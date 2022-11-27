@@ -2,7 +2,7 @@
 var express = require('express'),
     router = express.Router(),
     mongoose = require('mongoose'),
-    secrets = require('./config/secrets'),
+    secrets = require('./backend/config/secrets'),
     bodyParser = require('body-parser');
 
 // Create our Express application
@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 // Use routes as a module (see index.js)
-require('./routes')(app, router);
+require('./backend/routes')(app, router);
 
 // Start the server
 app.listen(port);
