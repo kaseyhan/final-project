@@ -1,16 +1,16 @@
-const { Timestamp } = require('bson');
 var mongoose = require('mongoose');
 
 var EventSchema = new mongoose.Schema({
     name: {type: String, required: true},
-    date: {type: Date, required: true},
-    time: Timestamp, // CHANGE???
-    host: {type: String, default: ""},
+    home: {type: String, required: true}, // do we need this?
+    start: {type: Date, required: true},
+    end: {type: Date, required: true},
+    host: {type: String, default: ""}, // user id
     hostName: {type: String, default: "none"},
     location: {type: String, default: ""},
     guests: [String],
     notes: {type: String, default: ""},
-    repeat: Boolean,
+    repeat: {type: String, default: "none"},
     dateCreated: Date
 });
 

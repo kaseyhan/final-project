@@ -43,6 +43,30 @@ def getTasks(conn):
 
     return tasks
 
+def getHomes(conn):
+    # Retrieve the list of homes
+    conn.request("GET","""/api/homes?select={"_id":1}""")
+    response = conn.getresponse()
+    data = response.read()
+    d = json.loads(data)
+
+    # Array of user IDs
+    homes = [str(d['data'][x]['_id']) for x in range(len(d['data']))]
+
+    return homes
+
+def getEvents(conn):
+    # Retrieve the list of events
+    conn.request("GET","""/api/events?select={"_id":1}""")
+    response = conn.getresponse()
+    data = response.read()
+    d = json.loads(data)
+
+    # Array of user IDs
+    events = [str(d['data'][x]['_id']) for x in range(len(d['data']))]
+
+    return events
+
 def main(argv):
 
     # Server Base URL and port
@@ -85,7 +109,6 @@ def main(argv):
     tasks = getTasks(conn)
 
     # Loop for as long as the database still returns tasks
-    counter = 0
     while len(tasks):
 
         # Delete each individual task
@@ -96,10 +119,26 @@ def main(argv):
 
         # Fetch a list of tasks
         tasks = getTasks(conn)
+    
+    homes = getHomes(conn)
+    while len(homes):
+        for home in homes:
+            conn.request("DELETE","/api/homes/"+home)
+            response = conn.getresponse()
+            data = response.read()
+        homes = getHomes(conn)
+
+    events = getEvents(conn)
+    while len(events):
+        for event in events:
+            conn.request("DELETE","/api/events/"+event)
+            response = conn.getresponse()
+            data = response.read()
+        events = getEvents(conn)
 
     # Exit gracefully
     conn.close()
-    print("All users and tasks removed at "+baseurl+":"+str(port))
+    print("All users, tasks, homes, and events removed at "+baseurl+":"+str(port))
 
 
 if __name__ == "__main__":

@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
-var Task = require('./backend/models/task')
+var Event = require('./backend/models/event')
 var User = require('./backend/models/user')
 
 module.exports = function (router) {
-    router.post('/tasks', async function (req, res) {
+    router.post('/events', async function (req, res) { // to do
         // let new_username = req.body.assignedUserName && req.body.assignedUserName !== "unassigned"
         
         // if (req.body.completed==="true" && (req.body.assignedUser !== "" || new_username)) {
@@ -11,78 +11,80 @@ module.exports = function (router) {
         //         message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
         //     return;
         // }
-        if ((req.body.assignedUserName && req.body.assignedUserName !== "unassigned") && !req.body.assignedUser) {
-            res.status(400).json({message: "Error: must provide assignedUser id", data:{}})
-            return;
-        }
-        const data = new Task({
+        // if ((req.body.assignedUserName && req.body.assignedUserName !== "unassigned") && !req.body.assignedUser) {
+        //     res.status(400).json({message: "Error: must provide assignedUser id", data:{}})
+        //     return;
+        // }
+        const data = new Event({
             name: req.body.name,
             home: req.body.home,
-            deadline: req.body.deadline,
-            completed: req.body.completed,
-            assignee: req.body.assignee,
-            assigneeName: req.body.assigneeName,
-            rotate: req.body.rotate,
+            repeat: req.body.repeat,
             notes: req.body.notes,
+            start: req.body.start,
+            end: req.body.end,
+            host: req.body.host,
+            hostName: req.body.hostName,
+            location: req.body.location,
+            guests: req.body.guests,
             dateCreated: Date.now()
         })
 
-        // do something with rotate??
+        // do something with repeat??
         
         
-        let user;
-        let invalid_user;
-        if (data.assignedUser) {
-            if (!mongoose.Types.ObjectId.isValid(data.assignedUser)) {
-                res.status(400).json({message:"Error: invalid user id", data:{}});
-                return;
-            }
-            user = await User.findById(data.assignee);
-            if (user) {
-                if (user.name !== data.assigneeName) {
-                    res.status(400).json({message: "Error: provided assigneeName does not match records for assignee", data:{}});
-                    return;
-                } else {
-                    if (!data.assigneeName) data.assigneeName = user.name;
-                    user.pendingTasks.push(data._id);
-                }
-            } else {
-                invalid_user = true;
-            }
-        }
+        // let user;
+        // let invalid_user;
+        // if (data.assignedUser) {
+        //     if (!mongoose.Types.ObjectId.isValid(data.assignedUser)) {
+        //         res.status(400).json({message:"Error: invalid user id", data:{}});
+        //         return;
+        //     }
+        //     user = await User.findById(data.assignee);
+        //     if (user) {
+        //         if (user.name !== data.assigneeName) {
+        //             res.status(400).json({message: "Error: provided assigneeName does not match records for assignee", data:{}});
+        //             return;
+        //         } else {
+        //             if (!data.assigneeName) data.assigneeName = user.name;
+        //             user.pendingTasks.push(data._id);
+        //         }
+        //     } else {
+        //         invalid_user = true;
+        //     }
+        // }
         
-        if (!invalid_user) {
-            try {
-                const dataToSave = await data.save();
-                if (user) {
-                    const userToSave = await user.save();
-                }
-                res.status(201)
-                res.json({
-                    message: "OK",
-                    data: dataToSave
-                })
-            } catch (error) {
-                if (!data.name || !data.home) {
-                    res.status(400).json({
-                        message: "Error: missing name or home",
-                        data: {name: data.name, deadline: data.home}})
-                } else {
-                    res.status(500).json({
-                        message: "Error saving data",
-                        data: {}})
-                }
-            }
-        } else {
-            res.status(400).json({
-                message: "Error: invalid assigned user",
-                data: {}
-            })
-        }
+        // if (!invalid_user) {
+        //     try {
+        //         const dataToSave = await data.save();
+        //         if (user) {
+        //             const userToSave = await user.save();
+        //         }
+        //         res.status(201)
+        //         res.json({
+        //             message: "OK",
+        //             data: dataToSave
+        //         })
+        //     } catch (error) {
+        //         if (!data.name || !data.home) {
+        //             res.status(400).json({
+        //                 message: "Error: missing name or home",
+        //                 data: {name: data.name, deadline: data.home}})
+        //         } else {
+        //             res.status(500).json({
+        //                 message: "Error saving data",
+        //                 data: {}})
+        //         }
+        //     }
+        // } else {
+        //     res.status(400).json({
+        //         message: "Error: invalid assigned user",
+        //         data: {}
+        //     })
+        // }
         
     })
 
-    router.get('/tasks', async function (req, res) {
+    router.get('/events', async function (req, res) { // to do
         try{
             let query = {};
 			let select = {};
@@ -122,11 +124,11 @@ module.exports = function (router) {
                 data: data})
         }
         catch(error){
-            res.status(500).json({message: "Error: couldn't get tasks", data: {}});
+            res.status(500).json({message: "Error: couldn't get events", data: {}});
         }
     })
 
-    router.get('/tasks/:id', async function (req, res) {
+    router.get('/events/:id', async function (req, res) { // to do
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
 			res.status(400).json({message:"Error: invalid task id", data:{}});
 			return;
@@ -158,7 +160,7 @@ module.exports = function (router) {
         }
     })
 
-    router.delete('/tasks/:id', async function (req, res) {
+    router.delete('/events/:id', async function (req, res) { // to do
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
 			res.status(400).json({message:"Error: invalid task id", data:{}});
 			return;
@@ -197,7 +199,7 @@ module.exports = function (router) {
         }
     })
 
-    router.put('/tasks/:id', async function (req, res) {
+    router.put('/events/:id', async function (req, res) { // to do
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
 			res.status(400).json({message:"Error: invalid task id", data:{}});
 			return;

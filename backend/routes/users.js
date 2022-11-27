@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
-var User = require('../models/user')
-var Task = require('../models/task')
+var User = require('./backend/models/user')
+var Task = require('./backend/models/task')
 
 module.exports = function (router) {
 	router.post('/users', async function (req, res) {
@@ -9,8 +9,12 @@ module.exports = function (router) {
 			data = await User.create({
 				name: req.body.name,
 				email: req.body.email,
-				pendingTasks: req.body.pendingTasks,
-				dateCreated: Date.now()
+				password: req.body.password,
+    			home: req.body.home,
+    			color: req.body.color,
+    			pendingTasks: req.body.pendingTasks,
+    			events: req.body.events,
+    			debts: req.body.debts
 			})
 			if (data) {
 				for (let i = 0; i < data.pendingTasks.length; i++) {
@@ -22,8 +26,8 @@ module.exports = function (router) {
 						let task = await Task.findById(data.pendingTasks[i]);
 						if (task) {
 							// if (!task.completed) {
-								task.assignedUser = data._id;
-								task.assignedUserName = data.name;
+								task.assignee = data._id;
+								task.assigneeName = data.name;
 								try {
 									let taskToSave = await task.save()
 								} catch (error) {
@@ -43,16 +47,25 @@ module.exports = function (router) {
 						return;
 					}
 				}
+
+				for (let i = 0; i < data.events.length; i++) {
+					// to do
+				}
+
+				for (let i = 0; i < data.debts.length; i++) {
+					// to do
+				}
+
 				res.status(201)
 				res.json({
 					message: "OK",
 					data: data})
 				return;
 			} else {
-				if (!req.body.name || !req.body.email) {
+				if (!req.body.name || !req.body.email || !req.body.password) {
 					res.status(400).json({
-						message: "Error: missing name or email",
-						data: {name: req.body.name, email: req.body.email}})
+						message: "Error: missing name, email, or password",
+						data: {name: req.body.name, email: req.body.email, password: req.body.password}})
 					return;
 				} else {
 					res.status(400).json({
@@ -63,10 +76,10 @@ module.exports = function (router) {
 			}
 			
 		} catch (error) {
-			if (!req.body.name || !req.body.email) {
+			if (!req.body.name || !req.body.email || !req.body.password) {
 				res.status(400).json({
-					message: "Error: missing name or email",
-					data: {name: req.body.name, email: req.body.email}})
+					message: "Error: missing name, email, or password",
+					data: {name: req.body.name, email: req.body.email, password: req.body.password}})
 				return;
 			} else if (error.message.substring(0,6) === "E11000") {
 				res.status(400).json({
@@ -163,7 +176,7 @@ module.exports = function (router) {
 		}
 		try{
 			const data = await User.findByIdAndDelete(req.params.id);
-			await Task.updateMany({assignedUser: data._id}, {assignedUser: "", assignedUserName: "unassigned"})
+			await Task.updateMany({assignee: data._id}, {assignee: "", assigneeName: "unassigned"})
 			res.status(200)
 			res.json({
 				message: "OK",
@@ -183,9 +196,12 @@ module.exports = function (router) {
 		if (data) {
 			data.name = req.body.name;
 			data.email = req.body.email;
+			data.password = req.body.password;
+    		if (req.body.home) data.home = req.body.home,
+    		if (req.body.color) data.color = req.body.color,
 			if (req.body.pendingTasks || data.pendingTasks.length > 0) {
 				if (req.body.pendingTasks) data.pendingTasks = req.body.pendingTasks;
-				await Task.updateMany({assignedUser: data._id}, {assignedUser: "", assignedUserName: "unassigned"})
+				await Task.updateMany({assignee: data._id}, {assignee: "", assigneeName: "unassigned"})
 				for (let i = 0; i < data.pendingTasks.length; i++) {
 					try {
 						if (!mongoose.Types.ObjectId.isValid(data.pendingTasks[i])) {
@@ -204,8 +220,8 @@ module.exports = function (router) {
 								// 	}
 								// }
 								
-								task.assignedUser = data._id;
-								task.assignedUserName = data.name;
+								task.assignee = data._id;
+								task.assigneeName = data.name;
 								try {
 									let taskToSave = await task.save()
 								} catch (error) {
@@ -226,6 +242,15 @@ module.exports = function (router) {
 					}
 				}
 			}
+			
+			if (req.body.events) {
+				// to do
+			}
+
+			if (req.body.debts) {
+				// to do
+			}
+
 		} else {
 			res.status(404).json({
 				message: "Error: user not found",
@@ -242,10 +267,10 @@ module.exports = function (router) {
 			})
 		}
 		catch (error) {
-			if (!data.name || !data.email) {
+			if (!data.name || !data.email || !data.password) {
 				res.status(400).json({
-					message: "Error: missing name or email",
-					data: {name: data.name, email: data.email}})
+					message: "Error: missing name, email, or password",
+					data: {name: data.name, email: data.email, password: data.password}})
 			} 
 		}
 	})
