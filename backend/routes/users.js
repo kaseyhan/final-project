@@ -81,7 +81,7 @@ module.exports = function (router) {
 				// TO DO
 				// for (let i = 0; i < data.debts.length; i++) {
 				// 	let debt = data.debts[i];
-				// 	let other_user = User.findById(debt.user);
+				// 	let other_user = await User.findById(debt.user);
 				// }
 
 				res.status(201)
@@ -207,7 +207,7 @@ module.exports = function (router) {
 			await Task.updateMany({assignee: data._id}, {assignee: "", assigneeName: "unassigned"});
 			await Event.updateMany({host: data._id}, {host: "", hostName: "none"});
 			
-			let home = Home.findById(data.home);
+			let home = await Home.findById(data.home);
 			for (let i = 0; i < home.members.length; i++) {
 				if (home.members[i] === req.params.id) {
 					home.members.splice(i,1);
@@ -244,7 +244,7 @@ module.exports = function (router) {
     		if (req.body.color) data.color = req.body.color;
 
 			if (req.body.home && req.body.home !== data.home) {
-				let old_home = Home.findById(data.home);
+				let old_home = await Home.findById(data.home);
 				for (let i = 0; i < old_home.members.length; i++) {
 					if (old_home.members[i] === data._id) {
 						old_home.members.splice(i,1);
@@ -257,7 +257,7 @@ module.exports = function (router) {
 					res.status(500).json({message: "Error saving", data:{}})
 					return;
 				}
-				let new_home = Home.findById(req.body.home);
+				let new_home = await Home.findById(req.body.home);
 				if (new_home) {
 					new_home.members.push(data._id);
 					try {

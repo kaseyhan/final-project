@@ -1,18 +1,23 @@
 var mongoose = require('mongoose');
 var Task = require('./backend/models/task')
 var User = require('./backend/models/user')
+var Home = require('./backend/models/home')
 
 module.exports = function (router) {
     router.post('/tasks', async function (req, res) {
-        let new_username = req.body.assignedUserName && req.body.assignedUserName !== "unassigned"
+        let new_username = req.body.assigneeName && req.body.assigneeName !== "unassigned"
         
-        if (req.body.completed==="true" && (req.body.assignedUser !== "" || new_username)) {
+        if (req.body.completed==="true" && (req.body.assignee !== "" || new_username)) {
             res.status(400).json({
                 message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
             return;
         }
-        if ((req.body.assignedUserName && req.body.assignedUserName !== "unassigned") && !req.body.assignedUser) {
-            res.status(400).json({message: "Error: must provide assignedUser id", data:{}})
+        if ((req.body.assigneeName && req.body.assigneeName !== "unassigned") && !req.body.assignee) {
+            res.status(400).json({message: "Error: must provide assignee id", data:{}})
+            return;
+        }
+        if (!req.body.home || !mongoose.Types.ObjectId.isValid(data.home)) {
+            res.status(400).json({message: "Error: must provide valid home id", data:{}})
             return;
         }
         const data = new Task({
@@ -26,14 +31,27 @@ module.exports = function (router) {
             notes: req.body.notes,
             dateCreated: Date.now()
         })
+        
+        let home = await Home.findById(data.home);
+        if (home) {
+            home.tasks.push(data._id);
+            try {
+                let homeToSave = await home.save();
+            } catch (error) {
+                res.status(500).json({message: "Error saving data", data: {}});
+                return;
+            }
+        } else {
+            res.status(404).json({message: "Error: home not found", data:{}})
+            return;
+        }
 
         // do something with rotate??
         
         
         let user;
-        let invalid_user;
-        if (data.assignedUser) {
-            if (!mongoose.Types.ObjectId.isValid(data.assignedUser)) {
+        if (data.assignee) {
+            if (!mongoose.Types.ObjectId.isValid(data.assignee)) {
                 res.status(400).json({message:"Error: invalid user id", data:{}});
                 return;
             }
@@ -47,39 +65,30 @@ module.exports = function (router) {
                     user.pendingTasks.push(data._id);
                 }
             } else {
-                invalid_user = true;
+                res.status(400).json({message: "Error: invalid assigned user", data: {}});
+                return;
             }
         }
-        
-        if (!invalid_user) {
-            try {
-                const dataToSave = await data.save();
-                if (user) {
-                    const userToSave = await user.save();
-                }
-                res.status(201)
-                res.json({
-                    message: "OK",
-                    data: dataToSave
-                })
-            } catch (error) {
-                if (!data.name || !data.home) {
-                    res.status(400).json({
-                        message: "Error: missing name or home",
-                        data: {name: data.name, deadline: data.home}})
-                } else {
-                    res.status(500).json({
-                        message: "Error saving data",
-                        data: {}})
-                }
+
+        try {
+            const dataToSave = await data.save();
+            if (user) {
+                const userToSave = await user.save();
             }
-        } else {
-            res.status(400).json({
-                message: "Error: invalid assigned user",
-                data: {}
+            res.status(201)
+            res.json({
+                message: "OK",
+                data: dataToSave
             })
+        } catch (error) {
+            if (!data.name || !data.home) {
+                res.status(400).json({
+                    message: "Error: missing name or home",
+                    data: {name: data.name, deadline: data.home}})
+            } else {
+                res.status(500).json({message: "Error saving data", data: {}});
+            }
         }
-        
     })
 
     router.get('/tasks', async function (req, res) {
@@ -166,8 +175,22 @@ module.exports = function (router) {
         try{
             const data = await Task.findByIdAndDelete(req.params.id);
             if (data) {
-                if (data.assignedUser) {
-                    let user = await User.findById(data.assignedUser);
+                let home = await Home.findById(data.home);
+                for (let i = 0; i < home.tasks.length; i++) {
+                    if (home.tasks[i] === req.params.id) {
+                        home.tasks.splice(i,1);
+                        break;
+                    }
+                }
+                try {
+                    let homeToSave = await home.save();
+                } catch (error) {
+                    res.status(500).json({message: "Error saving", data:{}})
+                    return;
+                }
+
+                if (data.assignee) {
+                    let user = await User.findById(data.assignee);
                     for (let i = 0; i < user.pendingTasks.length; i++) {
                         if (user.pendingTasks[i] === req.params.id) {
                             user.pendingTasks.splice(i,1);
@@ -202,28 +225,58 @@ module.exports = function (router) {
 			res.status(400).json({message:"Error: invalid task id", data:{}});
 			return;
 		}
+        if (!req.body.name || !req.body.home) {
+            res.status(400).json({message:"Error: missing name or home",data:{name:req.body.name,home:req.body.home}});
+            return;
+        }
+        if (req.body.completed && (req.body.assignee || req.body.assigneeName)) {
+            res.status(400).json({
+                message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
+            return;
+        }
+        if ((req.body.assigneeName && req.body.assigneeName !== "unassigned") && !req.body.assignee) { // if there is an assigneeName but no assignee
+            res.status(400).json({message: "Error: must provide assignee id", data:{}})
+            return;
+        }
+
         const data = await Task.findById(req.params.id);
         if (data) {
             data.name = req.body.name;
-            data.deadline = req.body.deadline;
-            if (req.body.home) data.home = req.body.home;
+            if (req.body.deadline) data.deadline = req.body.deadline;
             if (req.body.notes) data.notes = req.body.notes;
-            if (req.body.completed && (req.body.assignedUser || req.body.assignedUserName)) {
-                res.status(400).json({
-                    message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
-                return;
-            }
-            if (req.body.rotate) {
-                // to do
+            if (req.body.home !== data.home) {
+                let old_home = await Home.findById(data.home);
+                for (let i = 0; i < old_home.tasks.length; i++) {
+                    if (old_home.tasks[i] === req.params.id) {
+                        old_tasks.pendingTasks.splice(i,1);
+                        break;
+                    }
+                }
+                try {
+                    let homeToSave = await old_home.save();
+                } catch (error) {
+                    res.status(500).json({message: "Error saving", data:{}})
+                    return;
+                }
+                let new_home = await Home.findById(req.body.home);
+                if (new_home) {
+                    new_home.tasks.push(data._id);
+                    try {
+                        let homeToSave = await new_home.save();
+                    } catch (error) {
+                        res.status(500).json({message: "Error saving", data:{}})
+                        return;
+                    }
+                } else {
+                    res.status(404).json({message:"Error: new home not found",data:{}})
+                    return;
+                }
+                data.home = req.body.home;
             }
 
-            if ((req.body.assignedUserName && req.body.assignedUserName !== "unassigned") && !req.body.assignedUser) { // if there is an assignedUserName but no assignedUser
-                res.status(400).json({message: "Error: must provide assignedUser id", data:{}})
-                return;
-            }
             let new_user;
             if (req.body.assignee) { // if provided an assignee
-                if (!mongoose.Types.ObjectId.isValid(req.body.assignedUser)) {
+                if (!mongoose.Types.ObjectId.isValid(req.body.assignee)) {
                     res.status(400).json({message:"Error: invalid user id", data:{}});
                     return;
                 }
@@ -246,7 +299,7 @@ module.exports = function (router) {
             
             data.completed = req.body.completed;
             let old_user;
-            if (data.assignee) old_user = await User.findById(data.assignee);
+            if (data.assignee) old_user = await User.findById(data.assignee); // FIX??????????
             else {
                 res.status(404).json({message:"Error: old assignee not found", data:{}});
                 return;
@@ -267,9 +320,14 @@ module.exports = function (router) {
                 data.assignee = "";
                 data.assigneeName = "";
             }
+
+            // TO DO: ROTATION
+            // WHEN A TASK ROTATES, LEAVE THAT TASK AS COMPLETED WITH ITS ASSIGNEE AND CREATE A DUPLICATE OF IT AND ASSIGN IT TO THE NEXT USER IN THE ROTATION, SET DATECREATED=OLD_TASK.DATECREATED
+            // if (req.body.rotate && )
+
             if (req.body.assignee && req.body.assignee !== data.assignee && !data.completed) { // if a new user is provided
                 if (data.assignee) {
-                    // let old_user = await User.findById(data.assignedUser);
+                    // let old_user = await User.findById(data.assignee);
                     for (let i = 0; i < old_user.pendingTasks.length; i++) { // delete this task from the old user
                         if (old_user.pendingTasks[i] === req.params.id) {
                             old_user.pendingTasks.splice(i,1);
@@ -320,7 +378,9 @@ module.exports = function (router) {
                 res.status(400).json({
                     message: "Error: missing name or home",
                     data: {name: data.name, deadline: data.home}})
-            } 
+            } else {
+                res.status(500).json({message:"Error",data:{}});
+            }
         }
     })
 
