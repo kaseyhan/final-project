@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var User = require('./backend/models/user')
 var Task = require('./backend/models/task')
+var Event = require('./backend/models/event')
+var Home = require('./backend/models/home')
 
 module.exports = function (router) {
 	router.post('/users', async function (req, res) {
@@ -17,6 +19,8 @@ module.exports = function (router) {
     			debts: req.body.debts
 			})
 			if (data) {
+				// HOME
+
 				for (let i = 0; i < data.pendingTasks.length; i++) {
 					try {
 						if (!mongoose.Types.ObjectId.isValid(data.pendingTasks[i])) {
@@ -25,7 +29,7 @@ module.exports = function (router) {
 						}
 						let task = await Task.findById(data.pendingTasks[i]);
 						if (task) {
-							// if (!task.completed) {
+							if (!task.completed) {
 								task.assignee = data._id;
 								task.assigneeName = data.name;
 								try {
@@ -34,10 +38,10 @@ module.exports = function (router) {
 									res.status(500).json({message: "Error saving task", data: {}})
 									return;
 								}
-							// } else {
-							// 	res.status(400).json({message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
-							// 	return;
-							// }
+							} else {
+								res.status(400).json({message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
+								return;
+							}
 						} else {
 							res.status(404).json({message: "Error: task does not exist",data: {}})
 							return;
@@ -49,12 +53,36 @@ module.exports = function (router) {
 				}
 
 				for (let i = 0; i < data.events.length; i++) {
-					// to do
+					try {
+						if (!mongoose.Types.ObjectId.isValid(data.events[i])) {
+							res.status(400).json({message:"Error: invalid event id", data:{}});
+							return;
+						}
+						let event = await Event.findById(data.events[i]);
+						if (event) {
+							event.host = data._id;
+							event.hostName = data.name;
+							try {
+								let eventToSave = await event.save()
+							} catch (error) {
+								res.status(500).json({message: "Error saving event", data: {}})
+								return;
+							}
+						} else {
+							res.status(404).json({message: "Error: event does not exist",data: {}})
+							return;
+						}
+					} catch (error) {
+						res.status(404).json({message: "Error: event does not exist",data: {}})
+						return;
+					}
 				}
 
-				for (let i = 0; i < data.debts.length; i++) {
-					// to do
-				}
+				// TO DO
+				// for (let i = 0; i < data.debts.length; i++) {
+				// 	let debt = data.debts[i];
+				// 	let other_user = User.findById(debt.user);
+				// }
 
 				res.status(201)
 				res.json({
@@ -176,7 +204,23 @@ module.exports = function (router) {
 		}
 		try{
 			const data = await User.findByIdAndDelete(req.params.id);
-			await Task.updateMany({assignee: data._id}, {assignee: "", assigneeName: "unassigned"})
+			await Task.updateMany({assignee: data._id}, {assignee: "", assigneeName: "unassigned"});
+			await Event.updateMany({host: data._id}, {host: "", hostName: "none"});
+			
+			let home = Home.findById(data.home);
+			for (let i = 0; i < home.members.length; i++) {
+				if (home.members[i] === req.params.id) {
+					home.members.splice(i,1);
+					break;
+				}
+			}
+			try {
+				let homeToSave = await home.save();
+			} catch (error) {
+				res.status(500).json({message: "Error saving", data:{}})
+				return;
+			}
+
 			res.status(200)
 			res.json({
 				message: "OK",
@@ -197,8 +241,38 @@ module.exports = function (router) {
 			data.name = req.body.name;
 			data.email = req.body.email;
 			data.password = req.body.password;
-    		if (req.body.home) data.home = req.body.home,
-    		if (req.body.color) data.color = req.body.color,
+    		if (req.body.color) data.color = req.body.color;
+
+			if (req.body.home && req.body.home !== data.home) {
+				let old_home = Home.findById(data.home);
+				for (let i = 0; i < old_home.members.length; i++) {
+					if (old_home.members[i] === data._id) {
+						old_home.members.splice(i,1);
+						break;
+					}
+				}
+				try {
+					let homeToSave = await old_home.save();
+				} catch (error) {
+					res.status(500).json({message: "Error saving", data:{}})
+					return;
+				}
+				let new_home = Home.findById(req.body.home);
+				if (new_home) {
+					new_home.members.push(data._id);
+					try {
+						let homeToSave = await new_home.save();
+					} catch (error) {
+						res.status(500).json({message: "Error saving", data:{}})
+						return;
+					}
+					data.home = req.body.home;
+				} else {
+					res.status(404).json({message: "Error: home does not exist",data: {}})
+							return;
+				}
+			}
+
 			if (req.body.pendingTasks || data.pendingTasks.length > 0) {
 				if (req.body.pendingTasks) data.pendingTasks = req.body.pendingTasks;
 				await Task.updateMany({assignee: data._id}, {assignee: "", assigneeName: "unassigned"})
@@ -210,7 +284,7 @@ module.exports = function (router) {
 						}
 						let task = await Task.findById(data.pendingTasks[i]);
 						if (task) {
-							// if (!task.completed) {
+							if (!task.completed) {
 								// if (task.assignedUser) {
 								// 	const old_user = await User.findById(task.assignedUser);
 								// 	if (old_user) {
@@ -228,10 +302,10 @@ module.exports = function (router) {
 									res.status(500).json({message: "Error saving task", data: {}})
 									return;
 								}
-							// } else {
-							// 	res.status(400).json({message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
-							// 	return;
-							// }
+							} else {
+								res.status(400).json({message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
+								return;
+							}
 						} else {
 							res.status(404).json({message: "Error: task does not exist",data: {}})
 							return;
@@ -243,8 +317,34 @@ module.exports = function (router) {
 				}
 			}
 			
-			if (req.body.events) {
-				// to do
+			if (req.body.events || data.events.length > 0) {
+				if (req.body.events) data.events = req.body.events;
+				await Event.updateMany({host: data._id}, {host: "", hostName: "none"})
+				for (let i = 0; i < data.events.length; i++) {
+					try {
+						if (!mongoose.Types.ObjectId.isValid(data.events[i])) {
+							res.status(400).json({message:"Error: invalid event id", data:{}});
+							return;
+						}
+						let event = await Event.findById(data.events[i]);
+						if (event) {
+							event.host = data._id;
+							event.hostName = data.name;
+							try {
+								let eventToSave = await event.save()
+							} catch (error) {
+								res.status(500).json({message: "Error saving event", data: {}})
+								return;
+							}
+						} else {
+							res.status(404).json({message: "Error: event does not exist",data: {}})
+							return;
+						}
+					} catch (error) {
+						res.status(404).json({message: "Error: event does not exist",data: {}})
+						return;
+					}
+				}
 			}
 
 			if (req.body.debts) {

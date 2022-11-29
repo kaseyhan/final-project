@@ -4,13 +4,13 @@ var User = require('./backend/models/user')
 
 module.exports = function (router) {
     router.post('/tasks', async function (req, res) {
-        // let new_username = req.body.assignedUserName && req.body.assignedUserName !== "unassigned"
+        let new_username = req.body.assignedUserName && req.body.assignedUserName !== "unassigned"
         
-        // if (req.body.completed==="true" && (req.body.assignedUser !== "" || new_username)) {
-        //     res.status(400).json({
-        //         message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
-        //     return;
-        // }
+        if (req.body.completed==="true" && (req.body.assignedUser !== "" || new_username)) {
+            res.status(400).json({
+                message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
+            return;
+        }
         if ((req.body.assignedUserName && req.body.assignedUserName !== "unassigned") && !req.body.assignedUser) {
             res.status(400).json({message: "Error: must provide assignedUser id", data:{}})
             return;
@@ -208,11 +208,11 @@ module.exports = function (router) {
             data.deadline = req.body.deadline;
             if (req.body.home) data.home = req.body.home;
             if (req.body.notes) data.notes = req.body.notes;
-            // if (req.body.completed && (req.body.assignedUser || req.body.assignedUserName)) {
-            //     res.status(400).json({
-            //         message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
-            //     return;
-            // }
+            if (req.body.completed && (req.body.assignedUser || req.body.assignedUserName)) {
+                res.status(400).json({
+                    message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
+                return;
+            }
             if (req.body.rotate) {
                 // to do
             }

@@ -9,7 +9,7 @@ var UserSchema = new mongoose.Schema({
     color: {type: String, default: "#ADD8E6"},
     pendingTasks: [String],
     events: [Event],
-    debts: [{user: String, amount: Number}]
+    debts: [{user: String, amount: Number}] // positive = you owe them, negative = they owe you
 });
 
 module.exports = mongoose.model('User', UserSchema);
