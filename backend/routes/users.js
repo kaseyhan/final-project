@@ -6,6 +6,17 @@ var Home = require('./backend/models/home')
 
 module.exports = function (router) {
 	router.post('/users', async function (req, res) {
+		if (!req.body.name || !req.body.email || !req.body.password) {
+			res.status(400).json({
+				message: "Error: missing name, email, or password",
+				data: {name: req.body.name, email: req.body.email, password: req.body.password}})
+			return;
+        }
+		if (!req.body.home && (req.body.pendingTasks || req.body.events)) {
+			res.status(400).json({message: "Error: cannot assign tasks or events to a user without a home",data:{}});
+			return;
+		}
+
 		let data;
 		try {
 			data = await User.create({
@@ -19,9 +30,17 @@ module.exports = function (router) {
     			debts: req.body.debts
 			})
 			if (data) {
-				// HOME
+				if (req.body.home) {
+					let home = await Home.findById(req.body.home);
+					home.members.push(data._id);
+					try {
+						let homeToSave = await home.save();
+					} catch (error) {
+						res.status(500).json({message: "Error saving home", data: {}})
+					}
+				}
 
-				for (let i = 0; i < data.pendingTasks.length; i++) {
+				for (let i = 0; i < data.pendingTasks.length; i++) { // do we need to check if the task's home matches the user's home? i feel like no cuz they can't exist without a home anyway
 					try {
 						if (!mongoose.Types.ObjectId.isValid(data.pendingTasks[i])) {
 							res.status(400).json({message:"Error: invalid task id", data:{}});
@@ -52,7 +71,7 @@ module.exports = function (router) {
 					}
 				}
 
-				for (let i = 0; i < data.events.length; i++) {
+				for (let i = 0; i < data.events.length; i++) { // same question ^ for events
 					try {
 						if (!mongoose.Types.ObjectId.isValid(data.events[i])) {
 							res.status(400).json({message:"Error: invalid event id", data:{}});
@@ -83,7 +102,7 @@ module.exports = function (router) {
 				// 	let debt = data.debts[i];
 				// 	let other_user = await User.findById(debt.user);
 				// }
-
+				let dataToSave = await data.save();
 				res.status(201)
 				res.json({
 					message: "OK",
@@ -236,8 +255,20 @@ module.exports = function (router) {
 			res.status(400).json({message:"Error: invalid user id", data:{}});
 			return;
 		}
+		if (!req.body.name || !req.body.email || !req.body.password) {
+			res.status(400).json({
+				message: "Error: missing name, email, or password",
+				data: {name: req.body.name, email: req.body.email, password: req.body.password}})
+			return;
+        }
+
 		const data = await User.findById(req.params.id);
 		if (data) {
+			let new_provided_home = req.body.home && req.body.home !== "none";
+			if (!new_provided_home && data.home === "none" && (req.body.pendingTasks || req.body.events)) {
+				res.status(400).json({message: "Error: cannot assign tasks or events to a user without a home",data:{}});
+				return;
+			}
 			data.name = req.body.name;
 			data.email = req.body.email;
 			data.password = req.body.password;

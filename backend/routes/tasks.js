@@ -60,6 +60,9 @@ module.exports = function (router) {
                 if (user.name !== data.assigneeName) {
                     res.status(400).json({message: "Error: provided assigneeName does not match records for assignee", data:{}});
                     return;
+                } else if (user.home !== req.body.home) {
+                    res.status(400).json({message:"Error: cannot assign tasks to a user from a different home",data:{}});
+                    return;
                 } else {
                     if (!data.assigneeName) data.assigneeName = user.name;
                     user.pendingTasks.push(data._id);
@@ -285,6 +288,9 @@ module.exports = function (router) {
                     if (req.body.assigneeName) { // if provided assignee AND assigneeName
                         if (new_user.name !== req.body.assigneeName) { // if assigneeName doesn't match name of assignee
                             res.status(400).json({message: "Error: provided assigneeName does not match records for assignee", data:{}});
+                            return;
+                        } else if (new_user.home !== req.body.home) {
+                            res.status(400).json({message:"Error: cannot assign tasks to a user from a different home",data:{}});
                             return;
                         } else { // if assigneeName matches assignee
                             data.assigneeName = req.body.assigneeName;

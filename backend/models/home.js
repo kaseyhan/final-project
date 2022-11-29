@@ -6,7 +6,7 @@ var HomeSchema = new mongoose.Schema({
     tasks: [String], // task ids
     events: [String], // event ids
     address: String,
-    landlord: String,
+    landlordName: String,
     landlordPhoneNumber: String,
     leaseLink: String
 });
