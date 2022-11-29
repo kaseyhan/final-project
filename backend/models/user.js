@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var Event = require('./backend/models/event')
 
 var UserSchema = new mongoose.Schema({
     name: {type: String, required: true},
@@ -7,8 +6,8 @@ var UserSchema = new mongoose.Schema({
     password: {type: String, required: true},
     home: {type: String, default: "none"}, //home id
     color: {type: String, default: "#ADD8E6"},
-    pendingTasks: [String],
-    events: [Event],
+    pendingTasks: [String], // task id
+    events: [String], // event id
     debts: [{user: String, amount: Number}] // positive = you owe them, negative = they owe you
 });
 

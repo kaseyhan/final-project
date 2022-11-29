@@ -8,7 +8,7 @@ var EventSchema = new mongoose.Schema({
     host: {type: String, default: ""}, // user id
     hostName: {type: String, default: "none"},
     location: {type: String, default: ""},
-    guests: [String],
+    guests: [String], // user ids
     notes: {type: String, default: ""},
     repeat: {type: String, default: "none"},
     dateCreated: Date
