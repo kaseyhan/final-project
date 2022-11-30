@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
-var Event = require('./backend/models/event')
-var User = require('./backend/models/user')
-var Home = require('./backend/models/home')
+var Event = require('../models/event')
+var User = require('../models/user')
+var Home = require('../models/home')
 
 module.exports = function (router) {
     router.post('/events', async function (req, res) {
@@ -10,7 +10,7 @@ module.exports = function (router) {
             data:{name: req.body.name, start: req.body.start, end: req.body.end}})
             return;
         }
-        if (!req.body.home || !mongoose.Types.ObjectId.isValid(data.home)) {
+        if (!req.body.home || !mongoose.Types.ObjectId.isValid(req.body.home)) {
             res.status(400).json({message: "Error: must provide valid home id", data:{}})
             return;
         }
@@ -18,6 +18,8 @@ module.exports = function (router) {
             res.status(400).json({message: "Error: must provide host id", data:{}})
             return;
         }
+        // console.log(req.body.guests);
+        // g = JSON.parse(req.body.guests);
 
         const data = new Event({
             name: req.body.name,

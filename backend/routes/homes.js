@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
-var Home = require('./backend/models/home')
-var Task = require('./backend/models/task')
-var User = require('./backend/models/user')
-var Event = require('./backend/models/event')
+var Home = require('../models/home')
+var Task = require('../models/task')
+var User = require('../models/user')
+var Event = require('../models/event')
 
 module.exports = function (router) {
     router.post('/homes', async function (req, res) {
@@ -232,7 +232,7 @@ module.exports = function (router) {
             if (req.body.landlordPhoneNumber) data.landlordPhoneNumber = req.body.landlordPhoneNumber;
             if (req.body.leaseLink) data.leaseLink = req.body.leaseLink;
 
-            if (req.body.members && req.body.members.length > 0) {
+            if (req.body.members) {
                 // await User.updateMany({home: data._id},{home:"none"});
                 if (data.members) { // unassign old users and delete those users' tasks and events (DO WE NEED TO DELETE THEIR TASKS/EVENTS??)
                     for (let i = 0; i < data.members.length; i++) {
@@ -248,15 +248,16 @@ module.exports = function (router) {
                         }
                     }
                 }
-
-                for (let i = 0; i < req.body.members.length; i++) {
-                    let user = await User.findById(req.body.members[i]);
-                    user.home = data._id;
-                    try {
-                        let userToSave = await user.save();
-                    } catch (error) {
-                        res.status(500).json({message:"Error saving",data:{}});
-                        return;
+                if (req.body.members.length > 0) {
+                    for (let i = 0; i < req.body.members.length; i++) {
+                        let user = await User.findById(req.body.members[i]);
+                        user.home = data._id;
+                        try {
+                            let userToSave = await user.save();
+                        } catch (error) {
+                            res.status(500).json({message:"Error saving",data:{}});
+                            return;
+                        }
                     }
                 }
                 data.members = req.body.members;

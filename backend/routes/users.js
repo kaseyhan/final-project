@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
-var User = require('./backend/models/user')
-var Task = require('./backend/models/task')
-var Event = require('./backend/models/event')
-var Home = require('./backend/models/home')
+var User = require('../models/user')
+var Task = require('../models/task')
+var Event = require('../models/event')
+var Home = require('../models/home')
 
 module.exports = function (router) {
 	router.post('/users', async function (req, res) {
@@ -30,7 +30,7 @@ module.exports = function (router) {
     			debts: req.body.debts
 			})
 			if (data) {
-				if (req.body.home) {
+				if (req.body.home && req.body.home !== "none") {
 					let home = await Home.findById(req.body.home);
 					home.members.push(data._id);
 					try {
@@ -134,6 +134,7 @@ module.exports = function (router) {
 					data: {}})
 				return;
 			} else {
+				console.log(error)
 				res.status(500).json({message: "Error", data: {}})
 			}
 		}

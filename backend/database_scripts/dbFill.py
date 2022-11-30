@@ -88,8 +88,11 @@ def main(argv):
         d = json.loads(data)
 
         # Store the home's id
-        homeID = str(d['data']['_id'])
-        homes[homeID] = []
+        if '_id' in d['data']:
+            homeID = str(d['data']['_id'])
+            homes[homeID] = []
+        else:
+            print(data)
     
 
     # Loop 'userCount' number of times
@@ -101,7 +104,9 @@ def main(argv):
         characters = string.ascii_lowercase + string.digits
         password = ''.join(choice(characters) for i in range(8))
         assigned = (randint(0,10) > 2)
-        assignedHome = homes[homes.keys()[randint(0,len(homes.keys()))]] if assigned else "none"
+        idx = randint(0,len(list(homes.keys()))-1)
+        keys = list(homes.keys())
+        assignedHome = keys[idx] if assigned else "none"
         params = urllib.parse.urlencode({'name': firstNames[x] + " " + lastNames[y], 'email': firstNames[x] + "@" + lastNames[y] + ".com",'password':password, 'home': assignedHome})
 
         # POST the user
@@ -111,12 +116,15 @@ def main(argv):
         d = json.loads(data)
 
         # Store the users id
-        userIDs.append(str(d['data']['_id']))
-        userNames.append(str(d['data']['name']))
-        userEmails.append(str(d['data']['email']))
-        passwords.append(str(d['data']['password']))
-        homes[assignedHome].append(str(d['data']['_id']))
-
+        if '_id' in d['data']:
+            userIDs.append(str(d['data']['_id']))
+            userNames.append(str(d['data']['name']))
+            userEmails.append(str(d['data']['email']))
+            passwords.append(str(d['data']['password']))
+            if assignedHome != "none":
+                homes[assignedHome].append(str(d['data']['_id']))
+        else:
+            print(data)
 
     # Open 'tasks.txt' for sample task names
     f = open('tasks.txt','r')
@@ -124,14 +132,18 @@ def main(argv):
 
     # Loop 'taskCount' number of times
     for i in range(taskCount):
-
         # Randomly generate task parameters
         assigned = (randint(0,10) > 2)
         completed = (randint(0,10) > 7)
         if completed:
             assigned = False
-        home = homes[homes.keys()[randint(0,len(homes.keys()))]]
-        assignee = randint(0,len(homes[home]))
+        home = list(homes.keys())[randint(0,len(list(homes.keys()))-1)]
+        if len(homes[home]) == 0:
+            assigned = False
+        elif len(homes[home]) == 1:
+            assignee = 0
+        else:
+            assignee = randint(0,len(homes[home])-1)
         assigneeID = homes[home][assignee] if assigned else ''
         assigneeName = userNames[userIDs.index(assigneeID)] if assigned else 'unassigned' # ???
         deadline = (mktime(date.today().timetuple()) + randint(86400,864000)) * 1000
@@ -145,14 +157,25 @@ def main(argv):
         data = response.read()
         d = json.loads(data)
 
-        taskID = str(d['data']['_id'])
+        if '_id' in d['data']:
+            taskID = str(d['data']['_id'])
+        else:
+            print(data)
+
+    f = open('events.txt','r')
+    eventNames = f.read().splitlines()
 
     for i in range(eventCount):
         hosted = (randint(0,10) > 4)
-        home = homes[homes.keys()[randint(0,len(homes.keys()))]]
-        host = randint(0,len(homes[home]))
+        home = list(homes.keys())[randint(0,len(list(homes.keys()))-1)]
+        if len(homes[home]) == 0:
+            hosted = False
+        elif len(homes[home]) == 1:
+            host = 0
+        else:
+            host = randint(0,len(homes[home])-1)
         hostID = homes[home][host] if hosted else ''
-        hostName = userIDs.index(hostID) if hosted else 'none' # ???
+        hostName = userNames[userIDs.index(hostID)] if hosted else 'none'
         start = (mktime(date.today().timetuple()) + randint(3600,864000)) * 1000
         end = start + randint(86400,864000) * 1000
         locations = ["", "kitchen", "living room", "my room"]
@@ -164,18 +187,22 @@ def main(argv):
             guests.append(firstNames[x]+" "+lastNames[y])
         notes = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English."
         repeat = ["none","daily","weekly","biweekly","monthly"]
-        params = urllib.parse.urlencode({'name': choice(taskNames), 'home': home, 'start': start, 'end': end, 'hostID': hostID, 'hostName': hostName, 'notes': notes, 'repeat': choice(repeat), 'location': choice(locations), 'guests': guests})
-
+        params = urllib.parse.urlencode({'name': choice(eventNames), 'home': home, 'start': start, 'end': end, 'host': hostID, 'hostName': hostName, 'notes': notes, 'repeat': choice(repeat), 'location': choice(locations), 'guests': guests})
+        # print(params)
         conn.request("POST", "/api/events", params, headers)
         response = conn.getresponse()
         data = response.read()
         d = json.loads(data)
-
-        eventID = str(d['data']['_id'])
+        
+        if '_id' in d['data']:
+            eventID = str(d['data']['_id'])
+        else:
+            print(data)
 
     # Exit gracefully
     conn.close()
     print(str(userCount)+" users, "+str(taskCount)+" tasks, "+str(homeCount)+" homes, and "+str(eventCount)+" events added at "+baseurl+":"+str(port))
+    # print(str(userCount)+" users and "+str(homeCount)+" homes added at "+baseurl+":"+str(port))
 
 
 if __name__ == "__main__":

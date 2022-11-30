@@ -5,10 +5,10 @@ var HomeSchema = new mongoose.Schema({
     members: [String], // user ids
     tasks: [String], // task ids
     events: [String], // event ids
-    address: String,
-    landlordName: String,
-    landlordPhoneNumber: String,
-    leaseLink: String
+    address: {type: String, default: ""},
+    landlordName: {type: String, default: ""},
+    landlordPhoneNumber: {type: String, default: ""},
+    leaseLink: {type: String, default: ""}
 });
 
 module.exports = mongoose.model('Home', HomeSchema);

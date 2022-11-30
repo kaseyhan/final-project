@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
-var Task = require('./backend/models/task')
-var User = require('./backend/models/user')
-var Home = require('./backend/models/home')
+var Task = require('../models/task')
+var User = require('../models/user')
+var Home = require('../models/home')
 
 module.exports = function (router) {
     router.post('/tasks', async function (req, res) {
@@ -16,7 +16,7 @@ module.exports = function (router) {
             res.status(400).json({message: "Error: must provide assignee id", data:{}})
             return;
         }
-        if (!req.body.home || !mongoose.Types.ObjectId.isValid(data.home)) {
+        if (!req.body.home || !mongoose.Types.ObjectId.isValid(req.body.home)) {
             res.status(400).json({message: "Error: must provide valid home id", data:{}})
             return;
         }
