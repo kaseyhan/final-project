@@ -25,6 +25,10 @@ h1 {
 .sort p {
     display: inline-block;
 }
+select {
+    width: 60%;
+    padding: 7px;
+}
 
 .radioButtons {
     display: inline-block;
@@ -61,19 +65,17 @@ h1 {
 .listHeader {
     width: 100%;
     background-color: lightgray;
-    padding: 10px;
+    padding: 15px;
 }
 .listHeader span h3 {
     display: inline-block;
-    /* margin-right: 200px;
-    margin-left: 20px; */
 }
 .listItem {
     width: 100%;
     display: inline-block;
     border: solid #000;
     border-width: 1px 0.5px 0.5px 1px;
-    padding: 10px;
+    padding: 15px;
 }
 .listColumn {
     width: 20%;
@@ -83,16 +85,25 @@ h1 {
 }
 .task, .assignee, .deadline, .taskButtons {
     display: inline-block;
-    /* margin-right: 200px;
-    margin-left: 20px; */
+}
+.taskButtons {
+    width: 40%;
+    float: right;
+}
+.taskButton {
+    float: right;
+    grid-template-columns: 1fr 7fr;
+    padding: 15px;
 }
 
 
 .bottom {
     margin: auto;
     width: 100%;
-    background-color: blue;
-    position: relative;
+    /* background-color: blue; */
+    /* position: relative; */
+    padding-top: 30px;
+    padding-bottom: 30px;
 }
 .createTaskButton {
     margin: auto;
@@ -102,7 +113,7 @@ h1 {
     padding: 15px 32px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
+    /* display: inline-block; */
     font-size: 16px;
 }
 
