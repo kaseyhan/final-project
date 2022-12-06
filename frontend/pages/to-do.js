@@ -109,10 +109,15 @@ export default function ToDoView() {
 
     }, [query,sortBy,sortOrder]);
 
+    let user = '638ea4a74dea1620a451af54';
+    let home = '638ea4a44dea1620a451aeff'
     try {
         let dummyData = DummyData()
         var json_data = JSON.parse(dummyData);
         tasks = json_data["tasks"];
+        tasks = tasks.filter(function (el) {
+            return el['home'] === home;
+          });
 
     } catch (error) {
         console.log('err: ', error.message);
@@ -191,7 +196,7 @@ export default function ToDoView() {
         <div className="options">
             <div className="sort">
                 <p>Sort by: </p>
-                <select name="selectList" id="select" defaultValue="title" onChange={event => {
+                <select name="selectList" id="select" defaultValue="deadline" onChange={event => {
                     setSortBy(event.target.value);}}>
                     <option value="title">Title</option>
                     <option value="deadline">Deadline</option>
@@ -207,6 +212,7 @@ export default function ToDoView() {
             </div>
             <div className="rightButtons">
                 <button className="filterButton" /*onClick={}*/>Filter Tasks</button>
+                <span>   </span>
                 <button className="editRotationsButton" /*onClick={}*/>Edit Rotations</button>
             </div>
         </div>
@@ -214,9 +220,9 @@ export default function ToDoView() {
         <div className="listContainer">
             <div className="listHeader">
                 <span>
-                    <h3 class="listColumn">Task</h3>
-                    <h3 class="listColumn">Assignee</h3>
-                    <h3 class="listColumn">Deadline</h3>
+                    <h3 className="listColumn">Task</h3>
+                    <h3 className="listColumn">Assignee</h3>
+                    <h3 className="listColumn">Deadline</h3>
                 </span>
             </div>
             {tasks.sort((a,b) => {
@@ -277,16 +283,6 @@ export default function ToDoView() {
                 <div className="listItem" key={index} onClick={() => {
                             // let link = `/mp2/details/${task.id}/next`; // FIX
                             /*navigate(link)*/}}>
-                    {/* <div className="listImage"> */}
-                    {/* <img src={getImage(movie.poster_path)} alt="" height="100px" onError={({ currentTarget }) => {
-                        currentTarget.onerror = null;
-                        currentTarget.src=defaultImage;
-                    }}/> */}
-                    {/* </div> */}
-                    {/* <div className="listText">
-                        <h4>{movie.original_title}</h4>
-                        <p>{movie.overview}</p>
-                    </div> */}
                     <div className="listColumn task">
                         <p>{task.name}</p>
                     </div>
@@ -299,14 +295,19 @@ export default function ToDoView() {
                         <p>{task.deadline}</p>
                     </div>
                     <span className="listColumn taskButtons">
-                    {/* <input type="image" src="C:/Users/Han/Documents/Github/cs409/final-project/frontend/resources/box.png" /> */}
+                        <span className="taskButton">
+                            <img className="editButton" src="https://iili.io/HC8ZzHQ.png" width="18px" height="20px"></img>
+                        </span>
+                        <span className="taskButton">
+                            <img className="deleteButton" src="https://iili.io/HC8ZRx1.png" width="20px" height="20px"></img>
+                        </span>
+                        <span className="taskButton">
+                            <img className="checkButton" src="https://iili.io/HC8LA7V.png" width="20px" height="20px"></img>
+                        </span>
                     </span>
                 </div>
             ))}
         </div>
-
-
-
 
         <div className="bottom">
             <button className="createTaskButton" /*onClick={}*/>Create Task</button>
