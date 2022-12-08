@@ -1,12 +1,15 @@
 .navbar {
+  position: fixed;
   background: white;
-  height: auto;
+  width: 100vw;
+  height: 125px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 25px;
-  padding: 10px 50px;
-  z-index: 1;
+  padding: 25px 50px;
+  z-index: 10;
+  top: 0;
   /* border-bottom: black 3px solid; */
   box-shadow: 0 2px 2px -2px rgba(0, 0, 0, .2);
   text-align: center;
