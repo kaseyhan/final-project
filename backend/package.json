@@ -2,6 +2,7 @@
   "name": "final-project",
   "version": "1.0.0",
   "description": "CS 409 Fall 2022 Final Project GSK",
+  "main": "server.js",
   "authors": [
     "Kasey Han <kaseyjh2@illinois.edu>",
     "Sarah Zimmerman <sarahrz2@illinois.edu>",
@@ -25,5 +26,11 @@
     "express": "^4.15.3",
     "mongoose": "^5.4.18",
     "nodemon": "^1.11.0"
-  }
+  },
+  "engines": {
+    "node": "16.x"
+  },
+  "keywords": [
+    "heroku"
+  ]
 }
