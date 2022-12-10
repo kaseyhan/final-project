@@ -10,8 +10,13 @@ module.exports = function (router) {
             res.status(400).json({message: "Error: missing name", data:{}});
             return;
         }
+        if (!req.body.password) {
+            res.status(400).json({message: "Error: missing password", data:{}});
+            return;
+        }
         const data = new Home({
             name: req.body.name,
+            password: req.body.password,
             home: req.body.home,
             members: req.body.members,
             tasks: req.body.tasks,
@@ -20,6 +25,7 @@ module.exports = function (router) {
             landlordName: req.body.landlordName,
             landlordPhoneNumber: req.body.landlordPhoneNumber,
             leaseLink: req.body.leaseLink,
+            announcements: req.body.announcements,
             dateCreated: Date.now()
         })
 
@@ -224,6 +230,10 @@ module.exports = function (router) {
             res.status(400).json({message:"Error: missing name", data:{}});
 			return;
         }
+        if (!req.body.password) {
+            res.status(400).json({message:"Error: missing password", data:{}});
+			return;
+        }
         const data = await Home.findById(req.params.id);
         if (data) {
             data.name = req.body.name;
@@ -231,6 +241,7 @@ module.exports = function (router) {
             if (req.body.landlordName) data.landlordName = req.body.landlordName;
             if (req.body.landlordPhoneNumber) data.landlordPhoneNumber = req.body.landlordPhoneNumber;
             if (req.body.leaseLink) data.leaseLink = req.body.leaseLink;
+            if (req.body.announcements) data.announcements = req.body.announcements;
 
             if (req.body.members) {
                 // await User.updateMany({home: data._id},{home:"none"});

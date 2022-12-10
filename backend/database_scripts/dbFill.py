@@ -79,7 +79,9 @@ def main(argv):
     for i in range(homeCount):
         letters = string.ascii_lowercase
         home_name = ''.join(choice(letters) for i in range(6))
-        params = urllib.parse.urlencode({'name': home_name})
+        characters = string.ascii_lowercase + string.digits
+        password = ''.join(choice(characters) for i in range(8))
+        params = urllib.parse.urlencode({'name': home_name, 'password': password})
 
         # POST the home
         conn.request("POST", "/api/homes", params, headers)
