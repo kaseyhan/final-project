@@ -181,10 +181,10 @@ def main(argv):
         locations = ["", "kitchen", "living room", "my room"]
         num_guests = randint(0,10)
         guests = []
-        for j in range(num_guests):
-            x = randint(0,99)
-            y = randint(0,99)
-            guests.append(firstNames[x]+" "+lastNames[y])
+        # for j in range(num_guests):
+        #     x = randint(0,99)
+        #     y = randint(0,99)
+        #     guests.append(firstNames[x]+" "+lastNames[y])
         notes = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English."
         repeat = ["none","daily","weekly","biweekly","monthly"]
         params = urllib.parse.urlencode({'name': choice(eventNames), 'home': home, 'start': start, 'end': end, 'host': hostID, 'hostName': hostName, 'notes': notes, 'repeat': choice(repeat), 'location': choice(locations), 'guests': guests})

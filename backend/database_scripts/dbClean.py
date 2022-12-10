@@ -104,7 +104,7 @@ def main(argv):
 
         # Fetch a list of users
         users = getUsers(conn)
-
+    print("finished users")
     # Fetch a list of tasks
     tasks = getTasks(conn)
 
@@ -119,7 +119,8 @@ def main(argv):
 
         # Fetch a list of tasks
         tasks = getTasks(conn)
-    
+    print("finished tasks")
+
     homes = getHomes(conn)
     while len(homes):
         for home in homes:
@@ -127,6 +128,7 @@ def main(argv):
             response = conn.getresponse()
             data = response.read()
         homes = getHomes(conn)
+    print("finished homes")
 
     events = getEvents(conn)
     while len(events):
@@ -135,6 +137,7 @@ def main(argv):
             response = conn.getresponse()
             data = response.read()
         events = getEvents(conn)
+    print("finished events")
 
     # Exit gracefully
     conn.close()
