@@ -1,0 +1,63 @@
+.navbar {
+  position: fixed;
+  background: white;
+  width: 100vw;
+  height: 125px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  padding: 25px 50px;
+  z-index: 10;
+  top: 0;
+  /* border-bottom: black 3px solid; */
+  box-shadow: 0 2px 2px -2px rgba(0, 0, 0, .2);
+  text-align: center;
+}
+
+.navbar> :first-child,
+.navbar> :last-child {
+  flex-basis: 10%;
+}
+
+.links {
+  display: flex;
+  gap: 2rem;
+  /* border: red 3px solid; */
+
+  @media only screen and (max-width: 768px) {
+    display: none;
+  }
+}
+
+
+.logoBox {
+  display: flex;
+  justify-content: center;
+  /* border: red 3px solid; */
+}
+
+.userBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  /* border: red 3px solid; */
+}
+
+.bars {
+  display: none;
+  color: #000;
+}
+
+@media screen and (max-width: 768px) {
+  .bars {
+    display: flex;
+    font-size: 1.8rem;
+    cursor: pointer;
+  }
+
+  .links {
+    display: none
+  }
+}
