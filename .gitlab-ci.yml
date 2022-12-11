@@ -19,8 +19,9 @@ pages:
     - cd frontend
     - npm install        # Install all dependencies
     - npm run-script build && npm run-script export
+    - mkdir _public
     - mv public/* _public
-    - mv out public/*
+    - mv out _public
 
   artifacts:
     paths:
