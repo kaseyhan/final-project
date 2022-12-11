@@ -29,7 +29,8 @@ export default function ToDoView() {
     const [rotatedTasks, setRotatedTasks] = useState([]);
     const [newTask, setNewTask] = useState({});
     const [taskToEdit, setTaskToEdit] = useState({});
-    let homeID = '639508e44c9f274f9cec2a85'
+    const homeID = '639508e44c9f274f9cec2a85'
+    const userID = '639508e64c9f274f9cec2b23' 
     const api = axios.create({ baseURL: BASE_URL });
 
     const fetchData = async() => {
@@ -141,7 +142,7 @@ export default function ToDoView() {
                             let q = [...queryAssignees];
                             q.push(event.target.id);
                             setQueryAssignees(q);
-                        }}>{userNames[index]}</button>
+                        }}>{titleCase(userNames[index])}</button>
                     ))}
                     <button className="assigneeButton" id="anyone" onClick={(event) => {
                         let buttons = document.getElementsByClassName("assigneeButton");
@@ -555,7 +556,7 @@ export default function ToDoView() {
                                 if (buttons[i].id !== event.target.id) buttons[i].classList.remove('active');
                             }
                             setNewTask(t);
-                        }}>{userNames[index]}</button>
+                        }}>{titleCase(userNames[index])}</button>
                     ))}
                 </div>
                 <br></br>
