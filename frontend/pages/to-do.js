@@ -8,11 +8,13 @@ import Modal from "../components/modal";
 // import { useNavigate } from "react-router-dom";
 
 export default function ToDoView() {
-    // const BASE_URL = "http://localhost:4000/api";
-    const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
+    const BASE_URL = "http://localhost:4000/api";
+    // const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
 
     const [isLoading, setIsLoading] = useState(true);
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState({});
+    const [newQuery, setNewQuery] = useState({})
+    const [queryAssignees, setQueryAssignees] = useState([]);
     const [home, setHome] = useState({});
     const [tasks, setTasks] = useState([]);
     const [users, setUsers] = useState([]);
@@ -21,6 +23,7 @@ export default function ToDoView() {
     const [sortOrder, setSortOrder] = useState("asc");
     const [showCreate, setShowCreate] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
+    const [showFilter, setShowFilter] = useState(false);
     const [rotation, setRotation] = useState("none");
     const [rotatedTasks, setRotatedTasks] = useState([]);
     const [newTask, setNewTask] = useState({});
@@ -30,10 +33,10 @@ export default function ToDoView() {
 
     const fetchData = async() => {
         try {
-            let h = '{"home":"' + homeID + '"}';
+            query["home"] = homeID;
             let p = {
                 "params": {
-                    "where": h
+                    "where": JSON.stringify(query)
                 }
             }
 
@@ -121,12 +124,82 @@ export default function ToDoView() {
                 <input className="rad" type="radio" value="desc" name="sort"/> descending
             </div>
             <div className="rightButtons">
-                <button className="filterButton" /*onClick={}*/>Filter Tasks</button>
+                <button className="filterButton" onClick={()=> setShowFilter(true)}>Filter Tasks</button>
                 {/* <span>   </span>
                 <button className="editRotationsButton">Edit Rotations</button> */}
             </div>
         </div>
 
+        <Modal title="Filter Tasks" button="Apply Filters" onClose={() => setShowFilter(false)} show={showFilter}>
+                <label htmlFor="assignees">Assignee</label>
+                <div id="assignees">
+                    {users.map((user, index) => (
+                        <button className="assigneeButton" id={user} key={index} onClick={(event) => {
+                            event.target.classList.toggle('active');
+                            document.getElementById('anyone').classList.remove('active');
+                            let q = [...queryAssignees];
+                            q.push(event.target.id);
+                            setQueryAssignees(q);
+                        }}>{userNames[index]}</button>
+                    ))}
+                    <button className="assigneeButton" id="anyone" onClick={(event) => {
+                        let buttons = document.getElementsByClassName("assigneeButton");
+                        for (let i = 0; i < buttons.length; i++) {
+                            buttons[i].classList.remove('active');
+                        }
+                        event.target.classList.toggle('active');
+                        setQueryAssignees([]);
+                    }}>Anyone</button>
+                </div>
+                <br></br>
+                <label htmlFor="statusButtons">Status</label>
+                <div className="statusButtons">
+                    <button className="statusButton" id="notCompletedFilter" onClick={(event) => {
+                        let buttons = document.getElementsByClassName("statusButton");
+                        for (let i = 0; i < buttons.length; i++) {
+                            buttons[i].classList.remove('active');
+                        }
+                        event.target.classList.toggle('active');
+                        let q = {...newQuery};
+                        q["completed"] = false;
+                        setNewQuery(q);
+                    }}>Not completed</button>
+                    <button className="statusButton" id="completedFilter" onClick={(event) => {
+                        let buttons = document.getElementsByClassName("statusButton");
+                        for (let i = 0; i < buttons.length; i++) {
+                            buttons[i].classList.remove('active');
+                        }
+                        event.target.classList.toggle('active');
+                        let q = {...newQuery};
+                        q["completed"] = true;
+                        setNewQuery(q);
+                    }}>Completed</button>
+                    <button className="statusButton" id="anyStatusFilter" onClick={(event) => {
+                        let buttons = document.getElementsByClassName("statusButton");
+                        for (let i = 0; i < buttons.length; i++) {
+                            buttons[i].classList.remove('active');
+                        }
+                        event.target.classList.toggle('active');
+                        let q = {...newQuery};
+                        delete q["completed"];
+                        setNewQuery(q);
+                    }}>Any status</button>
+                </div>
+                <br></br>
+
+                <div className="submitButtons">
+                    <button className="modalButton" onClick={() => {
+                        if (queryAssignees.length > 0) {
+                            newQuery["assignee"] = {"$in":queryAssignees};
+                        }
+                        
+                        setQuery(newQuery);
+                        setNewQuery({});
+                        setQueryAssignees([]);                            
+                        setShowFilter(false)}}>Apply Filters</button>
+                </div>
+
+            </Modal>
             
         <div className="listContainer">
             <div className="listHeader">
@@ -316,6 +389,7 @@ export default function ToDoView() {
                 <br></br>
 
                 <label htmlFor="notesInputEdit">Notes (optional)</label>
+                <br></br>
                 <textarea type="text" id="notesInputEdit" placeholder={taskToEdit.notes} cols="40" rows="4" onChange={event => {
                     let t = {...taskToEdit}
                     t["notes"] = event.target.value;
