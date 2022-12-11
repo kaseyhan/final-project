@@ -142,12 +142,11 @@ export default function Home() {
     setNewAnnouncement(event.target.value)
   }
 
-  const handleContainerClick = (event, href) => {
-    router.push(href);
-  }
+  const handleSubmit = (data) => {
+    setIsLoading(true);
 
-  const updateAnnouncementData = data => {
-    let updatedAnnouncements = [...announcementsData, data];
+    setNewAnnouncement(data)
+    let updatedAnnouncements = [...announcementsData, newAnnouncement];
     let params = {
       "name": homeData.name,
       "password": homeData.password,
@@ -156,9 +155,15 @@ export default function Home() {
     API.put(`homes/${homeData._id}`, params)
       .then(response => {
         setAnnouncementsData(updatedAnnouncements);
-        setNewAnnouncement(data);
       })
       .catch(error => console.error(error));
+
+    setIsLoading(false);
+    closeModal();
+  }
+
+  const handleContainerClick = (event, href) => {
+    router.push(href);
   }
 
   return (
@@ -205,9 +210,7 @@ export default function Home() {
 
                 {showModal && (
                   <AnnouncementModal
-                    showModal={showModal}
-                    newAnnouncement={newAnnouncement}
-                    updateAnnouncementData={updateAnnouncementData}
+                    handleSubmit={handleSubmit}
                     closeModal={closeModal}
                     handleInput={handleInput}
                   />
