@@ -17,10 +17,12 @@ pages:
     - cd frontend
     - npm install        # Install all dependencies
     - npm run build      # Build for prod
+    - mv frontend/public _public  # CRA and gitlab pages both use the public folder. Only do this in a build pipeline.
+    - mv build frontend/public    # Move build files to public dir for Gitlab Pages
 
   artifacts:
     paths:
-    - public
+    - frontend/public
 
   only:
     - main
