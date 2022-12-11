@@ -9,6 +9,7 @@ cache:
   - frontend/.next/cache
 
 pages:
+  stage: deploy
   script:
     - cd frontend
     - npm install        # Install all dependencies
