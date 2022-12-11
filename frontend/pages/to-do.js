@@ -8,8 +8,8 @@ import Modal from "../components/modal";
 // import { useNavigate } from "react-router-dom";
 
 export default function ToDoView() {
-    const BASE_URL = "http://localhost:4000/api";
-    // const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
+    // const BASE_URL = "http://localhost:4000/api";
+    const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
 
     const [isLoading, setIsLoading] = useState(true);
     const [query, setQuery] = useState({});
@@ -186,6 +186,7 @@ export default function ToDoView() {
                     }}>Any status</button>
                 </div>
                 <br></br>
+                
 
                 <div className="submitButtons">
                     <button className="modalButton" onClick={() => {
