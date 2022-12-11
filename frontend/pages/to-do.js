@@ -8,13 +8,14 @@ import Modal from "../components/modal";
 // import { useNavigate } from "react-router-dom";
 
 export default function ToDoView() {
-    // const BASE_URL = "http://localhost:4000/api";
-    const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
+    const BASE_URL = "http://localhost:4000/api";
+    // const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
 
     const [isLoading, setIsLoading] = useState(true);
     const [query, setQuery] = useState({});
     const [newQuery, setNewQuery] = useState({})
     const [queryAssignees, setQueryAssignees] = useState([]);
+    const [queryDeadline, setQueryDeadline] = useState("");
     const [home, setHome] = useState({});
     const [tasks, setTasks] = useState([]);
     const [users, setUsers] = useState([]);
@@ -187,6 +188,45 @@ export default function ToDoView() {
                 </div>
                 <br></br>
                 
+                <label htmlFor="deadlineButtons">Deadline</label>
+                <div className="deadlineButtons">
+                    <button className="deadlineButton" id="pastFilter" onClick={(event) => {
+                        let buttons = document.getElementsByClassName("deadlineButton");
+                        for (let i = 0; i < buttons.length; i++) {
+                            buttons[i].classList.remove('active');
+                        }
+                        event.target.classList.toggle('active');
+                        let q = "$lt"
+                        setQueryDeadline(q);
+                    }}>Past</button>
+                    <button className="deadlineButton" id="todayFilter" onClick={(event) => {
+                        let buttons = document.getElementsByClassName("deadlineButton");
+                        for (let i = 0; i < buttons.length; i++) {
+                            buttons[i].classList.remove('active');
+                        }
+                        event.target.classList.toggle('active');
+                        let q = "$eq"
+                        setQueryDeadline(q);
+                    }}>Today</button>
+                    <button className="deadlineButton" id="futureFilter" onClick={(event) => {
+                        let buttons = document.getElementsByClassName("deadlineButton");
+                        for (let i = 0; i < buttons.length; i++) {
+                            buttons[i].classList.remove('active');
+                        }
+                        event.target.classList.toggle('active');
+                        let q = "$gt"
+                        setQueryDeadline(q);
+                    }}>Future</button>
+                    <button className="deadlineButton" id="anyDeadlineFilter" onClick={(event) => {
+                        let buttons = document.getElementsByClassName("deadlineButton");
+                        for (let i = 0; i < buttons.length; i++) {
+                            buttons[i].classList.remove('active');
+                        }
+                        event.target.classList.toggle('active');
+                        setQueryDeadline("");
+                    }}>Any deadline</button>
+                </div>
+                <br></br>
 
                 <div className="submitButtons">
                     <button className="modalButton" onClick={() => {
@@ -194,9 +234,22 @@ export default function ToDoView() {
                             newQuery["assignee"] = {"$in":queryAssignees};
                         }
                         
+                        // if (queryDeadline !== "") {
+                        //     newQuery["deadline"] = {queryDeadline: Date()}
+                        // }
+                        if (queryDeadline === "$gt") {
+                            newQuery["deadline"] = {"$gt": Date()}
+                        } else if (queryDeadline === "$eq") {
+                            newQuery["deadline"] = {"$eq": Date()}
+                        } else if (queryDeadline === "$lt") {
+                            newQuery["deadline"] = {"$lt": Date()}
+
+                        }
+                        
                         setQuery(newQuery);
                         setNewQuery({});
-                        setQueryAssignees([]);                            
+                        setQueryAssignees([]);       
+                        setQueryDeadline("");                     
                         setShowFilter(false)}}>Apply Filters</button>
                 </div>
 
