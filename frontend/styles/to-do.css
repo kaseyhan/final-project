@@ -2,17 +2,23 @@
     padding: 0 2rem;
     width: 90%;
     margin: auto;
+    margin-top: 150px;
+    color: #221c42;
   }
 
 h1 {
     text-align: center;
     line-height: 1.15;
     font-size: 3rem;
+    color: #221c42;
 }
 
 .options {
     width: 100%;
     display: inline-block;
+}
+.spacer {
+  padding: 5px;
 }
 
 .sort {
@@ -43,7 +49,7 @@ select {
 
 .filterButton,
 .editRotationsButton {
-    background-color: #488de2;
+    background-color: #69906b;
     border: none;
     color: white;
     padding: 15px 32px;
@@ -55,7 +61,7 @@ select {
 .editRotationsButton:hover,
 .filterButton:hover,
 .createTaskButton:hover {
-    background-color: #b5d6ff;
+    background-color: #dce6dd;
     color: black;
   }
 
@@ -64,7 +70,7 @@ select {
 }
 .listHeader {
     width: 100%;
-    background-color: lightgray;
+    background-color: #dce6dd;
     padding: 15px;
 }
 .listHeader span h3 {
@@ -78,7 +84,7 @@ select {
     padding: 15px;
 }
 .listColumn {
-    width: 20%;
+    width: 22%;
     margin: auto;
     display: grid;
     grid-template-columns: 1fr 7fr;
@@ -86,8 +92,16 @@ select {
 .task, .assignee, .deadline, .taskButtons {
     display: inline-block;
 }
+.assignees, .rotate {
+  display: inline-block;
+}
+
+/* .rotate {
+  visibility: hidden;
+} */
+
 .taskButtons {
-    width: 40%;
+    width: 30%;
     float: right;
 }
 .taskButton {
@@ -100,14 +114,13 @@ select {
 .bottom {
     margin: auto;
     width: 100%;
-    /* background-color: blue; */
     /* position: relative; */
     padding-top: 30px;
     padding-bottom: 30px;
 }
 .createTaskButton {
     margin: auto;
-    background-color: #488de2;
+    background-color: #69906b;
     border: none;
     color: white;
     padding: 15px 32px;
@@ -115,6 +128,8 @@ select {
     text-decoration: none;
     /* display: inline-block; */
     font-size: 16px;
+    display: flex;
+    justify-content: center;
 }
 
 

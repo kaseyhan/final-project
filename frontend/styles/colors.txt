@@ -1,5 +1,5 @@
-background: rgb(255,255,255) / #ffffff
-color1: rgb(220,230,221) / #dce6dd
-color2: rgb(105,144,107) / #69906b
-text: rgb(34,28,66) / #221c42
+background: rgb(255,255,255) / #ffffff - white
+color1: rgb(220,230,221) / #dce6dd   -   light green
+color2: rgb(105,144,107) / #69906b   -   darker green
+text: rgb(34,28,66) / #221c42       
 accent: rgb(255,225,201) / #ffe1c9

@@ -23,7 +23,12 @@
   },
   "dependencies": {
     "body-parser": "^1.17.2",
+<<<<<<< HEAD
     "express": "^4.18.2",
+=======
+    "cors": "^2.8.5",
+    "express": "^4.15.3",
+>>>>>>> 06e2fb7 (committing to save progress)
     "mongoose": "^5.4.18",
     "nodemon": "^1.11.0"
   },
