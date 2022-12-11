@@ -20,7 +20,7 @@ pages:
     - npm install        # Install all dependencies
     - npm run-script build && npm run-script export
     - mv public _public
-    - mv build public
+    - mv out public
 
   artifacts:
     paths:
