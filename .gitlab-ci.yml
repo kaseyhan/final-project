@@ -19,7 +19,7 @@ pages:
   artifacts:
     paths:
     - frontend/out
-    - "frontend/public/"
+    - frontend/public/
 
   only:
     - main
