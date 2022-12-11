@@ -20,6 +20,7 @@ pages:
     - npm install        # Install all dependencies
     - npm run-script build && npm run-script export
     - cd ..
+    - ls
     - mv "public"/* _public
     - mv build "public"/*
 
