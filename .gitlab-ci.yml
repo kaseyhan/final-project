@@ -19,10 +19,8 @@ pages:
     - cd frontend
     - npm install        # Install all dependencies
     - npm run-script build && npm run-script export
-    - cd ..
-    - ls
-    - mv "public"/* _public
-    - mv build "public"/*
+    - mv public _public
+    - mv build public
 
   artifacts:
     paths:
