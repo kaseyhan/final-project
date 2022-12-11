@@ -19,6 +19,7 @@ pages:
     - cd frontend
     - npm install        # Install all dependencies
     - npm run-script build && npm run-script export
+    - cd ..
     - mv public _public
     - mv build public
 
