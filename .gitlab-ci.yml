@@ -7,7 +7,7 @@ cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
   - frontend/node_modules
-  - frontend/.next
+  - frontend/.next/cache
 
 stages:
   - deploy
