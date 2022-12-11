@@ -9,11 +9,10 @@ cache:
 # Functions that should be executed before the build script is run
 before_script:
   - cd frontend
-  - npm ci
+  - npm install
 pages:
   script:
-    - next build
-    - next export
+    - npm run build
     - mv out/* public
     - rm -rf out
   artifacts:
