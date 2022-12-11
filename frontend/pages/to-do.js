@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../components/layout';
+import Navbar from '../components/Navbar'
 import axios from 'axios'
 import React, {useState, useEffect} from 'react'
 import Modal from "../components/modal";
@@ -9,9 +10,6 @@ import Modal from "../components/modal";
 export default function ToDoView() {
     const BASE_URL = "http://localhost:4000/api";
     // const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
-
-    // const getImage = (path) => `https://image.tmdb.org/t/p/original/${path}`;
-    // const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(true);
     const [query, setQuery] = useState("");
@@ -27,7 +25,7 @@ export default function ToDoView() {
     const [rotatedTasks, setRotatedTasks] = useState([]);
     const [newTask, setNewTask] = useState({});
     const [taskToEdit, setTaskToEdit] = useState({});
-    let homeID = '638ea4a54dea1620a451af13'
+    let homeID = '639508e44c9f274f9cec2a85'
     const api = axios.create({ baseURL: BASE_URL });
 
     const fetchData = async() => {
@@ -40,9 +38,8 @@ export default function ToDoView() {
             }
 
             const task_get = await api.get('tasks', p);
-            console.log(task_get)
             setTasks(task_get.data.data);
-            // await tasks;
+            await tasks;
 
             const home_get = await api.get('homes/'+homeID);
 
@@ -67,152 +64,19 @@ export default function ToDoView() {
             }
             setRotatedTasks(r);
 
+            // setTaskToEdit({});
+
         } catch (error) {
             console.error(error);
         }
     }
 
-    useEffect(() => {        
-        // setTasks([]);
-        // setNewTask({
-        //     "name": null,
-        //     "deadlineDate": null,
-        //     "deadlineTime": null,
-        //     "assignee": null,
-        //     "assigneeNames": null,
-        //     "rotate": null,
-        //     "notes": null
-        // })
-        // setUsers([]);
-        // setUserNames([]);
-        setNewTask({})
+    useEffect(() => {
+        setIsLoading(true);
         fetchData().then(function(response) {
             setIsLoading(false);
         });
-
-
-
-        // let h = '{"home":"' + homeID + '"}';
-        // let p = {
-        //     "params": {
-        //         "where": h
-        //     }
-        // }
-        // const data = api.get('tasks', p);
-        // data.then((res) => {
-        //     setTasks((curr) => {
-        //         return res.data["data"];
-        //     });
-        // });
-
-        // const home = api.get('homes/'+homeID);
-
-        // home.then((res) => {
-        //     let items = res["data"]["data"]["members"];
-        //     items = Object.values(items);
-        //     setUsers(items);
-        //     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-        //     const user_promises = [];
-
-        //     (function loop(i) {
-        //         if (i >= items.length) return user_promises; // all done
-        //         delay(Math.random() * 1000).then(() => {
-        //             let item = items[i].toString();
-        //             const u = api.get('users/'+item);
-        //             user_promises.push(u);
-        //             loop(i+1);
-        //         });
-        //     })(0);
-        //     return user_promises;
-        // }).then((resU) => {
-        //     console.log(resU.length)
-        //     for (let i = 0; i < resU.length; i++) {
-        //         console.log(i)
-        //         let n = [...userNames];
-        //         let userName = resU[i]["data"]["data"]["name"];
-        //         n.push(userName);
-        //         console.log(n);
-        //         if (resU !== undefined && resU !== null) setUserNames(n);
-        //     }
-        // })
-            // home.then((res) => {
-            //     // console.log(res["data"])
-            //     let items = res["data"]["data"]["members"];
-            //     items = Object.values(items);
-            //     // console.log(items);
-            //     setUsers(items);
-            //     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-            //     const user_promises = [];
-
-            //     (function loop(i) {
-            //         if (i >= items.length) return user_promises; // all done
-            //         delay(Math.random() * 1000).then(() => {
-            //             let item = items[i].toString();
-            //             const u = api.get('users/'+item);
-            //             user_promises.push(u);
-            //             loop(i+1);
-            //         });
-            //     })(0);
-            //     return user_promises;
-            // }).then((resU) => {
-            //     console.log(resU.length)
-            //     for (let i = 0; i < resU.length; i++) {
-            //         console.log(i)
-            //         let n = [...userNames];
-            //         let userName = resU[i]["data"]["data"]["name"];
-            //         n.push(userName);
-            //         console.log(n);
-            //         if (resU !== undefined && resU !== null) setUserNames(n);
-            //     }
-            // })
-
-                // let names = [];
-                // for (let i = 0; i < items.length; i++) {
-                //     let item = items[i].toString();
-                //     const u = api.get('users/'+item);
-                //     u.then((resU) => {
-                //         let n = [...userNames];
-                //         let userName = resU["data"]["data"]["name"];
-                //         n.push(userName);
-                //         // console.log(n)
-                //         if (resU !== undefined && resU !== null) setUserNames(n);
-                //     })
-                //     // item = u["data"]["data"]["name"];
-                //     // items[i] = item;
-                // }
-                // setUsers((curr) => {
-                //     return res.data["data"]["members"];
-                // });
-                // setUsers({items});
-            // home.then((res) => {
-            //     // console.log(res["data"])
-            //     let items = res["data"]["data"]["members"];
-            //     items = Object.values(items);
-            //     // console.log(items);
-            //     if (res !== undefined && res !== null) setUsers(items);
-
-            //     // let names = [];
-            //     for (let i = 0; i < items.length; i++) {
-            //         let item = items[i].toString();
-            //         const u = api.get('users/'+item);
-            //         u.then((resU) => {
-            //             let n = [...userNames];
-            //             let userName = resU["data"]["data"]["name"];
-            //             n.push(userName);
-            //             // console.log(n)
-            //             if (resU !== undefined && resU !== null) setUserNames(n);
-            //         })
-            //         // item = u["data"]["data"]["name"];
-            //         // items[i] = item;
-            //     }
-            //     // setUsers((curr) => {
-            //     //     return res.data["data"]["members"];
-            //     // });
-            //     // setUsers({items});
-            // });
-
     }, [query,sortBy,sortOrder]);
-    // console.log(userNames)
 
     function titleCase(str) {
         return str.replace(
@@ -223,6 +87,11 @@ export default function ToDoView() {
         );
       }
 
+    function convertDeadline(deadline) {
+        if (deadline !== undefined && deadline !== null) return new Date(deadline).toString().substring(0,25);
+        else return null;
+    }
+
   if (isLoading) {
     return <div className="pageContents">Loading...</div>;
   } else {
@@ -231,6 +100,7 @@ export default function ToDoView() {
       <Head>
         <title>To Do</title>
       </Head>
+      <Navbar />
       <div className="pageContents">
         <h1>To Do</h1>
         <div className="options">
@@ -252,8 +122,8 @@ export default function ToDoView() {
             </div>
             <div className="rightButtons">
                 <button className="filterButton" /*onClick={}*/>Filter Tasks</button>
-                <span>   </span>
-                <button className="editRotationsButton" /*onClick={}*/>Edit Rotations</button>
+                {/* <span>   </span>
+                <button className="editRotationsButton">Edit Rotations</button> */}
             </div>
         </div>
 
@@ -340,16 +210,16 @@ export default function ToDoView() {
                         </span>
                     </div>
                     <div className="listColumn deadline">
-                        <p>{new Date(task.deadline).toString().substring(0,25)}</p>
+                        <p>{convertDeadline(task.deadline)}</p>
                     </div>
                     <span className="listColumn taskButtons">
                         <span className="taskButton">
                             <img className="editButton" id={task._id + 'Edit'} src="https://iili.io/HC8ZzHQ.png" width="18px" height="20px" onClick={(event) => {
-                                console.log(task);
-                                let endpoint = 'tasks/' + task._id;
+                                // console.log(tasks[index]);
+                                let endpoint = 'tasks/' + tasks[index]._id//task._id;
                                 let task = api.get(endpoint).then(function(response) {
                                     setTaskToEdit(response.data.data);
-                                    setShowEdit(true)
+                                    setShowEdit(true);
                                 }).catch(function(error) {
                                     console.log(error);
                                 });
@@ -404,9 +274,9 @@ export default function ToDoView() {
             <Modal title="Edit Task" button="Save Task" onClose={() => setShowEdit(false)} show={showEdit}>
                 <label htmlFor="titleInputEdit">Title</label>
                 <input type="text" id="titleInputEdit" placeholder={taskToEdit.name} onChange={event => {
-                    let t = {...newTask};
+                    let t = {...taskToEdit};
                     t["name"] = event.target.value;
-                    setNewTask(t)
+                    setTaskToEdit(t)
                 }}></input><br></br>
                 <br></br>
 
@@ -415,15 +285,12 @@ export default function ToDoView() {
                     {users.map((user, index) => (
                         <button className="assigneeButton" id={user} key={index} onClick={(event) => {
                             event.target.classList.toggle('active');
-                            let t = {...newTask};
+                            let t = {...taskToEdit};
                             if (event.target.classList[1] === 'active') {
                                 t["assignee"] = user;
                                 t["assigneeName"] = userNames[index];
                             }
                             else {
-                                // let idx = t["assignees"].indexOf(event.target.id);
-                                // let x = t["assignees"].splice(idx, 1);
-                                // x = t["assigneeNames"].splice(idx, 1);
                                 t["assignee"] = null;
                                 t["assigneeName"] = null;
                             }
@@ -431,97 +298,102 @@ export default function ToDoView() {
                             for (let i = 0; i < buttons.length; i++) {
                                 if (buttons[i].id !== event.target.id) buttons[i].classList.remove('active');
                             }
-                        }}>{userNames[index]}</button>
+                            setTaskToEdit(t);
+                        }}>{titleCase(userNames[index])}</button>
                     ))}
                 </div>
                 <br></br>
 
                 <label htmlFor="deadlineInput">Deadline (optional)</label><br></br>
                 <input type="date" className="deadlineInput" id="deadlineInputDateEdit" onChange={event => {
-                    let t = {...newTask}
+                    let t = {...taskToEdit}
                     t["deadlineDate"] = event.target.value;
-                    setNewTask(t)}}></input>
+                    setTaskToEdit(t)}}></input>
                 <input type="time" className="deadlineInput" id="deadlineInputTimeEdit" onChange={event => {
-                    let t = {...newTask}
+                    let t = {...taskToEdit}
                     t["deadlineTime"] = event.target.value;
-                    setNewTask(t)}}></input><br></br>
+                    setTaskToEdit(t)}}></input><br></br>
                 <br></br>
 
                 <label htmlFor="notesInputEdit">Notes (optional)</label>
-                <input type="text" id="notesInputEdit" placeholder={taskToEdit.notes}onChange={event => {
-                    let t = {...newTask}
+                <textarea type="text" id="notesInputEdit" placeholder={taskToEdit.notes} cols="40" rows="4" onChange={event => {
+                    let t = {...taskToEdit}
                     t["notes"] = event.target.value;
-                    setNewTask(t)}}></input><br></br>
+                    setTaskToEdit(t)}}></textarea><br></br>
                 <br></br>
 
                 <label htmlFor="selectRotationEdit">Rotate</label>
                 <select id="selectRotationEdit" onChange={event => {
-                    let t = {...newTask}
+                    let t = {...taskToEdit}
                     t["rotate"] = event.target.value;
-                    setNewTask(t);
+                    setTaskToEdit(t);
                     /*setRotation(event.target.value);*/}}>
                     <option value="none">None</option>
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
                     <option value="biweekly">Biweekly</option>
                     <option value="monthly">Monthly</option>
-                </select>
+                </select><br></br>
+                <br></br>
+
+                <label htmlFor="completed">Completed?</label>
+                <input type="checkbox" id="completed" onChange={event => {
+                    let t = {...taskToEdit};
+                    t["completed"] = event.target.value;
+                    setTaskToEdit(t);
+                }}></input>
                 <br></br>
                 <br></br>
                 <br></br>
 
                 <div className="submitButtons">
                     <button className="modalButton" onClick={() => {
-                        // newTask["home"] = homeID;
-                        if (newTask["deadlineDate"] !== undefined) {
-                            newTask["deadline"] = newTask["deadlineDate"]
-                            if (newTask["deadlineTime"] !== undefined) {
-                                newTask["deadline"] += "T" + newTask["deadlineTime"] + ":00";
+                        if (taskToEdit["deadlineDate"] !== undefined) {
+                            taskToEdit["deadline"] = taskToEdit["deadlineDate"]
+                            if (taskToEdit["deadlineTime"] !== undefined) {
+                                taskToEdit["deadline"] += "T" + taskToEdit["deadlineTime"] + ":00";
                             }
                         } else {
-                            if (newTask["deadlineTime"] !== undefined) {
+                            if (taskToEdit["deadlineTime"] !== undefined) {
                                 const date = new Date();
                                 let day = date.getDate();
                                 let month = date.getMonth() + 1;
                                 let year = date.getFullYear();
 
                                 let currentDate = `${year}-${month}-${day}`;
-                                newTask["deadline"] = currentDate + "T" + newTask["deadlineTime"] + ":00";
+                                taskToEdit["deadline"] = currentDate + "T" + taskToEdit["deadlineTime"] + ":00";
                             }
                         }
 
-                        if (newTask["assigneeName"] === undefined) {
-                            newTask["assigneeName"] = "unassigned";
+                        if (taskToEdit["assigneeName"] === undefined) {
+                            taskToEdit["assigneeName"] = "unassigned";
                         }
 
-                        let tt = {
-                            name: newTask["name"],
-                            home: homeID,
-                            deadline: newTask["deadline"],
-                            rotate: newTask["rotate"],
-                            assignee: newTask["assignee"],
-                            assigneeName: newTask["assigneeName"],
-                            notes: newTask["notes"]
-                        }
+                        let tt = {name: taskToEdit["name"], home: homeID};
+                        if (taskToEdit["deadline"]) tt["deadline"] = taskToEdit["deadline"];
+                        if (taskToEdit["rotate"]) tt["rotate"] = taskToEdit["rotate"];
+                        if (taskToEdit["assignee"]) tt["assignee"] = taskToEdit["assignee"];
+                        else tt["assignee"] = "";
+                        if (taskToEdit["assigneeName"] && taskToEdit["assigneeName"] !== "unassigned") tt["assigneeName"] = taskToEdit["assigneeName"];
+                        if (taskToEdit["notes"]) tt["notes"] = taskToEdit["notes"];
 
                         let endpoint = 'tasks/' + taskToEdit._id;
                         api.put(endpoint, tt)
                           .then(function (response) {
-                            console.log(response);
+                            let new_tasks = [...tasks];
+                            const isTaskToEdit = (element) => element._id === taskToEdit._id;
+                            let idx = new_tasks.findIndex(isTaskToEdit);
+                            let x = new_tasks.splice(idx,1);
+                            new_tasks.push(response.data.data);
+                            setTasks(new_tasks);
+                            setTaskToEdit({});
                           })
                           .catch(function (error) {
                             console.log(error.response.data);
                           });
-                        let new_tasks = [...tasks];
-                        const isTaskToEdit = (element) => element._id === taskToEdit._id;
-                        let idx = new_tasks.findIndex(isTaskToEdit);
-                        let x = new_tasks.splice(idx,1);
-                        new_tasks.push(tt);
-                        setTasks(new_tasks);
 
                         setShowEdit(false)}}>Save Task</button>
                 </div>
-
             </Modal>
 
         </div>
@@ -547,9 +419,6 @@ export default function ToDoView() {
                                 t["assigneeName"] = userNames[index];
                             }
                             else {
-                                // let idx = t["assignees"].indexOf(event.target.id);
-                                // let x = t["assignees"].splice(idx, 1);
-                                // x = t["assigneeNames"].splice(idx, 1);
                                 t["assignee"] = null;
                                 t["assigneeName"] = null;
                             }
@@ -582,7 +451,7 @@ export default function ToDoView() {
                 <br></br>
 
                 <label htmlFor="selectRotation">Rotate</label>
-                <select id="selectRotation" defaultValue="None" onChange={event => {
+                <select id="selectRotation" defaultValue="none" onChange={event => {
                     let t = {...newTask}
                     t["rotate"] = event.target.value;
                     setNewTask(t);
@@ -594,69 +463,77 @@ export default function ToDoView() {
                     <option value="monthly">Monthly</option>
                 </select>
                 <br></br>
+                <p id="titleRequired">'Title' field is required.</p>
                 <br></br>
                 <br></br>
 
                 <div className="submitButtons">
                     <button className="modalButton" onClick={() => {
-                        // newTask["home"] = homeID;
-                        if (newTask["deadlineDate"] !== undefined) {
-                            newTask["deadline"] = newTask["deadlineDate"]
-                            if (newTask["deadlineTime"] !== undefined) {
-                                newTask["deadline"] += "T" + newTask["deadlineTime"] + ":00";
+                        if (newTask["name"] !== undefined) {
+                            if (newTask["deadlineDate"] !== undefined && newTask["deadlineDate"] !== null) {
+                                newTask["deadline"] = newTask["deadlineDate"]
+                                if (newTask["deadlineTime"] !== undefined) {
+                                    newTask["deadline"] += "T" + newTask["deadlineTime"] + ":00";
+                                } else {
+                                    newTask["deadline"] += "T00:00:00";
+                                }
                             } else {
-                                newTask["deadline"] += "T00:00:00";
+                                if (newTask["deadlineTime"] !== undefined && newTask["deadlineTime"] !== null) {
+                                    const date = new Date();
+                                    let day = date.getDate();
+                                    let month = date.getMonth() + 1;
+                                    let year = date.getFullYear();
+
+                                    let currentDate = `${year}-${month}-${day}`;
+                                    newTask["deadline"] = currentDate + "T" + newTask["deadlineTime"] + ":00";
+                                } else {
+                                    newTask["deadline"] = null;
+                                }
                             }
+
+                            if (newTask["assigneeName"] === undefined) {
+                                newTask["assigneeName"] = "unassigned";
+                            }
+
+                            let tt;
+                            if (newTask["deadline"] !== null && newTask["deadline"] !== undefined) {
+                                tt = {
+                                    name: newTask["name"],
+                                    home: homeID,
+                                    deadline: newTask["deadline"],
+                                    rotate: newTask["rotate"],
+                                    assignee: newTask["assignee"],
+                                    assigneeName: newTask["assigneeName"],
+                                    notes: newTask["notes"]
+                                }
+                            } else {
+                                tt = {
+                                    name: newTask["name"],
+                                    home: homeID,
+                                    rotate: newTask["rotate"],
+                                    assignee: newTask["assignee"],
+                                    assigneeName: newTask["assigneeName"],
+                                    notes: newTask["notes"]
+                                }
+                            }
+
+                            api.post('tasks', tt)
+                            .then(function (response) {
+                                let new_tasks = [...tasks];
+                                new_tasks.push(response.data.data);
+                                setTasks(new_tasks);
+                                setNewTask({});
+                                // document.getElementById('titleRequired').visibility = "hidden";
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                            
+                            setShowCreate(false)
                         } else {
-                            if (newTask["deadlineTime"] !== undefined) {
-                                const date = Date();
-                                let day = date.getDate();
-                                let month = date.getMonth() + 1;
-                                let year = date.getFullYear();
-
-                                let currentDate = `${year}-${month}-${day}`;
-                                newTask["deadline"] = currentDate + "T" + newTask["deadlineTime"] + ":00";
-                            }
-                        }
-
-                        if (newTask["assigneeName"] === undefined) {
-                            newTask["assigneeName"] = "unassigned";
-                        }
-
-                        let tt;
-                        if (newTask["deadline"]) {
-                            tt = {
-                                name: newTask["name"],
-                                home: homeID,
-                                deadline: newTask["deadline"],
-                                rotate: newTask["rotate"],
-                                assignee: newTask["assignee"],
-                                assigneeName: newTask["assigneeName"],
-                                notes: newTask["notes"]
-                            }
-                        } else {
-                            tt = {
-                                name: newTask["name"],
-                                home: homeID,
-                                rotate: newTask["rotate"],
-                                assignee: newTask["assignee"],
-                                assigneeName: newTask["assigneeName"],
-                                notes: newTask["notes"]
-                            }
-                        }
-
-                        api.post('tasks', tt)
-                          .then(function (response) {
-                            let new_tasks = [...tasks];
-                            new_tasks.push(tt);
-                            setTasks(new_tasks);
-                          })
-                          .catch(function (error) {
-                            console.log(error.response.data);
-                          });
-                        
-
-                        setShowCreate(false)}}>Create Task</button>
+                            console.log('name required')
+                            // document.getElementById('titleRequired').visibility = "visible";
+                        }}}>Create Task</button>
                 </div>
 
             </Modal>

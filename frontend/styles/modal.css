@@ -112,6 +112,10 @@ label {
   background-color: lightgray;
   margin: auto;
 }
+#titleRequired {
+  visibility: hidden;
+  color: red;
+}
 
 .active {
   background-color: #69906b;

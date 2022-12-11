@@ -141,49 +141,7 @@ module.exports = function (router) {
 				  }
 				
 			}
-            let data = await Task.find(query, select, other);
-
-            // let homes = await Home.find();
-
-            // for (let i = 0; i < data.length; i++) { // PROBLEM: WILL KEEP ROTATING THE OLD TASKS THAT WERE DUPLICATED ?
-            //     let diff = Date.now() - data[i].dateCreated;
-            //     let new_task;
-            //     if ((data[i].rotate === "daily" && diff >= 8.64e+7) || (data[i].rotate === "weekly" && diff >= 6.048e+8)
-            //         || (data[i].rotate === "biweekly" && diff >= 1.21e+9) || (data[i].rotate === "monthly" && diff >= 2.628e+9)) {
-            //         let idx = homes.indexOf(data[i].home);
-            //         let newAssigneeID = home.members[(idx+1)%data[i].home.length];
-            //         let newAssignee = await User.findById(newAssigneeID);
-            //         let newDeadline = data[i].deadline + diff; // ???
-            //         new_task = new Task({
-            //             name: data[i].name,
-            //             home: data[i].home,
-            //             deadline: newDeadline,
-            //             completed: false,
-            //             assignee: newAssignee._id,
-            //             assigneeName: newAssignee.name,
-            //             rotate: data[i].rotate,
-            //             notes: data[i].notes,
-            //             dateCreated: Date.now()
-            //         })
-
-            //         // save new_task
-            //         data[i].completed = true;
-            //         data.push(new_task);
-
-            //     }
-
-                    
-            //     // } else if (data[i].rotate === "weekly" && diff >= 6.048e+8) {
-
-            //     // } else if (data[i].rotate === "biweekly" && diff >= 1.21e+9) {
-
-            //     // } else if (data[i].rotate === "monthly" && diff >= 2.628e+9) {
-
-            //     // }
-            // }
-            
-            
-
+            let data = await Task.find(query, select, other);         
 
             if (count) data = {count: data.length};
             res.status(200)
@@ -198,7 +156,7 @@ module.exports = function (router) {
 
     router.get('/tasks/:id', async function (req, res) {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-			res.status(400).json({message:"Error: invalid task id", data:{}});
+			res.status(400).json({message:"Error: invalid task id", data:{id: req.params.id}});
 			return;
 		}
         try{
@@ -368,7 +326,9 @@ module.exports = function (router) {
             if (data.assignee !== "") {
                 old_user = await User.findById(data.assignee); // FIX??????????
                 if (!old_user) {
-                    res.status(404).json({message:"Error: old assignee not found", data:{}});
+                    let j = "assignee: " + data.assignee;
+                    // res.status(404).json({message:"Error: old assignee not found", data:{}});
+                    res.status(404).json({message: j, data:{}})
                     return;
                 }
             }
