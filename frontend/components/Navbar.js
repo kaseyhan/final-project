@@ -6,46 +6,32 @@ import Avatar from '@mui/material/Avatar';
 import { Menu, MenuItem, IconButton } from '@mui/material'
 import { FaBars } from 'react-icons/fa';
 import { RxCross1 } from 'react-icons/rx'
-
+import axios from 'axios';
 
 import styles from '../styles/Navbar.module.css'
 // icons by IconScout/unicon
 
-// cite: https://mui.com/material-ui/react-avatar/
-function stringToColor(string) {
-	let hash = 0;
-	let i;
-
-	/* eslint-disable no-bitwise */
-	for (i = 0; i < string.length; i += 1) {
-		hash = string.charCodeAt(i) + ((hash << 5) - hash);
-	}
-
-	let color = '#';
-
-	for (i = 0; i < 3; i += 1) {
-		const value = (hash >> (i * 8)) & 0xff;
-		color += `00${value.toString(16)}`.slice(-2);
-	}
-	/* eslint-enable no-bitwise */
-	return color;
-}
+const BASE_URL = 'https://gsk-final-project-api.herokuapp.com/api/';
+const API = axios.create({ baseURL: BASE_URL });
 
 // cite: https://mui.com/material-ui/react-avatar/
-function stringAvatar(name) {
+function stringAvatar(name, color) {
 	return {
 		sx: {
-			bgcolor: stringToColor(name),
+			bgcolor: color,
 			width: 48,
 			height: 48
 		},
-		children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+		children: name ? `${name.split(' ')[0][0].toUpperCase()}${name.split(' ')[1][0].toUpperCase()}` : null,
 	};
 }
 
 
 export default function Navbar() {
+	const userID = "63952f07f77a950017fe9466";
+
 	const [anchorEl, setAnchorEl] = useState(null);
+	const [user, setUser] = useState(null)
 	const open = Boolean(anchorEl);
 	const handleOpenMenu = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -53,6 +39,15 @@ export default function Navbar() {
 	const handleCloseMenu = () => {
 		setAnchorEl(null);
 	};
+
+	const fetchData = async () => {
+		const res = await API.get(`users/${userID}`);
+		setUser(res.data.data);
+	}
+
+	useEffect(() => {
+		fetchData();
+	}, []);
 
 	return (
 		<>
@@ -105,7 +100,7 @@ export default function Navbar() {
 					</Menu>
 
 					<Link href="/login">
-						<Avatar {...stringAvatar('Test User')} />
+						<Avatar {...stringAvatar(user ? user.name : null, user ? user.color : 'gray')} />
 					</Link>
 				</div>
 			</div>

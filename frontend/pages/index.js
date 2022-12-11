@@ -1,5 +1,5 @@
-import Head from 'next/head'
-import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import Navbar from '../components/Navbar'
 import { FaPlus } from 'react-icons/fa'
 import { Checkbox, Card, Typography, CircularProgress, IconButton } from '@mui/material'
@@ -12,88 +12,113 @@ import AnnouncementModal from '../components/AnnouncementModal'
 const BASE_URL = 'https://gsk-final-project-api.herokuapp.com/api/';
 const API = axios.create({ baseURL: BASE_URL });
 
+// cite: https://css-tricks.com/converting-color-spaces-in-javascript/
+function hexToRGB(h) {
+  let r = 0, g = 0, b = 0;
+  // 3 digits
+  if (h.length == 4) {
+    r = "0x" + h[1] + h[1];
+    g = "0x" + h[2] + h[2];
+    b = "0x" + h[3] + h[3];
+
+    // 6 digits
+  } else if (h.length == 7) {
+    r = "0x" + h[1] + h[2];
+    g = "0x" + h[3] + h[4];
+    b = "0x" + h[5] + h[6];
+  }
+
+  return "rgba(" + +r + "," + +g + "," + +b + ", 0.8)";
+}
+
+const ItemCard = ({ id, title, color, isTask, isClickable }) => {
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleCompleteTask = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    let res = await API.get(`/tasks/${id}`);
+    let taskData = res.data.data;
+    // console.log(taskData)
+
+    setIsChecked(!isChecked)
+    // setIsChecked(true)
+  }
+
+  const handleItemCardClick = (event, id) => {
+    console.log(id)
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  return (
+    <Card onClick={isClickable ? event => handleItemCardClick(event, id) : null} sx={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      flexDirection: 'row',
+      padding: '0 5px',
+      margin: 0,
+      width: '100%',
+      border: '2px black solid',
+      cursor: isClickable ? 'pointer' : 'default',
+      pointerEvents: 'auto',
+      backgroundColor: color ? hexToRGB(color) : 'white',
+    }}>
+      <p>{title}</p>
+      {isTask && <Checkbox checked={isChecked} onClick={handleCompleteTask} />}
+    </Card>
+  );
+};
+
 export default function Home() {
-  const tasks = [
-    {
-      'id': '1',
-      'title': 'Clean the dishes'
-    },
-    {
-      'id': '2',
-      'title': 'Take out the trash'
-    },
-  ]
-
-  const announcements = [
-    {
-      'id': '1',
-      'title': 'I baked cookies! Help yourself!'
-    },
-    {
-      'id': '2',
-      'title': 'Make sure to lock the door when you leave!'
-    },
-  ]
-
-  const upcomingEvents = [
-    {
-      'id': '1',
-      'title': 'Dinner'
-    },
-    {
-      'id': '2',
-      'title': 'Bar Crawl'
-    },
-    {
-      'id': '3',
-      'title': 'Dinner'
-    },
-    {
-      'id': '4',
-      'title': 'Bar Crawl'
-    },
-
-  ]
-
-  const ItemCard = ({ title, isTask }) => {
-    return (
-      <Card sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-        padding: '0 5px',
-        margin: 0,
-        width: '100%',
-        border: '2px black solid'
-      }}>
-        <p>{title}</p>
-        {isTask && <Checkbox />}
-      </Card>
-    );
-  };
+  const userID = "63952f07f77a950017fe9466";
+  const router = useRouter();
 
   const [toDoData, setToDoData] = useState(null);
   const [announcementsData, setAnnouncementsData] = useState(null);
   const [eventsData, setEventsData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [newAnnouncement, setNewAnnouncement] = useState('');
+  const [homeData, setHomeData] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [isFirstTime, setIsFirstTime] = useState(true);
 
   const fetchData = async () => {
     try {
-      // const res = await API.get('users');
-      // console.log(res.data.data);
-      // axios.get('/api/endpoint1')
-      //   .then(response => setToDoData(response.data))
-      //   .catch(error => console.error(error));
+      const res = await API.get(`users/${userID}`);
+      if (res) {
+        let data = res.data.data;
+        let homeID = data.home;
 
-      // axios.get('/api/endpoint2')
-      //   .then(response => setAnnouncementsData(response.data))
-      //   .catch(error => console.error(error));
+        setUserData(data);
 
-      // axios.get('/api/endpoint2')
-      //   .then(response => setEventsData(response.data))
-      //   .catch(error => console.error(error));
+        // get announcements
+        API.get(`homes/${homeID}`)
+          .then(response => {
+            setAnnouncementsData(response.data.data.announcements);
+            setHomeData(response.data.data);
+          })
+          .catch(error => console.error(error));
+
+        // get to-do tasks
+        let toDoTasks = [];
+        const tasksRequests = data.pendingTasks.map(id => API.get(`tasks/${id}`));
+        const tasksResults = await Promise.all(tasksRequests);
+        tasksResults.forEach(res => {
+          toDoTasks.push(res.data.data);
+        })
+        setToDoData(toDoTasks);
+
+        // get upcoming events
+        let upcomingEvents = [];
+        const eventsRequests = data.events.map(id => API.get(`events/${id}`));
+        const eventsResults = await Promise.all(eventsRequests);
+        eventsResults.forEach(res => {
+          upcomingEvents.push(res.data.data);
+        })
+        setEventsData(upcomingEvents);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -101,14 +126,8 @@ export default function Home() {
 
   useEffect(() => {
     setIsLoading(true);
-
     fetchData();
-
-    setToDoData(tasks);
-    setAnnouncementsData(announcements);
-    setEventsData(upcomingEvents);
     setIsLoading(false);
-    console.log(newAnnouncement)
   }, []);
 
   const openModal = () => {
@@ -123,30 +142,54 @@ export default function Home() {
     setNewAnnouncement(event.target.value)
   }
 
+  const handleContainerClick = (event, href) => {
+    router.push(href);
+  }
+
   const updateAnnouncementData = data => {
-    console.log(data)
-    setNewAnnouncement(data);
-    let newAnnouncementData = {'id': 3, 'title':newAnnouncement}
-    setAnnouncementsData([...announcementsData, newAnnouncementData]);
+    let updatedAnnouncements = [...announcementsData, data];
+    let params = {
+      "name": homeData.name,
+      "password": homeData.password,
+      "announcements": updatedAnnouncements
+    }
+    API.put(`homes/${homeData._id}`, params)
+      .then(response => {
+        setAnnouncementsData(updatedAnnouncements);
+        setNewAnnouncement(data);
+      })
+      .catch(error => console.error(error));
   }
 
   return (
     <div className={styles.container}>
       <Navbar />
       <div className={styles.pageContent}>
-        <div className={styles.welcomeSign}>
-          Welcome, Name
+        <div className={styles.welcomeSign} style={{
+          backgroundColor: userData ? hexToRGB(userData.color) : 'white'
+        }}>
+          Welcome, {userData ? userData.name : 'User'}
         </div>
 
         {isLoading ? <CircularProgress style={{ marginTop: '100px' }} /> :
           <div className={styles.dashboard}>
             <div className={styles.left}>
-              <div className={styles.toDoContainer}>
+              <div
+                onClick={event => handleContainerClick(event, '/to-do')}
+                className={styles.toDoContainer}
+              >
                 <Typography style={{ fontSize: '36px' }}>Your To-Do's</Typography>
                 <div className={styles.list}>
                   <div className={styles.listContent}>
                     {(toDoData && toDoData.length > 0) ? (toDoData.map((task) => (
-                      <ItemCard key={task.id} title={task.title} isTask />
+                      <ItemCard
+                        key={task._id}
+                        id={task._id}
+                        title={task.name}
+                        color={userData.color}
+                        isTask
+                        isClickable
+                      />
                     ))) : <h3>No Tasks...</h3>}
                   </div>
                 </div>
@@ -172,19 +215,31 @@ export default function Home() {
 
                 <div className={styles.list}>
                   <div className={styles.listContent}>
-                    {(announcementsData && announcementsData.length > 0) ? (announcementsData.map((announcement) => (
-                      <ItemCard key={announcement.id} title={announcement.title} />
+                    {(announcementsData && announcementsData.length > 0) ? (announcementsData.map((announcement, idx) => (
+                      <ItemCard
+                        key={idx}
+                        id={idx}
+                        title={announcement}
+                      />
                     ))) : <h3>No Announcements...</h3>}
                   </div>
                 </div>
               </div>
 
-              <div className={styles.eventsContainer}>
+              <div
+                onClick={event => handleContainerClick(event, '/calendar')}
+                className={styles.eventsContainer}
+              >
                 <Typography style={{ fontSize: '24px' }}>Upcoming Events</Typography>
                 <div className={styles.list}>
                   <div className={styles.listContent}>
                     {(eventsData && eventsData.length > 0) ? (eventsData.map((event) => (
-                      <ItemCard key={event.id} title={event.title} />
+                      <ItemCard
+                        key={event._id}
+                        id={event._id}
+                        title={event.name}
+                        isClickable
+                      />
                     ))) : <h3>No Upcoming Events...</h3>}
                   </div>
                 </div>
