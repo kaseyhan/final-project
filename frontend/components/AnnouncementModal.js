@@ -3,22 +3,7 @@ import { RxCross1 } from 'react-icons/rx'
 import { TextField, IconButton, Button, Typography, Card, Icon } from '@mui/material';
 import styles from '../styles/AnnouncementModal.module.css'
 
-export default function AnnouncementModal({ showModal, newAnnouncement, updateAnnouncementData, closeModal, handleInput }) {
-  const [state, setState] = useState({
-    showModal: showModal,
-    newAnnouncement: newAnnouncement
-  });
-
-  // const handleInput = event => {
-  //   setData(event.target.value)
-  // }
-
-  const handleSubmit = event => {
-    event.preventDefault();
-    updateAnnouncementData(state.newAnnouncement);
-    closeModal();
-  }
-
+export default function AnnouncementModal({handleSubmit, closeModal, handleInput }) {
   return (
     <div className={styles.dimBackground}>
       <div className={styles.modalContainer}>
