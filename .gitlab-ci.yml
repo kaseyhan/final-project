@@ -17,7 +17,7 @@ pages:
   script:
     - cd frontend
     - npm install        # Install all dependencies
-    - npm run-script build && npm run-script export
+    - npm run-script build && npm run-script start
     - rm -rf public/*
     - mv out/* public
 
