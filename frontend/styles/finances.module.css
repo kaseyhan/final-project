@@ -1,6 +1,6 @@
 .pageContents {
     padding: 0 2rem;
-    width: 90%;
+    width: 100%;
     margin: auto;
     margin-top: 150px;
     color: #221c42;
@@ -70,6 +70,10 @@
     display: inline-block;
 }
 
+.active {
+    background-color: #69906b;
+  }
+
 .bottom {
     margin: auto;
     width: 100%;
@@ -89,4 +93,8 @@
     font-size: 16px;
     display: flex;
     justify-content: center;
+}
+.enterNewExpenseButton:hover {
+    background-color: #dce6dd;
+    color: black;
 }
