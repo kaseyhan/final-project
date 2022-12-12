@@ -120,11 +120,30 @@ module.exports = function (router) {
 					}
 				}
 
-				// TO DO
-				// for (let i = 0; i < data.debts.length; i++) {
-				// 	let debt = data.debts[i];
-				// 	let other_user = await User.findById(debt.user);
-				// }
+				for (let i = 0; i < data.debts.length; i++) {
+					let debt = data.debts[i];
+					let other_user = await User.findById(debt.user);
+					if (other_user) {
+						const isDebtToEdit = (element) => element.user === data._id;
+						let idx = other_user.debts.findIndex(isDebtToEdit);
+						if (idx !== -1) {
+							other_user.debts[idx]["amount"] += -debt.amount;
+						} else {
+							other_user.debts.push({"user": data._id, "amount": -debt.amount});
+						}
+						try {
+							let otherUserToSave = await other_user.save();
+						} catch (error) {
+							res.status(500).json({message:"Error: couldn't save debt user",data:{}});
+							return;
+						}
+					} else {
+						res.status(404).json({message:"Error: couldn't find debt user", data:{}});
+						return;
+					}
+				}
+
+
 				let dataToSave = await data.save();
 				res.status(201)
 				res.json({
@@ -411,7 +430,30 @@ module.exports = function (router) {
 			}
 
 			if (req.body.debts) {
-				// to do
+				for (let i = 0; i < req.body.debts.length; i++) {
+					let debt = req.body.debts[i];
+					let other_user = await User.findById(debt.user);
+					if (other_user) {
+						const isDebtToEdit = (element) => element.user === data._id;
+						let idx = other_user.debts.findIndex(isDebtToEdit);
+						if (idx !== -1) {
+							other_user.debts[idx]["amount"] = -debt.amount;
+						} else {
+							other_user.debts.push({"user": data._id, "amount": -debt.amount});
+						}
+						try {
+							let otherUserToSave = await other_user.save();
+
+						} catch (error) {
+							res.status(500).json({message:"Error: couldn't save debt user",data:{}});
+							return;
+						}
+					} else {
+						res.status(404).json({message:"Error: couldn't find debt user", data:{}});
+						return;
+					}
+				}
+				data.debts = req.body.debts;
 			}
 
 		} else {
