@@ -430,11 +430,29 @@ module.exports = function (router) {
 			}
 
 			if (req.body.debts) {
+				if (data.debts.length > 0) {
+					for (let i = 0; i < data.debts.length; i++) {
+						let otherUser = await User.findById(data.debts[i].user);
+						const isDebtToDelete = (element) => element.user == data._id;
+						let idx = otherUser.debts.findIndex(isDebtToDelete);
+						if (idx !== -1) otherUser.debts.splice(idx,1);
+
+						try {
+							let otherUserToSave = await otherUser.save();
+						} catch (error) {
+							res.status(500).json({message:"Error: couldn't save debt user",data:{}});
+							return;
+						}
+					}
+				}
+				
+				let others = [];
 				for (let i = 0; i < req.body.debts.length; i++) {
 					let debt = req.body.debts[i];
 					let other_user = await User.findById(debt.user);
+					others.push(other_user);
 					if (other_user) {
-						const isDebtToEdit = (element) => element.user === data._id;
+						const isDebtToEdit = (element) => element.user == data._id;
 						let idx = other_user.debts.findIndex(isDebtToEdit);
 						if (idx !== -1) {
 							other_user.debts[idx]["amount"] = -debt.amount;
@@ -453,7 +471,27 @@ module.exports = function (router) {
 						return;
 					}
 				}
+				
+
 				data.debts = req.body.debts;
+				// for (let i = 0; i < others.length; i++) {
+				// 	let oid = others[i]._id;
+				// 	let total = 0;
+				// 	let duplicateIdxs = [];
+				// 	for (let j = 0; j < data.debts.length; j++) {
+				// 		if (data.debts[j].user == oid) {
+				// 			total += data.debt;
+				// 			duplicateIdxs.push(j);
+				// 		}
+				// 	}
+				// 	if (duplicateIdxs.length > 1) {
+				// 		for (let j = 0; j < duplicateIdxs.length; j++) {
+				// 			data.debts.splice(duplicateIdxs[j],1);
+				// 		}
+				// 	}
+				// 	data.debts.push({user: oid, amount: total});
+
+				// }
 			}
 
 		} else {

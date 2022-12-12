@@ -70,6 +70,10 @@
     display: inline-block;
 }
 
+.active {
+    background-color: #69906b;
+  }
+
 .bottom {
     margin: auto;
     width: 100%;
@@ -89,4 +93,8 @@
     font-size: 16px;
     display: flex;
     justify-content: center;
+}
+.enterNewExpenseButton:hover {
+    background-color: #dce6dd;
+    color: black;
 }
