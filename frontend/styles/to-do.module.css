@@ -1,0 +1,144 @@
+.pageContents {
+    padding: 0 2rem;
+    width: 90%;
+    margin: auto;
+    margin-top: 150px;
+    color: #221c42;
+  }
+
+.pageContents h1 {
+    text-align: center;
+    line-height: 1.15;
+    font-size: 3rem;
+    color: #221c42;
+}
+
+.options {
+    width: 100%;
+    display: inline-block;
+}
+.spacer {
+  padding: 5px;
+}
+
+.sort {
+    display: inline-block;
+}
+.sort select {
+    display: inline-block;
+    margin: 5px;
+}
+.sort p {
+    display: inline-block;
+}
+
+
+.active {
+    background-color: #69906b;
+  }
+
+.radioButtons {
+    display: inline-block;
+    margin: 5px;
+}
+
+.rightButtons {
+    margin-left: auto;
+    margin-right: 0;
+    float: right;
+}
+
+.filterButton,
+.editRotationsButton {
+    background-color: #69906b;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+.editRotationsButton:hover,
+.filterButton:hover,
+.createTaskButton:hover {
+    background-color: #dce6dd;
+    color: black;
+  }
+
+.listContainer {
+    width: 100%;
+}
+.listHeader {
+    width: 100%;
+    background-color: #dce6dd;
+    padding: 15px;
+    border: solid #000;
+    border-width: 1px 1px 1px 1px;
+}
+.listHeader span h3 {
+    display: inline-block;
+}
+.listItem {
+    width: 100%;
+    display: inline-block;
+    border: solid #000;
+    border-width: 0.5px 1px 0.5px 1px;
+    padding: 15px;
+}
+.listColumn {
+    width: 22%;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 7fr;
+}
+.task, .assignee, .deadline, .taskButtons {
+    display: inline-block;
+}
+.assignees, .rotate {
+  display: inline-block;
+}
+
+/* .rotate {
+  visibility: hidden;
+} */
+
+.taskButtons {
+    width: 30%;
+    float: right;
+}
+.taskButton {
+    float: right;
+    grid-template-columns: 1fr 7fr;
+    padding: 15px;
+}
+.taskButton:hover {
+  opacity: 60%;
+}
+
+.activeUser {
+    /* background-color: rgba(255, 114, 114, 0.4); */
+    background-color: #dce6dd;
+}
+
+
+.bottom {
+    margin: auto;
+    width: 100%;
+    /* position: relative; */
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+.createTaskButton {
+    margin: auto;
+    background-color: #69906b;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    /* display: inline-block; */
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+}

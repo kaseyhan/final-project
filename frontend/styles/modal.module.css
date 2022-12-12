@@ -76,7 +76,7 @@ body {
   margin: auto;
   text-align: center;
 }
-label {
+.modal label {
   padding: 10px;
   padding-bottom: 100px;
   margin: auto;
@@ -89,6 +89,11 @@ label {
 #selectRotation {
   width: 30%;
   margin: auto;
+}
+
+.modal select {
+  width: 60%;
+  padding: 7px;
 }
 .submitButtons {
   margin: auto;
@@ -112,9 +117,12 @@ label {
   background-color: lightgray;
   margin: auto;
 }
-#titleRequired {
-  visibility: hidden;
+.visible {
+  visibility: visible;
   color: red;
+}
+.hidden {
+  visibility: hidden;
 }
 
 .active {

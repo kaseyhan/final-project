@@ -1,17 +1,17 @@
 import React from "react";
-// import "../styles/modal.css";
+import styles from "../styles/modal.module.css";
 import PropTypes from "prop-types";
 
 const Modal = props => {
     if (!props.show) return null;
     return (
-        <div className="modal">
-            <div className="modalContent">
-                <div className="modalHeader">
-                    <h3 className="modalTitle">{props.title}</h3>
-                    <button className="exitButton" onClick={props.onClose}>x</button>
+        <div className={styles.modal}>
+            <div className={styles.modalContent}>
+                <div className={styles.modalHeader}>
+                    <h3 className={styles.modalTitle}>{props.title}</h3>
+                    <button className={styles.exitButton} onClick={props.onClose}>x</button>
                 </div>
-                <div className="modalBody">
+                <div className={styles.modalBody}>
                     {props.children}
                 </div>
                 {/* <div className="modalFooter">

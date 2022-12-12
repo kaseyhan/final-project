@@ -250,7 +250,7 @@ module.exports = function (router) {
             res.status(400).json({message:"Error: missing name or home",data:{name:req.body.name,home:req.body.home}});
             return;
         }
-        if (req.body.completed && (req.body.assignee || (req.body.assigneeName && req.body.assigneeName !== "unassigned"))) {
+        if (req.body.completed && (req.body.assignee)){ // || (req.body.assigneeName && req.body.assigneeName !== "unassigned"))) {
             res.status(400).json({
                 message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
             return;
