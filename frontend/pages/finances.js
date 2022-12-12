@@ -7,8 +7,8 @@ import Modal from "../components/modal";
 import styles from '../styles/finances.module.css'
 
 export default function Finances() {
-	const BASE_URL = "http://localhost:4000/api";
-	// const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
+	// const BASE_URL = "http://localhost:4000/api";
+	const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
 
 	const [isLoading, setIsLoading] = useState(true);
 	const [users, setUsers] = useState([]);
