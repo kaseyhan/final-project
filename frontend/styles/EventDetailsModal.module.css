@@ -19,8 +19,8 @@
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-  width: 60%;
-  height: 80%;
+  width: 50vw;
+  height: 70vh;
   background: white;
   opacity: 1;
   color: black
@@ -36,7 +36,7 @@
   flex-direction: column;
   padding: 0;
   margin: 0;
-  width: 80%;
+  width: 100%;
   gap: 15px;
 }
 
@@ -58,7 +58,9 @@
 .row {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 10%;
+  padding: 0;
   /* width: 100%; */
 }

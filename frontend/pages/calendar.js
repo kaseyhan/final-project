@@ -27,6 +27,7 @@ export default function Calendar() {
   const [user, setUser] = useState(null);
   const [showEventDetailModal, setShowEventDetailModal] = useState(false);
   const [activeEventDetails, setActiveEventDetails] = useState(null);
+  const [reload, setReload] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -34,6 +35,7 @@ export default function Calendar() {
       const res = await API.get(`users/${userID}`);
       if (res) {
         let data = res.data.data;
+        let userColor = data.color;
         let homeID = data.home;
 
         setUser(data);
@@ -55,12 +57,14 @@ export default function Calendar() {
           let eventData = {
             id: curEvent._id,
             title: curEvent.name,
+            home: curEvent.home,
             start: new Date(curEvent.start),
             end: new Date(curEvent.end),
             location: curEvent.location,
             guests: curEvent.guests,
             notes: curEvent.notes,
-            color: user ? user.color : '#9CAF88'
+            repeat: curEvent.repeat,
+            color: userColor || '#9CAF88'
           }
           upcomingEvents.push(eventData)
         })
@@ -75,12 +79,14 @@ export default function Calendar() {
             let eventData = {
               id: curEvent._id,
               title: curEvent.name,
+              home: curEvent.home,
               start: new Date(curEvent.start),
               end: new Date(curEvent.end),
               location: curEvent.location,
               guests: curEvent.guests,
               notes: curEvent.notes,
-              color: user ? user.color : '#9CAF88'
+              repeat: curEvent.repeat,
+              color: userColor || '#9CAF88'
             }
             upcomingEvents.push(eventData)
           })
@@ -96,7 +102,7 @@ export default function Calendar() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [reload]);
 
   const openEventDetailModal = (event) => {
     console.log(event)
@@ -108,8 +114,37 @@ export default function Calendar() {
     setShowEventDetailModal(false);
   }
 
-  const handleEventDetailFormSubmit = data => {
-    setN(data)
+  const handleEventDetailFormSubmit = async data => {
+    try {
+      if (data && activeEventDetails) {
+        console.log(data)
+        let params = {
+          name: data.title,
+          home: data.home,
+          start: new Date(data.start),
+          end: new Date(data.end),
+          location: data.location,
+          guests: data.guests,
+          notes: data.notes,
+          repeat: data.repeat
+        }
+        const res = await API.put(`events/${activeEventDetails.id}`, params);
+        setReload(!reload);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  const handleEventDetailFormDelete = async data => {
+    try {
+      if (data && activeEventDetails) {
+        const res = await API.delete(`events/${activeEventDetails.id}`);
+        setReload(!reload);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   const getEventStyle = (event) => {
@@ -138,7 +173,7 @@ export default function Calendar() {
               events={events}
               onSelectEvent={openEventDetailModal}
               eventPropGetter={getEventStyle}
-              style={{ height: "calc(90vh - 150px)", width: "90vw" }}
+              style={{ height: "calc(90vh - 150px)", width: "90vw", }}
               popup
             />
             {showEventDetailModal &&
@@ -146,6 +181,7 @@ export default function Calendar() {
                 handleSubmit={handleEventDetailFormSubmit}
                 closeModal={closeEventDetailModal}
                 eventData={activeEventDetails}
+                handleDelete={handleEventDetailFormDelete}
               />}
             <div className={styles.row}>
               <Button variant='contained'>Create Event</Button>

@@ -15,6 +15,15 @@ a {
   box-sizing: border-box;
 }
 
+.rbc-toolbar-label {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.rbc-today {
+  background-color: #dce6dd !important;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: light;
