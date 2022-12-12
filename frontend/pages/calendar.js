@@ -7,6 +7,7 @@ import axios from 'axios';
 import Navbar from '../components/Navbar';
 import { CircularProgress, Button } from '@mui/material';
 import EventDetailsModal from '../components/EventDetailsModal';
+import CreateEventModal from '../components/CreateEventModal';
 import moment from 'moment';
 import 'moment-timezone'
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar'
@@ -26,6 +27,7 @@ export default function Calendar() {
   const [home, setHome] = useState(null);
   const [user, setUser] = useState(null);
   const [showEventDetailModal, setShowEventDetailModal] = useState(false);
+  const [showCreateEventModal, setShowCreateEventModal] = useState(false);
   const [activeEventDetails, setActiveEventDetails] = useState(null);
   const [reload, setReload] = useState(false);
 
@@ -71,7 +73,6 @@ export default function Calendar() {
 
         // get home events
         if (home && home.events.length > 0) {
-          console.log(home.events)
           const homeRequests = home.events.map(id => API.get(`events/${id}`));
           const homeResults = await Promise.all(homeRequests);
           homeResults.map(res => {
@@ -86,9 +87,15 @@ export default function Calendar() {
               guests: curEvent.guests,
               notes: curEvent.notes,
               repeat: curEvent.repeat,
-              color: userColor || '#9CAF88'
+              color: '#9CAF88'
             }
-            upcomingEvents.push(eventData)
+
+            // avoid adding Home events that are also one of the logged in
+            // User's events to the calendar
+            const IDs = upcomingEvents.map(event => event.id);
+            if (IDs.indexOf(eventData.id) === -1) {
+              upcomingEvents.push(eventData);
+            }
           })
         }
 
@@ -105,13 +112,20 @@ export default function Calendar() {
   }, [reload]);
 
   const openEventDetailModal = (event) => {
-    console.log(event)
     setActiveEventDetails(event)
     setShowEventDetailModal(true);
   }
 
   const closeEventDetailModal = () => {
     setShowEventDetailModal(false);
+  }
+
+  const openCreateEventModal = () => {
+    setShowCreateEventModal(true);
+  }
+
+  const closeCreateEventModal = () => {
+    setShowCreateEventModal(false);
   }
 
   const handleEventDetailFormSubmit = async data => {
@@ -140,6 +154,31 @@ export default function Calendar() {
     try {
       if (data && activeEventDetails) {
         const res = await API.delete(`events/${activeEventDetails.id}`);
+        setReload(!reload);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  const handleCreateEvent = async data => {
+    try {
+      if (data) {
+        console.log(data)
+        console.log("test")
+        let params = {
+          name: data.title,
+          home: home._id,
+          start: new Date(data.start),
+          end: new Date(data.end),
+          location: data.location,
+          guests: data.guests,
+          notes: data.notes,
+          repeat: data.repeat,
+          host: user._id,
+          hostName: user.name
+        }
+        const res = await API.post('events', params);
         setReload(!reload);
       }
     } catch (err) {
@@ -183,8 +222,14 @@ export default function Calendar() {
                 eventData={activeEventDetails}
                 handleDelete={handleEventDetailFormDelete}
               />}
+
+            {showCreateEventModal &&
+              <CreateEventModal
+                handleCreate={handleCreateEvent}
+                closeModal={closeCreateEventModal}
+              />}
             <div className={styles.row}>
-              <Button variant='contained'>Create Event</Button>
+              <Button onClick={openCreateEventModal} variant='contained'>Create Event</Button>
             </div>
           </div>
           : <CircularProgress />}

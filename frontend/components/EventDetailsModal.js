@@ -30,7 +30,6 @@ const FormItem = ({ title, defaultValue, numRows, id, type, handleFormChange }) 
             value={repeatLabel}
             label="Repeat"
             onChange={event => handleSelect(event, id)}
-            displayEmpty
             inputProps={{ 'aria-label': 'Without label' }}
             fullWidth
             style={{width: '10vw'}}

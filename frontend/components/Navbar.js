@@ -54,7 +54,7 @@ export default function Navbar() {
 			<div className={styles.navbar}>
 				<div className={styles.logoBox}>
 					<Link href="/">
-						<Image src="/assets/logo.png" width='200' height='60' />
+						<Image src="/assets/logo.png" alt="ourhouse_logo" width='200' height='60' />
 					</Link>
 				</div>
 				<div className={styles.links}>
