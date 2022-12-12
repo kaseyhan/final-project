@@ -1,0 +1,64 @@
+.dimBackground {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 15;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 1
+}
+
+.modalContainer {
+  position: relative;
+  top: 50;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  width: 60%;
+  height: 80%;
+  background: white;
+  opacity: 1;
+  color: black
+}
+
+.title {
+  text-decoration: underline;
+  font-size: 3vw;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  width: 80%;
+  gap: 15px;
+}
+
+.formHeader {
+  padding: 0;
+  padding-bottom: 5px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  /* width: 100%; */
+}
