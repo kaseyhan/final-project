@@ -1,0 +1,31 @@
+.container {
+  /* padding-top: 100px; */
+  display: flex;
+  flex-direction: column;
+}
+
+.pageContent {
+  display: flex;
+  /* justify-content: center; */
+  flex-direction: column;
+  align-items: center;
+  /* border: red 3px solid; */
+  margin-top: 150px;
+  width: 100%;
+  min-height: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
