@@ -16,13 +16,13 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const BASE_URL = 'https://gsk-final-project-api.herokuapp.com/api/';
 const API = axios.create({ baseURL: BASE_URL });
-const userID = "63952f07f77a950017fe9466";
 
 moment.tz.setDefault('America/Chicago');
 const localizer = momentLocalizer(moment);
 
 export default function Calendar() {
   const [isLoading, setIsLoading] = useState(false);
+  const [userID, setUserID] = useState(null);
   const [events, setEvents] = useState(null);
   const [home, setHome] = useState(null);
   const [user, setUser] = useState(null);
@@ -33,7 +33,6 @@ export default function Calendar() {
 
   const fetchData = async () => {
     try {
-      setIsLoading(true);
       const res = await API.get(`users/${userID}`);
       if (res) {
         let data = res.data.data;
@@ -41,14 +40,17 @@ export default function Calendar() {
         let homeID = data.home;
 
         setUser(data);
-        // console.log(user)
+        console.log(user)
 
         // get home data
-        API.get(`homes/${homeID}`)
-          .then(response => {
-            setHome(response.data.data);
-          })
-          .catch(error => console.error(error));
+        if (homeID && homeID.length > 4) {
+          API.get(`homes/${homeID}`)
+            .then(response => {
+              setHome(response.data.data);
+            })
+            .catch(error => console.error(error));
+        }
+
 
         // get upcoming user events
         let upcomingEvents = [];
@@ -72,7 +74,7 @@ export default function Calendar() {
         })
 
         // get home events
-        if (home && home.events.length > 0) {
+        if (homeID && homeID.length > 2 && home && home.events.length > 0) {
           const homeRequests = home.events.map(id => API.get(`events/${id}`));
           const homeResults = await Promise.all(homeRequests);
           homeResults.map(res => {
@@ -100,7 +102,6 @@ export default function Calendar() {
         }
 
         setEvents(upcomingEvents);
-        setIsLoading(false);
       }
     } catch (error) {
       console.error(error);
@@ -108,8 +109,20 @@ export default function Calendar() {
   }
 
   useEffect(() => {
-    fetchData();
-  }, [reload]);
+    if (typeof window !== 'undefined') {
+      var id = window.sessionStorage.getItem("userID");
+
+      if (!id || id === 'undefined') {
+        router.push('/login');
+      } else {
+        setUserID(id);
+        // console.log(id, userID)
+        setIsLoading(true);
+        fetchData();
+        setIsLoading(false);
+      }
+    }
+  }, [userID, reload]);
 
   const openEventDetailModal = (event) => {
     setActiveEventDetails(event)
@@ -164,8 +177,8 @@ export default function Calendar() {
   const handleCreateEvent = async data => {
     try {
       if (data) {
-        console.log(data)
-        console.log("test")
+        // console.log(data)
+        // console.log("test")
         let params = {
           name: data.title,
           home: home._id,
@@ -182,6 +195,7 @@ export default function Calendar() {
         setReload(!reload);
       }
     } catch (err) {
+      alert("No Home ID provided. Join a home!")
       console.error(err);
     }
   }
