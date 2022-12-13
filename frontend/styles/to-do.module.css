@@ -20,6 +20,9 @@
 .spacer {
   padding: 5px;
 }
+.buttonSpacer {
+    padding: 2px;
+}
 
 .sort {
     display: inline-block;
@@ -35,6 +38,7 @@
 
 .active {
     background-color: #69906b;
+    color: white;
   }
 
 .radioButtons {
@@ -99,6 +103,33 @@
   display: inline-block;
 }
 
+.assigneeButtons {
+    display: inline-block;
+    margin: auto;
+    padding: 4px;
+}
+/* .assigneeButton {
+    background-color: #dce6dd;
+    border: none;
+    color: black;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+} */
+.statusButtons {
+    display: inline-block;
+    margin: auto;
+    padding: 4px;
+}
+
+.deadlineButtons {
+    display: inline-block;
+    margin: auto;
+    padding: 4px;
+}
+
 /* .rotate {
   visibility: hidden;
 } */
@@ -121,6 +152,22 @@
     background-color: #dce6dd;
 }
 
+.submitButtons {
+    margin: auto;
+}
+.modalButton {
+    margin: auto;
+    text-align: center;
+    background-color: #69906b;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+  }
+.modalButton:hover {
+    background-color: #dce6dd;
+    color: black;
+  }
 
 .bottom {
     margin: auto;

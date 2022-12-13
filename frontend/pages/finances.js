@@ -17,50 +17,80 @@ export default function Finances() {
 	const [youOwe, setYouOwe] = useState([]);
 	const [owesYou, setOwesYou] = useState([]);
 	const [amount, setAmount] = useState(0);
-	// const [expenseToCreate, setExpenseToCreate] = useState()
 	const [activeAssigneeButton, setActiveAssigneeButton] = useState([]);
 	const [show, setShow] = useState(false);
 	const homeID = '639508e44c9f274f9cec2a85'
 	const userID = '639508e64c9f274f9cec2b23' 
 	const api = axios.create({ baseURL: BASE_URL });
-	// let currUser;
 
-	const fetchData = async() => {
-		try {
-			let endpoint = 'homes/' + homeID;
-			const homeGet = await api.get(endpoint);
-			const members = homeGet.data.data.members;
-			let query = {
-				"_id": {
-					"$in": members
-				}
-			}
-			let p = {
-				"params": {
-					"where": JSON.stringify(query)
-				}
-			}
-			const userGet = await api.get('users',p);
-			setUsers(userGet.data.data);
+	// const fetchData = async() => {
+	// 	try {
+	// 		let endpoint = 'homes/' + homeID;
+	// 		const homeGet = await api.get(endpoint);
+	// 		const members = homeGet.data.data.members;
+	// 		let query = {
+	// 			"_id": {
+	// 				"$in": members
+	// 			}
+	// 		}
+	// 		let p = {
+	// 			"params": {
+	// 				"where": JSON.stringify(query)
+	// 			}
+	// 		}
+	// 		const userGet = await api.get('users',p);
+	// 		setUsers(userGet.data.data);
 
-			const isCurrUser = (element) => element._id === userID;
-			let idx = users.findIndex(isCurrUser);
-			setCurrUser(users[idx]);
+	// 		const isCurrUser = (element) => element._id === userID;
+	// 		let idx = users.findIndex(isCurrUser);
+	// 		setCurrUser(users[idx]);
 
-			let others = [];
-			for (let i = 0; i < users.length; i++) {
-				if (i !== idx) others.push(users[i]);
-			}
-			setOtherUsers(others);
+	// 		let others = [];
+	// 		for (let i = 0; i < users.length; i++) {
+	// 			if (i !== idx) others.push(users[i]);
+	// 		}
+	// 		setOtherUsers(others);
 
-		} catch (error) {
-			console.error(error);
-		}
-	}
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// }
 
 	useEffect(() => {
+		const fetchData = async() => {
+			try {
+				let endpoint = 'homes/' + homeID;
+				const homeGet = await api.get(endpoint);
+				const members = homeGet.data.data.members;
+				let query = {
+					"_id": {
+						"$in": members
+					}
+				}
+				let p = {
+					"params": {
+						"where": JSON.stringify(query)
+					}
+				}
+				const userGet = await api.get('users',p);
+				setUsers(userGet.data.data);
+	
+				const isCurrUser = (element) => element._id === userID;
+				let idx = users.findIndex(isCurrUser);
+				setCurrUser(users[idx]);
+	
+				let others = [];
+				for (let i = 0; i < users.length; i++) {
+					if (i !== idx) others.push(users[i]);
+				}
+				setOtherUsers(others);
+	
+			} catch (error) {
+				console.error(error);
+			}
+		}
 			setIsLoading(true);
-			fetchData().then(function(response) {
+			fetchData().then(() => {
 					setIsLoading(false);
 					setOwes(currUser);
 					// const isCurrUser = (element) => element._id === userID;

@@ -35,7 +35,9 @@ export default function ToDoView() {
     const [activeAssigneeCreateButton, setActiveAssigneeCreateButton] = useState("");
 
     const homeID = '639508e44c9f274f9cec2a85'
-    const userID = '639508e64c9f274f9cec2b23' 
+    const userID = '639508e64c9f274f9cec2b23'
+    const blankImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII='
+    const rotateImage = "https://iili.io/HnsuCps.png";
     const api = axios.create({ baseURL: BASE_URL });
 
     const fetchData = async() => {
@@ -59,20 +61,23 @@ export default function ToDoView() {
             let u = [];
             let un = [];
             
-            for (let i = 0; i < home.members.length; i++) {
-                const user_get = await api.get('users/' + home.members[i].toString());
-                u.push(user_get.data.data._id);
-                un.push(user_get.data.data.name);
-            }
+            // if (typeof home !== "undefined" && typeof home.members !== "undefined") {
+                for (let i = 0; i < home.members.length; i++) {
+                    const user_get = await api.get('users/' + home.members[i].toString());
+                    u.push(user_get.data.data._id);
+                    un.push(user_get.data.data.name);
+                }
+                
+                setUsers(u);
+                setUserNames(un);
+            // }
             
-            setUsers(u);
-            setUserNames(un);
 
-            let r = [];
-            for (let i = 0; i < tasks.length; i++) {
-                if (tasks[i].rotate !== "none") r.push(tasks[i]._id);
-            }
-            setRotatedTasks(r);
+            // let r = [];
+            // for (let i = 0; i < tasks.length; i++) {
+            //     if (tasks[i].rotate !== "none") r.push(tasks[i]._id);
+            // }
+            // setRotatedTasks(r);
 
             // setTaskToEdit({});
 
@@ -143,7 +148,8 @@ export default function ToDoView() {
 
         <Modal title="Filter Tasks" button="Apply Filters" onClose={() => setShowFilter(false)} show={showFilter}>
                 <label htmlFor="assignees">Assignee</label>
-                <div id="assignees">
+                <br></br>
+                <div id="assignees" className={styles.assigneeButtons}>
                     {users.map((user, index) => (
                         <button className={activeAssigneeFilterButton.includes(user) ? `${styles.assigneeButton} ${styles.active}` : 
                         styles.assigneeButton} id={user} key={index} onClick={(event) => {
@@ -167,6 +173,7 @@ export default function ToDoView() {
                             setQueryAssignees(q);
                         }}>{titleCase(userNames[index])}</button>
                     ))}
+                    {/* <span className={styles.buttonSpacer}> </span> */}
                     <button className={activeAssigneeFilterButton[0]==="anyone" ? `${styles.assigneeButton} ${styles.active}` : 
                             styles.assigneeButton} id="anyone" onClick={(event) => {
                         // let buttons = document.getElementsByClassName(styles.assigneeButton);
@@ -178,6 +185,7 @@ export default function ToDoView() {
                         else setActiveAssigneeFilterButton(["anyone"]);
                         setQueryAssignees([]);
                     }}>Anyone</button>
+                    {/* <span className={styles.buttonSpacer}> </span> */}
                     <button className={activeAssigneeFilterButton[0]==="unassigned" ? `${styles.assigneeButton} ${styles.active}` : 
                             styles.assigneeButton} id="unassigned" onClick={(event) => {
                         if (activeAssigneeFilterButton.length === 1 && activeAssigneeFilterButton[0] === "unassigned") setActiveAssigneeFilterButton([]);
@@ -185,6 +193,7 @@ export default function ToDoView() {
                         setQueryAssignees([""]);
                     }}>Unassigned</button>
                 </div>
+                <br></br>
                 <br></br>
 
                 <label htmlFor="statusButtons">Status</label>
@@ -202,6 +211,8 @@ export default function ToDoView() {
                         q["completed"] = false;
                         setNewQuery(q);
                     }}>Not completed</button>
+                    <span className={styles.buttonSpacer}> </span>
+                    
                     <button className={activeStatusFilterButton==="completedFilter" ? `${styles.statusButton} ${styles.active}` : 
                             styles.statusButton} id="completedFilter" onClick={(event) => {
                         // let buttons = document.getElementsByClassName(styles.statusButton);
@@ -215,6 +226,8 @@ export default function ToDoView() {
                         q["completed"] = true;
                         setNewQuery(q);
                     }}>Completed</button>
+                    <span className={styles.buttonSpacer}> </span>
+
                     <button className={activeStatusFilterButton==="anyStatusFilter" ? `${styles.statusButton} ${styles.active}` : 
                             styles.statusButton} id="anyStatusFilter" onClick={(event) => {
                         // let buttons = document.getElementsByClassName(styles.statusButton);
@@ -229,6 +242,7 @@ export default function ToDoView() {
                         setNewQuery(q);
                     }}>Any status</button>
                 </div>
+                <br></br>
                 <br></br>
                 
                 <label htmlFor="deadlineButtons">Deadline</label>
@@ -245,6 +259,8 @@ export default function ToDoView() {
                         let q = "$lt"
                         setQueryDeadline(q);
                     }}>Past</button>
+                    <span className={styles.buttonSpacer}> </span>
+
                     <button className={activeDeadlineFilterButton==="todayFilter" ? `${styles.deadlineButton} ${styles.active}` : 
                             styles.deadlineButton} id="todayFilter" onClick={(event) => {
                         // let buttons = document.getElementsByClassName(styles.deadlineButton);
@@ -257,6 +273,8 @@ export default function ToDoView() {
                         let q = "$eq"
                         setQueryDeadline(q);
                     }}>Today</button>
+                    <span className={styles.buttonSpacer}> </span>
+
                     <button className={activeDeadlineFilterButton==="futureFilter" ? `${styles.deadlineButton} ${styles.active}` : 
                             styles.deadlineButton} id="futureFilter" onClick={(event) => {
                         // let buttons = document.getElementsByClassName(styles.deadlineButton);
@@ -269,6 +287,8 @@ export default function ToDoView() {
                         let q = "$gt"
                         setQueryDeadline(q);
                     }}>Future</button>
+                    <span className={styles.buttonSpacer}> </span>
+
                     <button className={activeDeadlineFilterButton==="anyDeadlineFilter" ? `${styles.deadlineButton} ${styles.active}` : 
                             styles.deadlineButton} id="anyDeadlineFilter" onClick={(event) => {
                         // let buttons = document.getElementsByClassName(styles.deadlineButton);
@@ -281,6 +301,7 @@ export default function ToDoView() {
                         setQueryDeadline("");
                     }}>Any deadline</button>
                 </div>
+                <br></br>
                 <br></br>
 
                 <div className={styles.submitButtons}>
@@ -384,7 +405,7 @@ export default function ToDoView() {
                             <p>{titleCase(task.assigneeName)}</p>
                         </span>
                         <span className={styles.rotate}>
-                            <img id={task._id + 'Rotate'} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=" alt="r"></img> 
+                            <img id={task._id + 'Rotate'} src={task.rotate !== "none" ? rotateImage : blankImage} alt=" "></img> 
                             {/* <script>
                                 if (rotatedTasks.includes(task._id)) {
                                     document.getElementById(task._id+'Rotate').src = "https://iili.io/HnsuCps.png"

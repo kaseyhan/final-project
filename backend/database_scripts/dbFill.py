@@ -148,10 +148,15 @@ def main(argv):
             assignee = randint(0,len(homes[home])-1)
         assigneeID = homes[home][assignee] if assigned else ''
         assigneeName = userNames[userIDs.index(assigneeID)] if assigned else 'unassigned' # ???
-        deadline = (mktime(date.today().timetuple()) + randint(86400,864000)) * 1000
+        has_deadline = (randint(0,10)>3)
+        if has_deadline:
+            deadline = (mktime(date.today().timetuple()) + randint(86400,864000)) * 1000
         notes = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English."
         rotate = ["none","daily","weekly","biweekly","monthly"]
-        params = urllib.parse.urlencode({'name': choice(taskNames), 'home': home, 'deadline': deadline, 'assigneeName': assigneeName, 'assignee': assigneeID, 'completed': str(completed).lower(), 'notes': notes, 'rotate': choice(rotate)})
+        if has_deadline:
+            params = urllib.parse.urlencode({'name': choice(taskNames), 'home': home, 'deadline': deadline, 'assigneeName': assigneeName, 'assignee': assigneeID, 'completed': str(completed).lower(), 'notes': notes, 'rotate': choice(rotate)})
+        else:
+            params = urllib.parse.urlencode({'name': choice(taskNames), 'home': home, 'assigneeName': assigneeName, 'assignee': assigneeID, 'completed': str(completed).lower(), 'notes': notes, 'rotate': choice(rotate)})
 
         # POST the task
         conn.request("POST", "/api/tasks", params, headers)
