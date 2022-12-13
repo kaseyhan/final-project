@@ -21,12 +21,20 @@
     border-color: black;
     border-width: 2px;
 }
+.child {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    justify-content: center;
+    font-size: 20px;
+}
 
 .container {
     display: flex;
     background-color: #69906b;
-    width: 500px;
-    height: 400px;
+    width: 900px;
+    height: 700px;
     flex-wrap: wrap;
     border-radius: 10%;
     align-items: center;
@@ -38,19 +46,29 @@
     margin: auto;
     display:flex;
     align-items: flex-end;
+    border-width: 10px;
+    border-color: black;
 }
 .body {
     position: absolute;
-    margin-top: 25%;
+    margin-top: 30%;
     margin-left: 50%;
     transform: translate(-50%, -50%);
 
 }
+
+.h2 {
+    font-size: 40px;
+    /* position: absolute;
+    margin-left: 15%;
+    transform: translate(-30%, 0); */
+}
+
 .button {
     background-color: #dce6dd;
     border: none;
     color: #221c42;
-    padding: 25px 20px;
+    padding: 15px 20px;
     text-align: center;
     text-decoration: none;
     /* display: inline-block; */
