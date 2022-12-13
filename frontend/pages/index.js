@@ -86,6 +86,7 @@ export default function Home() {
 
   const fetchData = async () => {
     try {
+      console.log(window.sessionStorage.getItem("userID"))
       const res = await API.get(`users/${userID}`);
       if (res) {
         let data = res.data.data;
