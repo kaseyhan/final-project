@@ -14,7 +14,6 @@ import styles from '../styles/Navbar.module.css'
 
 const BASE_URL = 'https://gsk-final-project-api.herokuapp.com/api/';
 const API = axios.create({ baseURL: BASE_URL });
-// const router = useRouter();
 
 // cite: https://mui.com/material-ui/react-avatar/
 function stringAvatar(name, color) {
@@ -31,6 +30,7 @@ function stringAvatar(name, color) {
 
 export default function Navbar() {
 	let currUserID = null;
+	const router = useRouter();
 
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [user, setUser] = useState(null)
@@ -102,7 +102,7 @@ export default function Navbar() {
 						{/* <MenuItem onClick={handleCloseMenu}><Link href="/analytics">Analytics</Link></MenuItem> */}
 					</Menu>
 
-					{currUserID == "undefined" || currUserID == null ? 
+					{currUserID !== "undefined" && currUserID !== null ? 
 						(<div className={styles.accountButtons}>
 							<Link href="/login" className={styles.accountButton} onClick={(event) => {
 								window.sessionStorage.removeItem("userID");
@@ -114,7 +114,9 @@ export default function Navbar() {
 							{/* </Link> */}
 						</div>) : 
 						(<div className={styles.accountButtons}>
-							<Link href="/login" className={styles.accountButton}>Login</Link>
+							<Link href="/login" className={styles.accountButton} onClick={(event) => {
+								window.sessionStorage.removeItem("userID");
+							}}>Logout</Link>
 						</div>)}
 				</div>
 			</div>

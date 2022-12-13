@@ -297,22 +297,28 @@ module.exports = function (router) {
                 // let tasksToAdd = req.body.tasks.filter(x => !data.tasks.includes(x));
                 for (let i = 0; i < req.body.tasks.length; i++) { // do we need to do this? if tasks cannot exist without being tied to a home
                     let task = await Task.findById(req.body.tasks[i]);
-                    if (task.home !== data._id) {
-                        let old_home = await Home.findById(task.home);
-                            for (let i = 0; i < old_home.events.length; i++) {
-                                if (old_home.events[i] === task._id) {
-                                    old_home.events.splice(i,1);
-                                    break;
+                    if (task) {
+                        if (task.home !== data._id) {
+                            let old_home = await Home.findById(task.home);
+                                for (let i = 0; i < old_home.events.length; i++) {
+                                    if (old_home.events[i] === task._id) {
+                                        old_home.events.splice(i,1);
+                                        break;
+                                    }
                                 }
+                            task.home = data._id;
+                            try {
+                                let taskToSave = await task.save();
+                            } catch (error) {
+                                res.status(500).json({message: "Error saving", data:{}})
+                                    return;
                             }
-                        task.home = data._id;
-                        try {
-                            let taskToSave = await task.save();
-                        } catch (error) {
-                            res.status(500).json({message: "Error saving", data:{}})
-                                return;
                         }
+                    } else {
+                        res.status(404).json({message: "Error: task not found", data:{}});
+                        return;
                     }
+                    
                 }
                 data.tasks = req.body.tasks;
             }
