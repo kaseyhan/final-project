@@ -1,6 +1,7 @@
 import styles from '../styles/Login.module.css'
 import axios from 'axios'
 import React, { useState } from 'react'
+import Navbar from '../components/Navbar'
 import { useRouter } from 'next/router'
 
 export default function registerPage() {
@@ -97,23 +98,21 @@ export default function registerPage() {
 
   return (
     <div>
-      <div className={styles.header}>
-        <img className={styles.logobox} src="/assets/logo.png"></img>
-      </div>
+      <Navbar />
 
       <form className={styles.body}>
         <div className={styles.container} name="register-container">
           <h2>Create a New User.</h2>
           <div className={styles.child}>
-            <label><b>Name: </b></label>
+            <label style={{paddingRight: '10px'}}><b>Name: </b></label>
             <input type="text" placeholder="Enter Name" name="email" value={newName} onChange={handleNameChange} required />
           </div>
           <div className={styles.child}>
-            <label><b>Email: </b></label>
+            <label style={{paddingRight: '10px'}}><b>Email: </b></label>
             <input type="text" placeholder="Enter Email" name="email" value={newEmail} onChange={handleEmailChange} required />
           </div>
           <div className={styles.child}>
-            <label ><b>Password: </b></label>
+            <label style={{paddingRight: '10px'}}><b>Password: </b></label>
             <input type="password" placeholder="Enter Password" value={newPassword} onChange={handlePasswordChange} required />
           </div>
           <div className={styles.child}>

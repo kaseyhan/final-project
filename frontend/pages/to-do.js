@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Layout from '../components/layout';
 import Navbar from '../components/Navbar'
+import { useRouter } from 'next/router'
 import axios from 'axios'
 import React, {useState, useEffect} from 'react'
 import Modal from "../components/modal";
@@ -9,6 +10,7 @@ import styles from '../styles/to-do.module.css'
 export default function ToDoView() {
     // const BASE_URL = "http://localhost:4000/api";
     const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
+    const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(true);
     const [currUser, setCurrUser] = useState({});
@@ -33,44 +35,50 @@ export default function ToDoView() {
     const [activeAssigneeEditButton, setActiveAssigneeEditButton] = useState("");
     const [activeAssigneeCreateButton, setActiveAssigneeCreateButton] = useState("");
 
-    // const homeID = '639508e44c9f274f9cec2a85'
-    const currUserID = '639508e64c9f274f9cec2b23'
     const blankImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII='
     const rotateImage = "https://iili.io/HnsuCps.png";
+    const uncheckedImage = "https://iili.io/HoB1ha1.png";
+    const checkedImage = "https://iili.io/HoB1wyg.png";
     const api = axios.create({ baseURL: BASE_URL });
 
-    // let currUserID = sessionStorage.getItem("user");           UNCOMMENT
+    let currUserID = null;
 
     useEffect(() => {
         const fetchData = async() => {
             try {
-                const currUserGet = await api.get('users/'+currUserID);
-                setCurrUser(currUserGet.data.data);
+                if (typeof window !== 'undefined') currUserID = window.sessionStorage.getItem("userID");
+                console.log(currUserID);
+                if (currUserID === "undefined" || currUserID == null) {
+                    router.push('/login');
+                } else {
+                    const currUserGet = await api.get('users/'+currUserID);
+                    setCurrUser(currUserGet.data.data);
 
-                let homeID = currUserGet.data.data.home;
+                    let homeID = currUserGet.data.data.home;
 
-                query["home"] = homeID;
-                let p = {
-                    "params": {
-                        "where": JSON.stringify(query)
+                    query["home"] = homeID;
+                    let p = {
+                        "params": {
+                            "where": JSON.stringify(query)
+                        }
                     }
-                }
-    
-                const task_get = await api.get('tasks', p);
-                setTasks(task_get.data.data);
-    
-                const home_get = await api.get('homes/'+homeID);
-                setHome(home_get.data.data);
+        
+                    const task_get = await api.get('tasks', p);
+                    setTasks(task_get.data.data);
+        
+                    const home_get = await api.get('homes/'+homeID);
+                    setHome(home_get.data.data);
 
-                const usersGet = await api.get('users',p);
-                let u = [];
-                let un = [];
-                for (let i = 0; i < usersGet.data.data.length; i++) {
-                    u.push(usersGet.data.data[i]._id);
-                    un.push(usersGet.data.data[i].name);
+                    const usersGet = await api.get('users',p);
+                    let u = [];
+                    let un = [];
+                    for (let i = 0; i < usersGet.data.data.length; i++) {
+                        u.push(usersGet.data.data[i]._id);
+                        un.push(usersGet.data.data[i].name);
+                    }
+                    setUsers(u);
+                    setUserNames(un)
                 }
-                setUsers(u);
-                setUserNames(un)
             } catch (error) {
                 console.error(error);
             }
@@ -91,7 +99,7 @@ export default function ToDoView() {
             }
             );
         } else {
-            return "EMPTY"
+            return "Unassigned"
         }
       }
 
@@ -379,7 +387,8 @@ export default function ToDoView() {
                             }}></img>
                         </span>
                         <span className={styles.taskButton}>
-                            <img className={styles.checkButton} id={task._id + 'Check'} src="https://iili.io/HC8LA7V.png" width="20px" height="20px" onClick={(event) => {
+                            <img className={styles.checkButton} id={task._id + 'Check'} src={task.completed ? checkedImage : uncheckedImage} width="20px" height="20px" onClick={(event) => {
+                                console.log(tasks);
                                 let taskToEditID = task._id;
                                 let endpoint = 'tasks/' + taskToEditID;
 
@@ -390,15 +399,13 @@ export default function ToDoView() {
                                 let taskToEdit = new_tasks[idx];
                                 taskToEdit.completed = !taskToEdit.completed;
                                 if (taskToEdit.completed) {
-                                    taskToEdit.assignee = "";
-                                    taskToEdit.assigneeName = "unassigned"; // ??
+                                    delete taskToEdit.assignee;
+                                    delete taskToEdit.assigneeName;
                                 }
 
                                 api.put(endpoint, taskToEdit).then(function(response) {
                                     let x = new_tasks.splice(idx,1);
                                     new_tasks.push(taskToEdit);
-                                    if (taskToEdit.completed) event.target.src = "https://iili.io/HniDgnV.png";
-                                    else event.target.src = "https://iili.io/HC8LA7V.png";
                                     setTasks(new_tasks);
                                 }).catch(function(error) {
                                     console.log(error);
@@ -500,14 +507,13 @@ export default function ToDoView() {
                             }
                         }
 
-                        if (taskToEdit["assigneeName"] === undefined) taskToEdit["assigneeName"] = "unassigned";
-
-                        let tt = {name: taskToEdit["name"], home: homeID};
+                        let tt = {name: taskToEdit["name"], home: currUser.home};
                         if (taskToEdit["deadline"]) tt["deadline"] = taskToEdit["deadline"];
                         if (taskToEdit["rotate"]) tt["rotate"] = taskToEdit["rotate"];
                         if (taskToEdit["assignee"]) tt["assignee"] = taskToEdit["assignee"];
                         else tt["assignee"] = "";
                         if (taskToEdit["assigneeName"] && taskToEdit["assigneeName"] !== "unassigned") tt["assigneeName"] = taskToEdit["assigneeName"];
+                        else tt["assigneeName"] = "unassigned";
                         if (taskToEdit["notes"]) tt["notes"] = taskToEdit["notes"];
 
                         let endpoint = 'tasks/' + taskToEdit._id;
@@ -520,6 +526,7 @@ export default function ToDoView() {
                             new_tasks.push(response.data.data);
                             setTasks(new_tasks);
                             setTaskToEdit({});
+                            setActiveAssigneeEditButton("");
                           })
                           .catch(function (error) {
                             console.log(error.response.data);

@@ -1,6 +1,7 @@
 import styles from '../styles/Login.module.css'
 import axios from 'axios'
 import React, { useState, useEffect } from 'react'
+import Navbar from '../components/Navbar'
 import { useRouter } from 'next/router'
 
 
@@ -13,6 +14,8 @@ export default function NameForm() {
   const [error, setError] = useState('');
   const [query, setQuery] = useState({});
   const router = useRouter();
+  
+  // console.log("fjieowjfoiwjfioJiofjwiowejiof")
 
 
   const handleEmailChange = (event) => {
@@ -37,10 +40,11 @@ export default function NameForm() {
         "where": JSON.stringify(query)
       }
     }
-    console.log(p);
+    // console.log("HI")
     const user_get = await api.get("/users", p).then(function (response) {
       if (response.data.data.length == 1) {
         window.sessionStorage.setItem("userID", response.data.data[0]._id)
+        console.log(window.sessionStorage.getItem("userID"));
         router.push('/');
 
       } else {
@@ -48,6 +52,7 @@ export default function NameForm() {
       }
     }
     ).catch(error => {
+      console.log(p);
       setError(error.message);
     })
   }
@@ -59,18 +64,16 @@ export default function NameForm() {
 
   return (
     <div>
-      <div className={styles.header}>
-        <img className={styles.logobox} src="/assets/logo.png"></img>
-      </div>
+      <Navbar />
       <form className={styles.body}>
         <div className={styles.container} name="login-container">
           <h2 className={styles.h2}>Login Below!</h2>
           <div className={styles.child}>
-            <label><b>Email: </b></label>
+            <label style={{paddingRight: '10px'}}><b>Email: </b></label>
             <input className={styles.input} type="text" placeholder="Enter Email" name="email" value={loginEmail} onChange={handleEmailChange} required />
           </div>
           <div className={styles.child}>
-            <label ><b>Password: </b></label>
+            <label style={{paddingRight: '10px'}}><b>Password: </b></label>
             <input className={styles.input} type="password" placeholder="Enter Password" name="psw" value={loginPassword} onChange={handlePasswordChange} required />
           </div>
 
