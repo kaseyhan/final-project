@@ -11,21 +11,20 @@ export default function ToDoView() {
     const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
 
     const [isLoading, setIsLoading] = useState(true);
-    const [query, setQuery] = useState({});
-    const [newQuery, setNewQuery] = useState({})
-    const [queryAssignees, setQueryAssignees] = useState([]);
-    const [queryDeadline, setQueryDeadline] = useState("");
+    const [currUser, setCurrUser] = useState({});
     const [home, setHome] = useState({});
     const [tasks, setTasks] = useState([]);
     const [users, setUsers] = useState([]);
     const [userNames, setUserNames] = useState([]);
+    const [query, setQuery] = useState({});
+    const [newQuery, setNewQuery] = useState({});
+    const [queryAssignees, setQueryAssignees] = useState([]);
+    const [queryDeadline, setQueryDeadline] = useState("");
     const [sortBy, setSortBy] = useState("deadline");
     const [sortOrder, setSortOrder] = useState("asc");
     const [showCreate, setShowCreate] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
     const [showFilter, setShowFilter] = useState(false);
-    const [rotation, setRotation] = useState("none");
-    const [rotatedTasks, setRotatedTasks] = useState([]);
     const [newTask, setNewTask] = useState({});
     const [taskToEdit, setTaskToEdit] = useState({});
     const [activeStatusFilterButton, setActiveStatusFilterButton] = useState("");
@@ -34,59 +33,49 @@ export default function ToDoView() {
     const [activeAssigneeEditButton, setActiveAssigneeEditButton] = useState("");
     const [activeAssigneeCreateButton, setActiveAssigneeCreateButton] = useState("");
 
-    const homeID = '639508e44c9f274f9cec2a85'
-    const userID = '639508e64c9f274f9cec2b23'
+    // const homeID = '639508e44c9f274f9cec2a85'
+    const currUserID = '639508e64c9f274f9cec2b23'
     const blankImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII='
     const rotateImage = "https://iili.io/HnsuCps.png";
     const api = axios.create({ baseURL: BASE_URL });
 
-    const fetchData = async() => {
-        try {
-            query["home"] = homeID;
-            let p = {
-                "params": {
-                    "where": JSON.stringify(query)
-                }
-            }
-
-            const task_get = await api.get('tasks', p);
-            setTasks(task_get.data.data);
-            await tasks;
-
-            const home_get = await api.get('homes/'+homeID);
-
-            setHome(home_get.data.data);
-            await home;
-
-            let u = [];
-            let un = [];
-            
-            // if (typeof home !== "undefined" && typeof home.members !== "undefined") {
-                for (let i = 0; i < home.members.length; i++) {
-                    const user_get = await api.get('users/' + home.members[i].toString());
-                    u.push(user_get.data.data._id);
-                    un.push(user_get.data.data.name);
-                }
-                
-                setUsers(u);
-                setUserNames(un);
-            // }
-            
-
-            // let r = [];
-            // for (let i = 0; i < tasks.length; i++) {
-            //     if (tasks[i].rotate !== "none") r.push(tasks[i]._id);
-            // }
-            // setRotatedTasks(r);
-
-            // setTaskToEdit({});
-
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    // let currUserID = sessionStorage.getItem("user");           UNCOMMENT
 
     useEffect(() => {
+        const fetchData = async() => {
+            try {
+                const currUserGet = await api.get('users/'+currUserID);
+                setCurrUser(currUserGet.data.data);
+
+                let homeID = currUserGet.data.data.home;
+
+                query["home"] = homeID;
+                let p = {
+                    "params": {
+                        "where": JSON.stringify(query)
+                    }
+                }
+    
+                const task_get = await api.get('tasks', p);
+                setTasks(task_get.data.data);
+    
+                const home_get = await api.get('homes/'+homeID);
+                setHome(home_get.data.data);
+
+                const usersGet = await api.get('users',p);
+                let u = [];
+                let un = [];
+                for (let i = 0; i < usersGet.data.data.length; i++) {
+                    u.push(usersGet.data.data[i]._id);
+                    un.push(usersGet.data.data[i].name);
+                }
+                setUsers(u);
+                setUserNames(un)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
         setIsLoading(true);
         fetchData().then(function(response) {
             setIsLoading(false);
@@ -153,8 +142,6 @@ export default function ToDoView() {
                     {users.map((user, index) => (
                         <button className={activeAssigneeFilterButton.includes(user) ? `${styles.assigneeButton} ${styles.active}` : 
                         styles.assigneeButton} id={user} key={index} onClick={(event) => {
-                            // event.target.classList.toggle('active');
-                            // document.getElementById('anyone').classList.remove('active');
                             if (activeAssigneeFilterButton.includes("anyone") || activeAssigneeFilterButton.includes("unassigned")) {
                                 setActiveAssigneeFilterButton([user]);
                             } else if (activeAssigneeFilterButton.includes(user)) {
@@ -176,11 +163,6 @@ export default function ToDoView() {
                     {/* <span className={styles.buttonSpacer}> </span> */}
                     <button className={activeAssigneeFilterButton[0]==="anyone" ? `${styles.assigneeButton} ${styles.active}` : 
                             styles.assigneeButton} id="anyone" onClick={(event) => {
-                        // let buttons = document.getElementsByClassName(styles.assigneeButton);
-                        // for (let i = 0; i < buttons.length; i++) {
-                        //     buttons[i].classList.remove('active');
-                        // }
-                        // event.target.classList.toggle('active');
                         if (activeAssigneeFilterButton.length === 1 && activeAssigneeFilterButton[0] === "anyone") setActiveAssigneeFilterButton([]);
                         else setActiveAssigneeFilterButton(["anyone"]);
                         setQueryAssignees([]);
@@ -197,14 +179,10 @@ export default function ToDoView() {
                 <br></br>
 
                 <label htmlFor="statusButtons">Status</label>
+                <br></br>
                 <div className={styles.statusButtons}>
                     <button className={activeStatusFilterButton==="notCompletedFilter" ? `${styles.statusButton} ${styles.active}` : 
                             styles.statusButton} id="notCompletedFilter" onClick={(event) => {
-                        // let buttons = document.getElementsByClassName("statusButton");
-                        // for (let i = 0; i < buttons.length; i++) {
-                        //     buttons[i].classList.remove(styles.active);
-                        // }
-                        // event.target.classList.toggle(styles.active);
                         if (activeStatusFilterButton === "notCompletedFilter") setActiveStatusFilterButton("");
                         else setActiveStatusFilterButton("notCompletedFilter")
                         let q = {...newQuery};
@@ -215,11 +193,6 @@ export default function ToDoView() {
                     
                     <button className={activeStatusFilterButton==="completedFilter" ? `${styles.statusButton} ${styles.active}` : 
                             styles.statusButton} id="completedFilter" onClick={(event) => {
-                        // let buttons = document.getElementsByClassName(styles.statusButton);
-                        // for (let i = 0; i < buttons.length; i++) {
-                        //     buttons[i].classList.remove(styles.active);
-                        // }
-                        // event.target.classList.toggle(styles.active);
                         if (activeStatusFilterButton === "completedFilter") setActiveStatusFilterButton("");
                         else setActiveStatusFilterButton("completedFilter")
                         let q = {...newQuery};
@@ -230,11 +203,6 @@ export default function ToDoView() {
 
                     <button className={activeStatusFilterButton==="anyStatusFilter" ? `${styles.statusButton} ${styles.active}` : 
                             styles.statusButton} id="anyStatusFilter" onClick={(event) => {
-                        // let buttons = document.getElementsByClassName(styles.statusButton);
-                        // for (let i = 0; i < buttons.length; i++) {
-                        //     buttons[i].classList.remove(styles.active);
-                        // }
-                        // event.target.classList.toggle(styles.active);
                         if (activeStatusFilterButton === "anyStatusFilter") setActiveStatusFilterButton("");
                         else setActiveStatusFilterButton("anyStatusFilter")
                         let q = {...newQuery};
@@ -246,14 +214,10 @@ export default function ToDoView() {
                 <br></br>
                 
                 <label htmlFor="deadlineButtons">Deadline</label>
+                <br></br>
                 <div className={styles.deadlineButtons}>
                     <button className={activeDeadlineFilterButton==="pastFilter" ? `${styles.deadlineButton} ${styles.active}` : 
                             styles.deadlineButton} id="pastFilter" onClick={(event) => {
-                        // let buttons = document.getElementsByClassName(styles.deadlineButton);
-                        // for (let i = 0; i < buttons.length; i++) {
-                        //     buttons[i].classList.remove('active');
-                        // }
-                        // event.target.classList.toggle('active');
                         if (activeDeadlineFilterButton === "pastFilter") setActiveDeadlineFilterButton("");
                         else setActiveDeadlineFilterButton("pastFilter");
                         let q = "$lt"
@@ -263,11 +227,6 @@ export default function ToDoView() {
 
                     <button className={activeDeadlineFilterButton==="todayFilter" ? `${styles.deadlineButton} ${styles.active}` : 
                             styles.deadlineButton} id="todayFilter" onClick={(event) => {
-                        // let buttons = document.getElementsByClassName(styles.deadlineButton);
-                        // for (let i = 0; i < buttons.length; i++) {
-                        //     buttons[i].classList.remove('active');
-                        // }
-                        // event.target.classList.toggle('active');
                         if (activeDeadlineFilterButton === "todayFilter") setActiveDeadlineFilterButton("");
                         else setActiveDeadlineFilterButton("todayFilter");
                         let q = "$eq"
@@ -277,11 +236,6 @@ export default function ToDoView() {
 
                     <button className={activeDeadlineFilterButton==="futureFilter" ? `${styles.deadlineButton} ${styles.active}` : 
                             styles.deadlineButton} id="futureFilter" onClick={(event) => {
-                        // let buttons = document.getElementsByClassName(styles.deadlineButton);
-                        // for (let i = 0; i < buttons.length; i++) {
-                        //     buttons[i].classList.remove('active');
-                        // }
-                        // event.target.classList.toggle('active');
                         if (activeDeadlineFilterButton === "futureFilter") setActiveDeadlineFilterButton("");
                         else setActiveDeadlineFilterButton("futureFilter");
                         let q = "$gt"
@@ -291,11 +245,6 @@ export default function ToDoView() {
 
                     <button className={activeDeadlineFilterButton==="anyDeadlineFilter" ? `${styles.deadlineButton} ${styles.active}` : 
                             styles.deadlineButton} id="anyDeadlineFilter" onClick={(event) => {
-                        // let buttons = document.getElementsByClassName(styles.deadlineButton);
-                        // for (let i = 0; i < buttons.length; i++) {
-                        //     buttons[i].classList.remove('active');
-                        // }
-                        // event.target.classList.toggle('active');
                         if (activeDeadlineFilterButton === "anyDeadlineFilter") setActiveDeadlineFilterButton("");
                         else setActiveDeadlineFilterButton("anyDeadlineFilter");
                         setQueryDeadline("");
@@ -311,17 +260,9 @@ export default function ToDoView() {
                             else newQuery["assignee"] = {"$in":queryAssignees};
                         }
                         
-                        // if (queryDeadline !== "") {
-                        //     newQuery["deadline"] = {queryDeadline: Date()}
-                        // }
-                        if (queryDeadline === "$gt") {
-                            newQuery["deadline"] = {"$gt": Date()}
-                        } else if (queryDeadline === "$eq") {
-                            newQuery["deadline"] = {"$eq": Date()}
-                        } else if (queryDeadline === "$lt") {
-                            newQuery["deadline"] = {"$lt": Date()}
-
-                        }
+                        if (queryDeadline === "$gt") newQuery["deadline"] = {"$gt": Date()}
+                        else if (queryDeadline === "$eq") newQuery["deadline"] = {"$eq": Date()}
+                        else if (queryDeadline === "$lt") newQuery["deadline"] = {"$lt": Date()}
                         
                         setQuery(newQuery);
                         setNewQuery({});
@@ -395,8 +336,7 @@ export default function ToDoView() {
                 else if (first > second) return 1;
                 else return 0;
             }).map((task, index) => (
-                /*<div className={styles.listItem} key={index}>*/
-                <div className={task.assignee === userID ? `${styles.listItem} ${styles.activeUser}` : styles.listItem}>
+                <div className={task.assignee === currUserID ? `${styles.listItem} ${styles.activeUser}` : styles.listItem}>
                     <div className={[styles.listColumn, styles.task].join(" ")}>
                         <p>{task.name}</p>
                     </div>
@@ -405,13 +345,7 @@ export default function ToDoView() {
                             <p>{titleCase(task.assigneeName)}</p>
                         </span>
                         <span className={styles.rotate}>
-                            <img id={task._id + 'Rotate'} src={task.rotate !== "none" ? rotateImage : blankImage} alt=" "></img> 
-                            {/* <script>
-                                if (rotatedTasks.includes(task._id)) {
-                                    document.getElementById(task._id+'Rotate').src = "https://iili.io/HnsuCps.png"
-                                    // document.getElementById(task._id+'Rotate').visibility = 'visible'
-                                }
-                            </script> */}
+                            <img id={task._id + 'Rotate'} src={task.rotate !== "none" ? rotateImage : blankImage} alt=" "></img>
                         </span>
                     </div>
                     <div className={[styles.listColumn, styles.deadline].join(" ")}>
@@ -420,8 +354,7 @@ export default function ToDoView() {
                     <span className={[styles.listColumn, styles.taskButtons].join(" ")}>
                         <span className={styles.taskButton}>
                             <img className={styles.editButton} id={task._id + 'Edit'} src="https://iili.io/HC8ZzHQ.png" width="18px" height="20px" onClick={(event) => {
-                                // console.log(tasks[index]);
-                                let endpoint = 'tasks/' + tasks[index]._id//task._id;
+                                let endpoint = 'tasks/' + tasks[index]._id;
                                 let task = api.get(endpoint).then(function(response) {
                                     setTaskToEdit(response.data.data);
                                     setShowEdit(true);
@@ -456,7 +389,6 @@ export default function ToDoView() {
                                 
                                 let taskToEdit = new_tasks[idx];
                                 taskToEdit.completed = !taskToEdit.completed;
-                                // console.log(taskToEdit.completed);
                                 if (taskToEdit.completed) {
                                     taskToEdit.assignee = "";
                                     taskToEdit.assigneeName = "unassigned"; // ??
@@ -490,9 +422,7 @@ export default function ToDoView() {
                 <div id="assigneesEdit">
                     {users.map((user, index) => (
                         <button className={activeAssigneeEditButton===user ? `${styles.assigneeButton} ${styles.active}` : 
-                        styles.assigneeButton} id={user} key={index} onClick={(event) => {
-                            // event.target.classList.toggle('active');
-                        
+                        styles.assigneeButton} id={user} key={index} onClick={(event) => {                        
                             let t = {...taskToEdit};
                             if (activeAssigneeEditButton === user) {
                                 t["assignee"] = null;
@@ -503,10 +433,6 @@ export default function ToDoView() {
                                 t["assigneeName"] = userNames[index];
                                 setActiveAssigneeEditButton(user);
                             }
-                            // let buttons = document.getElementsByClassName(styles.assigneeButton);
-                            // for (let i = 0; i < buttons.length; i++) {
-                            //     if (buttons[i].id !== event.target.id) buttons[i].classList.remove('active');
-                            // }
                             setTaskToEdit(t);
                         }}>{titleCase(userNames[index])}</button>
                     ))}
@@ -536,8 +462,7 @@ export default function ToDoView() {
                 <select id="selectRotationEdit" onChange={event => {
                     let t = {...taskToEdit}
                     t["rotate"] = event.target.value;
-                    setTaskToEdit(t);
-                    /*setRotation(event.target.value);*/}}>
+                    setTaskToEdit(t);}}>
                     <option value="none">None</option>
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
@@ -575,9 +500,7 @@ export default function ToDoView() {
                             }
                         }
 
-                        if (taskToEdit["assigneeName"] === undefined) {
-                            taskToEdit["assigneeName"] = "unassigned";
-                        }
+                        if (taskToEdit["assigneeName"] === undefined) taskToEdit["assigneeName"] = "unassigned";
 
                         let tt = {name: taskToEdit["name"], home: homeID};
                         if (taskToEdit["deadline"]) tt["deadline"] = taskToEdit["deadline"];
@@ -622,9 +545,7 @@ export default function ToDoView() {
                 <div id="assignees">
                     {users.map((user, index) => (
                         <button className={activeAssigneeCreateButton===user ? `${styles.assigneeButton} ${styles.active}` : 
-                        styles.assigneeButton} id={user} key={index} onClick={(event) => {
-                            // event.target.classList.toggle('active');
-                            
+                        styles.assigneeButton} id={user} key={index} onClick={(event) => {                           
                             let t = {...newTask};
                             if (activeAssigneeCreateButton === user) {
                                 t["assignee"] = null;
@@ -635,21 +556,6 @@ export default function ToDoView() {
                                 t["assigneeName"] = userNames[index];
                                 setActiveAssigneeCreateButton(user);
                             }
-
-                            // let t = {...newTask};
-                            // if (event.target.classList[1] === 'active') {
-                            //     t["assignee"] = user;
-                            //     t["assigneeName"] = userNames[index];
-                            // }
-                            // else {
-                            //     t["assignee"] = null;
-                            //     t["assigneeName"] = null;
-                            // }
-
-                            // let buttons = document.getElementsByClassName(styles.assigneeButton);
-                            // for (let i = 0; i < buttons.length; i++) {
-                            //     if (buttons[i].id !== event.target.id) buttons[i].classList.remove('active');
-                            // }
                             setNewTask(t);
                         }}>{titleCase(userNames[index])}</button>
                     ))}
@@ -678,8 +584,7 @@ export default function ToDoView() {
                 <select id="selectRotation" defaultValue="none" onChange={event => {
                     let t = {...newTask}
                     t["rotate"] = event.target.value;
-                    setNewTask(t);
-                    /*setRotation(event.target.value);*/}}>
+                    setNewTask(t);}}>
                     <option value="none">None</option>
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
@@ -748,7 +653,6 @@ export default function ToDoView() {
                                 setTasks(new_tasks);
                                 setNewTask({});
                                 setActiveAssigneeCreateButton("");
-                                // document.getElementById('titleRequired').visibility = "hidden";
                             })
                             .catch(function (error) {
                                 console.log(error);
@@ -757,7 +661,6 @@ export default function ToDoView() {
                             setShowCreate(false)
                         } else {
                             console.log('name required')
-                            // document.getElementById('titleRequired').visibility = "visible";
                         }}}>Create Task</button>
                 </div>
 

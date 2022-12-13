@@ -11,56 +11,28 @@ export default function Finances() {
 	const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
 
 	const [isLoading, setIsLoading] = useState(true);
+	const [currUser, setCurrUser] = useState({});
 	const [users, setUsers] = useState([]);
 	const [otherUsers, setOtherUsers] = useState([]);
-	const [currUser, setCurrUser] = useState({});
 	const [youOwe, setYouOwe] = useState([]);
 	const [owesYou, setOwesYou] = useState([]);
 	const [amount, setAmount] = useState(0);
 	const [activeAssigneeButton, setActiveAssigneeButton] = useState([]);
 	const [show, setShow] = useState(false);
-	const homeID = '639508e44c9f274f9cec2a85'
-	const userID = '639508e64c9f274f9cec2b23' 
+
+	// const homeID = '639508e44c9f274f9cec2a85'
+	const currUserID = '639508e64c9f274f9cec2b23' 
 	const api = axios.create({ baseURL: BASE_URL });
-
-	// const fetchData = async() => {
-	// 	try {
-	// 		let endpoint = 'homes/' + homeID;
-	// 		const homeGet = await api.get(endpoint);
-	// 		const members = homeGet.data.data.members;
-	// 		let query = {
-	// 			"_id": {
-	// 				"$in": members
-	// 			}
-	// 		}
-	// 		let p = {
-	// 			"params": {
-	// 				"where": JSON.stringify(query)
-	// 			}
-	// 		}
-	// 		const userGet = await api.get('users',p);
-	// 		setUsers(userGet.data.data);
-
-	// 		const isCurrUser = (element) => element._id === userID;
-	// 		let idx = users.findIndex(isCurrUser);
-	// 		setCurrUser(users[idx]);
-
-	// 		let others = [];
-	// 		for (let i = 0; i < users.length; i++) {
-	// 			if (i !== idx) others.push(users[i]);
-	// 		}
-	// 		setOtherUsers(others);
-
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// }
+	// let currUserID = sessionStorage.getItem("user");		UNCOMMENT
 
 	useEffect(() => {
 		const fetchData = async() => {
 			try {
-				let endpoint = 'homes/' + homeID;
-				const homeGet = await api.get(endpoint);
+                const currUserGet = await api.get('users/'+currUserID);
+                setCurrUser(currUserGet.data.data);
+				let homeID = currUserGet.data.data.home;
+
+				const homeGet = await api.get('homes/'+homeID);
 				const members = homeGet.data.data.members;
 				let query = {
 					"_id": {
@@ -72,18 +44,16 @@ export default function Finances() {
 						"where": JSON.stringify(query)
 					}
 				}
-				const userGet = await api.get('users',p);
-				setUsers(userGet.data.data);
-	
-				const isCurrUser = (element) => element._id === userID;
-				let idx = users.findIndex(isCurrUser);
-				setCurrUser(users[idx]);
-	
+				const usersGet = await api.get('users',p);
+				setUsers(usersGet.data.data);
+
 				let others = [];
-				for (let i = 0; i < users.length; i++) {
-					if (i !== idx) others.push(users[i]);
+				for (let i = 0; i < usersGet.data.data.length; i++) {
+					if (usersGet.data.data[i]._id !== currUserGet.data.data._id) others.push(usersGet.data.data[i]);
 				}
 				setOtherUsers(others);
+				
+				setOwes(currUserGet.data.data);	
 	
 			} catch (error) {
 				console.error(error);
@@ -91,17 +61,7 @@ export default function Finances() {
 		}
 			setIsLoading(true);
 			fetchData().then(() => {
-					setIsLoading(false);
-					setOwes(currUser);
-					// const isCurrUser = (element) => element._id === userID;
-					// let idx = users.findIndex(isCurrUser);
-					// setCurrUser(users[idx]);
-
-					// let others = [];
-					// for (let i = 0; i < users.length; i++) {
-					// 	if (i !== idx) others.push(users[i]);
-					// }
-					// setOtherUsers(others);					
+					setIsLoading(false);	
 			});
 	}, []);
 
@@ -151,7 +111,7 @@ export default function Finances() {
       </Head>
       <Navbar />
 			<div className={styles.pageContents}>
-        <h1>Finances</h1>
+        		<h1>Finances</h1>
 				<div className={styles.tables}>
 					<div className={styles.youOweTable}>
 						<div className={styles.listHeader}>
@@ -183,13 +143,14 @@ export default function Finances() {
 					</div>
 				</div>
 				<Modal title="Enter new expense" button="Submit" onClose={() => setShow(false)} show={show}>
-								<label htmlFor="amount">Amount</label>
-								<input type="number" className={styles.amountInput} onChange={event => {
-									setAmount(event.target.value);
-								}}></input>
-								<br></br>
+					<label htmlFor="amount">Amount</label>
+					<input type="number" className={styles.amountInput} onChange={event => {
+						setAmount(event.target.value);
+					}}></input>
+					<br></br>
+					<br></br>
 
-								<label htmlFor="assignees">Charge</label>
+					<label htmlFor="assignees">Charge</label>
                 <div id="assignees">
                     {otherUsers.map((user, index) => (
                         <button className={activeAssigneeButton.includes(user._id) ? `${styles.assigneeButton} ${styles.active}` : 
@@ -219,41 +180,37 @@ export default function Finances() {
 
                 <div className={styles.submitButtons}>
                     <button className={styles.modalButton} onClick={() => {
-											let u = {...currUser};
-											let ids = [];
-											if (activeAssigneeButton.length === 1 && activeAssigneeButton[0] === "everyone") {
-												for (let i = 0; i < otherUsers.length; i++) {
-													ids.push(otherUsers[i]._id);
-												}
-											} else {
-												ids = [...activeAssigneeButton];
-											}
+						let u = {...currUser};
+						let ids = [];
+						if (activeAssigneeButton.length === 1 && activeAssigneeButton[0] === "everyone") {
+							for (let i = 0; i < otherUsers.length; i++) {
+								ids.push(otherUsers[i]._id);
+							}
+						} else {
+							ids = [...activeAssigneeButton];
+						}
 
-											for (let i = 0; i < ids.length; i++) {
-												// let user = getUser(ids[i]);
-												// let idx = findDebtIdx(user.debts);
-												// if (idx !== -1) user.debts[idx].amount += amount;
-												// else user.debts.push({user: currUser._id, amount: amount})
-												let idx = findDebtIdx(u.debts,ids[i]);
-												if (idx !== -1) u.debts[idx].amount += -amount;
-												else u.debts.push({user: ids[i], amount: -amount});
-											}
-											console.log(u);
+						for (let i = 0; i < ids.length; i++) {
+							let idx = findDebtIdx(u.debts,ids[i]);
+							if (idx !== -1) u.debts[idx].amount += -amount;
+							else u.debts.push({user: ids[i], amount: -amount});
+						}
+						console.log(u);
 
-											let endpoint = 'users/' + u._id;
-											api.put(endpoint,u)
-											.then(function(response) {
-												setCurrUser(u);
-												setOwes(u);
-											})
-											.catch(function(error) {
-												console.log(error);
-											})
-										
+						let endpoint = 'users/' + u._id;
+						api.put(endpoint,u)
+						.then(function(response) {
+							setCurrUser(u);
+							setOwes(u);
+						})
+						.catch(function(error) {
+							console.log(error);
+						})
+					
 
-											setAmount(0);
-											setActiveAssigneeButton([]);      
-                      setShow(false)}}>Submit</button>
+						setAmount(0);
+						setActiveAssigneeButton([]);      
+                    setShow(false)}}>Submit</button>
                 </div>
 
             </Modal>
