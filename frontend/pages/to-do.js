@@ -47,35 +47,38 @@ export default function ToDoView() {
         const fetchData = async() => {
             try {
                 if (typeof window !== 'undefined') currUserID = window.sessionStorage.getItem("userID");
-                if (currUserID === "undefined" || currUserID == null) router.push('/login');    
+                console.log(currUserID);
+                if (currUserID === "undefined" || currUserID == null) {
+                    router.push('/login');
+                } else {
+                    const currUserGet = await api.get('users/'+currUserID);
+                    setCurrUser(currUserGet.data.data);
 
-                const currUserGet = await api.get('users/'+currUserID);
-                setCurrUser(currUserGet.data.data);
+                    let homeID = currUserGet.data.data.home;
 
-                let homeID = currUserGet.data.data.home;
-
-                query["home"] = homeID;
-                let p = {
-                    "params": {
-                        "where": JSON.stringify(query)
+                    query["home"] = homeID;
+                    let p = {
+                        "params": {
+                            "where": JSON.stringify(query)
+                        }
                     }
-                }
-    
-                const task_get = await api.get('tasks', p);
-                setTasks(task_get.data.data);
-    
-                const home_get = await api.get('homes/'+homeID);
-                setHome(home_get.data.data);
+        
+                    const task_get = await api.get('tasks', p);
+                    setTasks(task_get.data.data);
+        
+                    const home_get = await api.get('homes/'+homeID);
+                    setHome(home_get.data.data);
 
-                const usersGet = await api.get('users',p);
-                let u = [];
-                let un = [];
-                for (let i = 0; i < usersGet.data.data.length; i++) {
-                    u.push(usersGet.data.data[i]._id);
-                    un.push(usersGet.data.data[i].name);
+                    const usersGet = await api.get('users',p);
+                    let u = [];
+                    let un = [];
+                    for (let i = 0; i < usersGet.data.data.length; i++) {
+                        u.push(usersGet.data.data[i]._id);
+                        un.push(usersGet.data.data[i].name);
+                    }
+                    setUsers(u);
+                    setUserNames(un)
                 }
-                setUsers(u);
-                setUserNames(un)
             } catch (error) {
                 console.error(error);
             }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import NavLink from './NavLink'
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Avatar from '@mui/material/Avatar';
 import { Menu, MenuItem, IconButton } from '@mui/material'
@@ -13,6 +14,7 @@ import styles from '../styles/Navbar.module.css'
 
 const BASE_URL = 'https://gsk-final-project-api.herokuapp.com/api/';
 const API = axios.create({ baseURL: BASE_URL });
+// const router = useRouter();
 
 // cite: https://mui.com/material-ui/react-avatar/
 function stringAvatar(name, color) {
@@ -28,7 +30,7 @@ function stringAvatar(name, color) {
 
 
 export default function Navbar() {
-	const userID = "63952f07f77a950017fe9466";
+	let currUserID = null;
 
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [user, setUser] = useState(null)
@@ -41,11 +43,13 @@ export default function Navbar() {
 	};
 
 	const fetchData = async () => {
-		const res = await API.get(`users/${userID}`);
+		const res = await API.get(`users/${currUserID}`);
 		setUser(res.data.data);
 	}
 
 	useEffect(() => {
+		if (typeof window !== 'undefined') currUserID = window.sessionStorage.getItem("userID");
+        // if (currUserID === "undefined" || currUserID == null) router.push('/login');    
 		fetchData();
 	}, []);
 
@@ -67,7 +71,6 @@ export default function Navbar() {
 				</div>
 
 				<div className={styles.userBox}>
-					{/* handle login authentication here -> if no user logged in show log in button instead */}
 					<div className={styles.bars}>
 						<IconButton
 							aria-label="more"
@@ -99,9 +102,20 @@ export default function Navbar() {
 						{/* <MenuItem onClick={handleCloseMenu}><Link href="/analytics">Analytics</Link></MenuItem> */}
 					</Menu>
 
-					<Link href="/login">
-						<Avatar {...stringAvatar(user ? user.name : null, user ? user.color : 'gray')} />
-					</Link>
+					{currUserID == "undefined" || currUserID == null ? 
+						(<div className={styles.accountButtons}>
+							<Link href="/login" className={styles.accountButton} onClick={(event) => {
+								window.sessionStorage.removeItem("userID");
+							}}>Logout</Link>
+							{/* <Link href="/login" className={styles.accountButton}> */}
+							<div className={styles.accountButton}>
+								<Avatar {...stringAvatar(user ? user.name : null, user ? user.color : 'gray')} />
+							</div>
+							{/* </Link> */}
+						</div>) : 
+						(<div className={styles.accountButtons}>
+							<Link href="/login" className={styles.accountButton}>Login</Link>
+						</div>)}
 				</div>
 			</div>
 		</>

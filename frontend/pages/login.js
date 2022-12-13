@@ -13,6 +13,8 @@ export default function NameForm() {
   const [error, setError] = useState('');
   const [query, setQuery] = useState({});
   const router = useRouter();
+  
+  // console.log("fjieowjfoiwjfioJiofjwiowejiof")
 
 
   const handleEmailChange = (event) => {
@@ -37,8 +39,9 @@ export default function NameForm() {
         "where": JSON.stringify(query)
       }
     }
-    console.log(p);
+    // console.log("HI")
     const user_get = await api.get("/users", p).then(function (response) {
+      // console.log(response);
       // console.log(response.data.data[0]._id)
 
       if (response.data.data.length == 1) {
@@ -52,6 +55,7 @@ export default function NameForm() {
       }
     }
     ).catch(error => {
+      console.log(p);
       setError(error.message);
     })
   }
