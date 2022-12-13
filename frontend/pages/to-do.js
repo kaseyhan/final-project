@@ -7,8 +7,8 @@ import Modal from "../components/modal";
 import styles from '../styles/to-do.module.css'
 
 export default function ToDoView() {
-    // const BASE_URL = "http://localhost:4000/api";
-    const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
+    const BASE_URL = "http://localhost:4000/api";
+    // const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
 
     const [isLoading, setIsLoading] = useState(true);
     const [currUser, setCurrUser] = useState({});
@@ -27,6 +27,7 @@ export default function ToDoView() {
     const [showFilter, setShowFilter] = useState(false);
     const [newTask, setNewTask] = useState({});
     const [taskToEdit, setTaskToEdit] = useState({});
+    // const [completedTasks, setCompletedTasks] = useState([]);
     const [activeStatusFilterButton, setActiveStatusFilterButton] = useState("");
     const [activeAssigneeFilterButton, setActiveAssigneeFilterButton] = useState([]);
     const [activeDeadlineFilterButton, setActiveDeadlineFilterButton] = useState("");
@@ -37,6 +38,8 @@ export default function ToDoView() {
     const currUserID = '639508e64c9f274f9cec2b23'
     const blankImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII='
     const rotateImage = "https://iili.io/HnsuCps.png";
+    const uncheckedImage = "https://iili.io/HoB1ha1.png";
+    const checkedImage = "https://iili.io/HoB1wyg.png";
     const api = axios.create({ baseURL: BASE_URL });
 
     // let currUserID = sessionStorage.getItem("user");           UNCOMMENT
@@ -58,6 +61,14 @@ export default function ToDoView() {
     
                 const task_get = await api.get('tasks', p);
                 setTasks(task_get.data.data);
+
+                // let c = [];
+                // for (let i = 0; i < task_get.data.data.length; i++) {
+                //     if (task_get.data.data[i].completed) c.push(true);
+                //     else c.push(false);
+                // }
+                // console.log(c);
+                // setCompletedTasks(c);
     
                 const home_get = await api.get('homes/'+homeID);
                 setHome(home_get.data.data);
@@ -91,7 +102,7 @@ export default function ToDoView() {
             }
             );
         } else {
-            return "EMPTY"
+            return "Unassigned"
         }
       }
 
@@ -379,7 +390,8 @@ export default function ToDoView() {
                             }}></img>
                         </span>
                         <span className={styles.taskButton}>
-                            <img className={styles.checkButton} id={task._id + 'Check'} src="https://iili.io/HC8LA7V.png" width="20px" height="20px" onClick={(event) => {
+                            <img className={styles.checkButton} id={task._id + 'Check'} src={task.completed ? checkedImage : uncheckedImage} width="20px" height="20px" onClick={(event) => {
+                                console.log(tasks);
                                 let taskToEditID = task._id;
                                 let endpoint = 'tasks/' + taskToEditID;
 
@@ -390,16 +402,22 @@ export default function ToDoView() {
                                 let taskToEdit = new_tasks[idx];
                                 taskToEdit.completed = !taskToEdit.completed;
                                 if (taskToEdit.completed) {
-                                    taskToEdit.assignee = "";
-                                    taskToEdit.assigneeName = "unassigned"; // ??
+                                    // taskToEdit.assignee = "";
+                                    // taskToEdit.assigneeName = "unassigned"; // ??
+                                    delete taskToEdit.assignee;
+                                    delete taskToEdit.assigneeName;
                                 }
 
                                 api.put(endpoint, taskToEdit).then(function(response) {
                                     let x = new_tasks.splice(idx,1);
                                     new_tasks.push(taskToEdit);
-                                    if (taskToEdit.completed) event.target.src = "https://iili.io/HniDgnV.png";
-                                    else event.target.src = "https://iili.io/HC8LA7V.png";
                                     setTasks(new_tasks);
+                                    // if (taskToEdit.completed) event.target.src = checkedImage;
+                                    // else event.target.src = uncheckedImage;
+                                    // let c = [...completedTasks]
+                                    // if (taskToEdit.completed) c[tasks.indexOf(task)] = true;
+                                    // else c[tasks.indexOf(task)] = false;
+                                    // setCompletedTasks(c);
                                 }).catch(function(error) {
                                     console.log(error);
                                 })
@@ -500,14 +518,15 @@ export default function ToDoView() {
                             }
                         }
 
-                        if (taskToEdit["assigneeName"] === undefined) taskToEdit["assigneeName"] = "unassigned";
+                        // if (taskToEdit["assigneeName"] === undefined) taskToEdit["assigneeName"] = "unassigned";
 
-                        let tt = {name: taskToEdit["name"], home: homeID};
+                        let tt = {name: taskToEdit["name"], home: currUser.home};
                         if (taskToEdit["deadline"]) tt["deadline"] = taskToEdit["deadline"];
                         if (taskToEdit["rotate"]) tt["rotate"] = taskToEdit["rotate"];
                         if (taskToEdit["assignee"]) tt["assignee"] = taskToEdit["assignee"];
                         else tt["assignee"] = "";
                         if (taskToEdit["assigneeName"] && taskToEdit["assigneeName"] !== "unassigned") tt["assigneeName"] = taskToEdit["assigneeName"];
+                        else tt["assigneeName"] = "unassigned";
                         if (taskToEdit["notes"]) tt["notes"] = taskToEdit["notes"];
 
                         let endpoint = 'tasks/' + taskToEdit._id;
@@ -520,6 +539,7 @@ export default function ToDoView() {
                             new_tasks.push(response.data.data);
                             setTasks(new_tasks);
                             setTaskToEdit({});
+                            setActiveAssigneeEditButton("");
                           })
                           .catch(function (error) {
                             console.log(error.response.data);

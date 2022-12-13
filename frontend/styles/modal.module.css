@@ -22,7 +22,7 @@ body {
   visibility: visible;
   position: fixed;
   z-index:9999;
-  top : 200px;
+  top : 160px;
   left:0;
   right:0;
     /* bottom:0; */
