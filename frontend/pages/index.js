@@ -71,9 +71,10 @@ const ItemCard = ({ id, title, color, isTask, isClickable }) => {
 };
 
 export default function Home() {
-  const userID = "63952f07f77a950017fe9466";
+  // const userID = "63952f07f77a950017fe9466";
   const router = useRouter();
 
+  const [userID, setUserID] = useState(null);
   const [toDoData, setToDoData] = useState(null);
   const [announcementsData, setAnnouncementsData] = useState(null);
   const [eventsData, setEventsData] = useState(null);
@@ -86,7 +87,7 @@ export default function Home() {
 
   const fetchData = async () => {
     try {
-      console.log(window.sessionStorage.getItem("userID"))
+      // console.log(window.sessionStorage.getItem("userID"))
       const res = await API.get(`users/${userID}`);
       if (res) {
         let data = res.data.data;
@@ -95,12 +96,14 @@ export default function Home() {
         setUserData(data);
 
         // get announcements
-        API.get(`homes/${homeID}`)
-          .then(response => {
-            setAnnouncementsData(response.data.data.announcements);
-            setHomeData(response.data.data);
-          })
-          .catch(error => console.error(error));
+        if (homeID && homeID !== 'none') {
+          API.get(`homes/${homeID}`)
+            .then(response => {
+              setAnnouncementsData(response.data.data.announcements);
+              setHomeData(response.data.data);
+            })
+            .catch(error => console.error(error));
+        }
 
         // get to-do tasks
         let toDoTasks = [];
@@ -126,13 +129,26 @@ export default function Home() {
   }
 
   useEffect(() => {
-    setIsLoading(true);
-    fetchData();
-    setIsLoading(false);
-  }, []);
+    if (typeof window !== 'undefined') {
+      var id = window.sessionStorage.getItem("userID");
+
+      if (!id || id === 'undefined') {
+        router.push('/login');
+      } else {
+        setUserID(id);
+        setIsLoading(true);
+        fetchData();
+        setIsLoading(false);
+      }
+    }
+  }, [userID]);
 
   const openModal = () => {
-    setShowModal(true);
+    if (!homeData) {
+      alert("You can't make an announcement if you're not part of a house!")
+    } else {
+      setShowModal(true);
+    }
   }
 
   const closeModal = () => {
@@ -144,22 +160,24 @@ export default function Home() {
   }
 
   const handleSubmit = (data) => {
-    setIsLoading(true);
+    if (homeData) {
+      setIsLoading(true);
 
-    setNewAnnouncement(data)
-    let updatedAnnouncements = [...announcementsData, newAnnouncement];
-    let params = {
-      "name": homeData.name,
-      "password": homeData.password,
-      "announcements": updatedAnnouncements
+      setNewAnnouncement(data)
+      let updatedAnnouncements = [...announcementsData, newAnnouncement];
+      let params = {
+        "name": homeData.name,
+        "password": homeData.password,
+        "announcements": updatedAnnouncements
+      }
+      API.put(`homes/${homeData._id}`, params)
+        .then(response => {
+          setAnnouncementsData(updatedAnnouncements);
+        })
+        .catch(error => console.error(error));
+
+      setIsLoading(false);
     }
-    API.put(`homes/${homeData._id}`, params)
-      .then(response => {
-        setAnnouncementsData(updatedAnnouncements);
-      })
-      .catch(error => console.error(error));
-
-    setIsLoading(false);
     closeModal();
   }
 
