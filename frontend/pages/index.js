@@ -5,9 +5,9 @@ import { FaPlus } from 'react-icons/fa'
 import { Checkbox, Card, Typography, CircularProgress, IconButton } from '@mui/material'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import styles from '../styles/Home.module.css'
 import { FaCreativeCommonsSamplingPlus } from 'react-icons/fa'
 import AnnouncementModal from '../components/AnnouncementModal'
+import styles from '../styles/Home.module.css'
 
 const BASE_URL = 'https://gsk-final-project-api.herokuapp.com/api/';
 const API = axios.create({ baseURL: BASE_URL });

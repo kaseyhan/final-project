@@ -98,7 +98,7 @@
 .toDoContainer:hover,
 .eventsContainer:hover {
   cursor: pointer;
-  background-color: antiquewhite;
+  background-color: #faebd7;
 }
 
 .announcementsContainer {
