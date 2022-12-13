@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Layout from '../components/layout';
 import Navbar from '../components/Navbar'
+import { useRouter } from 'next/router'
 import axios from 'axios'
 import React, {useState, useEffect} from 'react'
 import Modal from "../components/modal";
@@ -9,6 +10,7 @@ import styles from '../styles/finances.module.css'
 export default function Finances() {
 	// const BASE_URL = "http://localhost:4000/api";
 	const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
+    const router = useRouter();
 
 	const [isLoading, setIsLoading] = useState(true);
 	const [currUser, setCurrUser] = useState({});
@@ -20,14 +22,15 @@ export default function Finances() {
 	const [activeAssigneeButton, setActiveAssigneeButton] = useState([]);
 	const [show, setShow] = useState(false);
 
-	// const homeID = '639508e44c9f274f9cec2a85'
-	const currUserID = '639508e64c9f274f9cec2b23' 
+	let currUserID = null;
 	const api = axios.create({ baseURL: BASE_URL });
-	// let currUserID = sessionStorage.getItem("user");		UNCOMMENT
 
 	useEffect(() => {
 		const fetchData = async() => {
 			try {
+				if (typeof window !== 'undefined') currUserID = window.sessionStorage.getItem("userID");
+                if (currUserID === "undefined" || currUserID == null) router.push('/login');    
+
                 const currUserGet = await api.get('users/'+currUserID);
                 setCurrUser(currUserGet.data.data);
 				let homeID = currUserGet.data.data.home;

@@ -1,14 +1,16 @@
 import Head from 'next/head';
 import Layout from '../components/layout';
 import Navbar from '../components/Navbar'
+import { useRouter } from 'next/router'
 import axios from 'axios'
 import React, {useState, useEffect} from 'react'
 import Modal from "../components/modal";
 import styles from '../styles/to-do.module.css'
 
 export default function ToDoView() {
-    const BASE_URL = "http://localhost:4000/api";
-    // const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
+    // const BASE_URL = "http://localhost:4000/api";
+    const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
+    const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(true);
     const [currUser, setCurrUser] = useState({});
@@ -27,26 +29,26 @@ export default function ToDoView() {
     const [showFilter, setShowFilter] = useState(false);
     const [newTask, setNewTask] = useState({});
     const [taskToEdit, setTaskToEdit] = useState({});
-    // const [completedTasks, setCompletedTasks] = useState([]);
     const [activeStatusFilterButton, setActiveStatusFilterButton] = useState("");
     const [activeAssigneeFilterButton, setActiveAssigneeFilterButton] = useState([]);
     const [activeDeadlineFilterButton, setActiveDeadlineFilterButton] = useState("");
     const [activeAssigneeEditButton, setActiveAssigneeEditButton] = useState("");
     const [activeAssigneeCreateButton, setActiveAssigneeCreateButton] = useState("");
 
-    // const homeID = '639508e44c9f274f9cec2a85'
-    const currUserID = '639508e64c9f274f9cec2b23'
     const blankImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII='
     const rotateImage = "https://iili.io/HnsuCps.png";
     const uncheckedImage = "https://iili.io/HoB1ha1.png";
     const checkedImage = "https://iili.io/HoB1wyg.png";
     const api = axios.create({ baseURL: BASE_URL });
 
-    // let currUserID = sessionStorage.getItem("user");           UNCOMMENT
+    let currUserID = null;
 
     useEffect(() => {
         const fetchData = async() => {
             try {
+                if (typeof window !== 'undefined') currUserID = window.sessionStorage.getItem("userID");
+                if (currUserID === "undefined" || currUserID == null) router.push('/login');    
+
                 const currUserGet = await api.get('users/'+currUserID);
                 setCurrUser(currUserGet.data.data);
 
@@ -61,14 +63,6 @@ export default function ToDoView() {
     
                 const task_get = await api.get('tasks', p);
                 setTasks(task_get.data.data);
-
-                // let c = [];
-                // for (let i = 0; i < task_get.data.data.length; i++) {
-                //     if (task_get.data.data[i].completed) c.push(true);
-                //     else c.push(false);
-                // }
-                // console.log(c);
-                // setCompletedTasks(c);
     
                 const home_get = await api.get('homes/'+homeID);
                 setHome(home_get.data.data);
@@ -402,8 +396,6 @@ export default function ToDoView() {
                                 let taskToEdit = new_tasks[idx];
                                 taskToEdit.completed = !taskToEdit.completed;
                                 if (taskToEdit.completed) {
-                                    // taskToEdit.assignee = "";
-                                    // taskToEdit.assigneeName = "unassigned"; // ??
                                     delete taskToEdit.assignee;
                                     delete taskToEdit.assigneeName;
                                 }
@@ -412,12 +404,6 @@ export default function ToDoView() {
                                     let x = new_tasks.splice(idx,1);
                                     new_tasks.push(taskToEdit);
                                     setTasks(new_tasks);
-                                    // if (taskToEdit.completed) event.target.src = checkedImage;
-                                    // else event.target.src = uncheckedImage;
-                                    // let c = [...completedTasks]
-                                    // if (taskToEdit.completed) c[tasks.indexOf(task)] = true;
-                                    // else c[tasks.indexOf(task)] = false;
-                                    // setCompletedTasks(c);
                                 }).catch(function(error) {
                                     console.log(error);
                                 })
@@ -517,8 +503,6 @@ export default function ToDoView() {
                                 taskToEdit["deadline"] = currentDate + "T" + taskToEdit["deadlineTime"] + ":00";
                             }
                         }
-
-                        // if (taskToEdit["assigneeName"] === undefined) taskToEdit["assigneeName"] = "unassigned";
 
                         let tt = {name: taskToEdit["name"], home: currUser.home};
                         if (taskToEdit["deadline"]) tt["deadline"] = taskToEdit["deadline"];
