@@ -61,9 +61,9 @@ export default function Navbar() {
 					<NavLink name="My Home" href="/" icon='/assets/house-user.svg' />
 					<NavLink name="To-Do" href="/to-do" icon='/assets/list-ul.svg' />
 					<NavLink name="Calendar" href="/calendar" icon='/assets/schedule.svg' />
-					<NavLink name="Chat" href="/chat" icon='/assets/comments-alt.svg' />
+					{/* <NavLink name="Chat" href="/chat" icon='/assets/comments-alt.svg' /> */}
 					<NavLink name="Finances" href="/finances" icon='/assets/dollar-alt.svg' />
-					<NavLink name="Analytics" href="/analytics" icon='/assets/chart-line.svg' />
+					{/* <NavLink name="Analytics" href="/analytics" icon='/assets/chart-line.svg' /> */}
 				</div>
 
 				<div className={styles.userBox}>
@@ -94,9 +94,9 @@ export default function Navbar() {
 						<MenuItem onClick={handleCloseMenu}><Link href="/">My Home</Link></MenuItem>
 						<MenuItem onClick={handleCloseMenu}><Link href="/to-do">To-Do</Link></MenuItem>
 						<MenuItem onClick={handleCloseMenu}><Link href="/calendar">Calendar</Link></MenuItem>
-						<MenuItem onClick={handleCloseMenu}><Link href="/chat">Chat</Link></MenuItem>
+						{/* <MenuItem onClick={handleCloseMenu}><Link href="/chat">Chat</Link></MenuItem> */}
 						<MenuItem onClick={handleCloseMenu}><Link href="/finances">Finances</Link></MenuItem>
-						<MenuItem onClick={handleCloseMenu}><Link href="/analytics">Analytics</Link></MenuItem>
+						{/* <MenuItem onClick={handleCloseMenu}><Link href="/analytics">Analytics</Link></MenuItem> */}
 					</Menu>
 
 					<Link href="/login">
