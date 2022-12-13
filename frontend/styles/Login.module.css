@@ -1,3 +1,27 @@
+.header {
+    position: fixed;
+    background: #dce6dd;
+    width: 100vw;
+    height: 125px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 25px 50px;
+    z-index: 10;
+    top: 0;
+    /* border-bottom: black 3px solid; */
+    box-shadow: 0 2px 2px -2px rgba(0, 0, 0, .2);
+    text-align: center;
+}
+
+.logobox {
+    background-color: white;
+    padding: 10px;
+    border-color: black;
+    border-width: 2px;
+}
+
 .container {
     display: flex;
     background-color: #69906b;
@@ -12,9 +36,15 @@
     vertical-align: middle;
     font-size: 40;
     margin: auto;
+    display:flex;
+    align-items: flex-end;
 }
 .body {
-    place-items: center;
+    position: absolute;
+    margin-top: 25%;
+    margin-left: 50%;
+    transform: translate(-50%, -50%);
+
 }
 .button {
     background-color: #dce6dd;
@@ -30,3 +60,4 @@
     margin: 10px;
 
 }
+
