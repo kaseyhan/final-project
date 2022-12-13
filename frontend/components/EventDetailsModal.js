@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { RxCross1 } from 'react-icons/rx'
+import { FaRegTrashAlt, FaRegSave } from 'react-icons/fa'
 import {
   TextField,
   IconButton,
@@ -32,7 +33,7 @@ const FormItem = ({ title, defaultValue, numRows, id, type, handleFormChange }) 
             onChange={event => handleSelect(event, id)}
             inputProps={{ 'aria-label': 'Without label' }}
             fullWidth
-            style={{width: '10vw'}}
+            style={{ width: '10vw' }}
           >
             <MenuItem value={'none'}>None</MenuItem>
             <MenuItem value={'daily'}>Daily</MenuItem>
@@ -59,6 +60,20 @@ const FormItem = ({ title, defaultValue, numRows, id, type, handleFormChange }) 
   )
 }
 
+// const ConfirmationModal = () => {
+//   return (
+//     <div
+//       className={styles.modalContainer}
+//       style={{ 
+//         zIndex: 20, 
+//         backgroundColor: 'white',
+//         position: 'absolute' 
+//       }}>
+//       TETETETETE
+//     </div>
+//   )
+// }
+
 export default function EventDetailsModal({ handleSubmit, closeModal, eventData, handleDelete }) {
   const [newEventDetails, setNewEventDetails] = useState({
     title: eventData.title,
@@ -70,15 +85,18 @@ export default function EventDetailsModal({ handleSubmit, closeModal, eventData,
     notes: eventData.notes,
     repeat: eventData.repeat,
     color: eventData.color
-  })
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  // const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+
 
   const handleFormChange = (event, param) => {
     if (param === 'date') {
       let oldTime = newEventDetails.start.toLocaleTimeString('en-US', { hour12: false });
 
       let newStartDate = new Date(`${event.target.value} ${oldTime}`);
-      let newEndDate = new Date(newStartDate.getTime() + 60*60*1000);
-      
+      let newEndDate = new Date(newStartDate.getTime() + 60 * 60 * 1000);
+
       setNewEventDetails(newEventDetails => ({
         ...newEventDetails,
         start: newStartDate,
@@ -106,8 +124,6 @@ export default function EventDetailsModal({ handleSubmit, closeModal, eventData,
     }
   }
 
-  const [isLoading, setIsLoading] = useState(false);
-
   const handleSubmitEvent = data => {
     setIsLoading(true);
     handleSubmit(data);
@@ -126,7 +142,11 @@ export default function EventDetailsModal({ handleSubmit, closeModal, eventData,
     <div className={styles.dimBackground}>
       {isLoading
         ? <CircularProgress />
-        : <div className={styles.modalContainer}>
+        : <div
+          className={styles.modalContainer}
+          style={{
+            // backgroundColor: showConfirmationModal ? 'rgba(0, 0, 0, 0.3)' : '',
+          }}>
           <IconButton onClick={closeModal} style={{
             position: 'absolute',
             top: 0,
@@ -198,15 +218,18 @@ export default function EventDetailsModal({ handleSubmit, closeModal, eventData,
             </div>
           </div>
           <div className={styles.row} style={{ paddingTop: '35px', width: '60%' }}>
-            <Button onClick={() => handleSubmitEvent(newEventDetails)} color='success' variant='contained' style={{ margin: 'auto' }}>
-              <Typography>Save Changes</Typography>
-            </Button>
             <Button onClick={() => handleDeleteEvent(newEventDetails)} variant='contained' color='error' style={{ margin: 'auto' }}>
               <Typography>Delete Event</Typography>
+              <FaRegTrashAlt style={{ marginLeft: '10px' }} />
+            </Button>
+            <Button onClick={() => handleSubmitEvent(newEventDetails)} color='success' variant='contained' style={{ margin: 'auto' }}>
+              <Typography>Save Changes</Typography>
+              <FaRegSave style={{ marginLeft: '10px' }} />
             </Button>
           </div>
         </div>
       }
+      {/* {showConfirmationModal && <ConfirmationModal />} */}
     </div>
   )
 }

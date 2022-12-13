@@ -120,7 +120,6 @@ export default function CreateEventModal({ handleCreate, closeModal }) {
   const handleCreateEvent = data => {
     // data validation
     if (!data.title || !data.start || !data.end) {
-      console.log(data)
       setIsValid(false);
     } else {
       setIsLoading(true);
@@ -183,13 +182,13 @@ export default function CreateEventModal({ handleCreate, closeModal }) {
             <div className={styles.row}>
               <FormItem
                 title="Guests"
-                numRows={4}
+                numRows={2}
                 id="guests"
                 handleFormChange={handleFormChange}
               />
               <FormItem
                 title="Notes"
-                numRows={4}
+                numRows={2}
                 id="notes"
                 handleFormChange={handleFormChange}
               />
