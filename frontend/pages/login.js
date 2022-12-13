@@ -25,7 +25,7 @@ export default function NameForm() {
 
   const handleClick = async (event) => {
     event.preventDefault();
-    if (loginEmail.lenght == 0 || loginPassword.length == 0) {
+    if (loginEmail.length == 0 || loginPassword.length == 0) {
       setError("Please enter an email and a password to attempt to login.");
       return;
     }
@@ -37,8 +37,14 @@ export default function NameForm() {
         "where": JSON.stringify(query)
       }
     }
+    console.log(p);
     const user_get = await api.get("/users", p).then(function (response) {
+      // console.log(response.data.data[0]._id)
+
       if (response.data.data.length == 1) {
+        // console.log(response);
+        // console.log(response.data.data[0]._id);
+        window.sessionStorage.setItem("userID", response.data.data[0]._id)
         router.push('/');
 
       } else {
@@ -49,6 +55,7 @@ export default function NameForm() {
       setError(error.message);
     })
   }
+
 
   const goToRegister = async (event) => {
     router.push('/register');
@@ -61,7 +68,7 @@ export default function NameForm() {
       </div>
       <form className={styles.body}>
         <div className={styles.container} name="login-container">
-          <h2>Login Below!</h2>
+          <h2 className={styles.h2}>Login Below!</h2>
           <div className={styles.child}>
             <label><b>Email: </b></label>
             <input className={styles.input} type="text" placeholder="Enter Email" name="email" value={loginEmail} onChange={handleEmailChange} required />
@@ -70,11 +77,12 @@ export default function NameForm() {
             <label ><b>Password: </b></label>
             <input className={styles.input} type="password" placeholder="Enter Password" name="psw" value={loginPassword} onChange={handlePasswordChange} required />
           </div>
+
           <div className={styles.child}>
             <button onClick={handleClick} className={styles.button}>Login</button>
           </div>
           <div className={styles.child}>
-            <button type="newuser" id="registerRoute" className={styles.button} onClick={goToRegister}>Make an Account</button>
+            <button type="newuser" id="registerRoute" className={styles.button} onClick={goToRegister}>Register a New User</button>
           </div>
           {error && (
             <p>

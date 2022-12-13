@@ -43,9 +43,10 @@ export default function registerPage() {
       query["home"] = newHome;
     }
     const res = await api.post('/users', query).then(function (response) {
-      console.log(response);
+      // console.log(response);
+      // console.log(response.data.data._id);
       if (response.status == 200 || response.status == 201) {
-        console.log("success");
+        window.sessionStorage.setItem("userID", response.data.data._id)
         router.push('/');
       } else {
         setError("There was an error");
@@ -53,7 +54,7 @@ export default function registerPage() {
     }
     ).catch(error => {
       console.log(error);
-      setError(error.response.data.message);
+      // setError(error.response.data.message);
     }
     )
   }
@@ -70,7 +71,7 @@ export default function registerPage() {
 
       <form className={styles.body}>
         <div className={styles.container} name="register-container">
-          <h2>Create a new user.</h2>
+          <h2>Create a New User.</h2>
           <div className={styles.child}>
             <label><b>Name: </b></label>
             <input type="text" placeholder="Enter Name" name="email" value={newName} onChange={handleNameChange} required />
@@ -88,10 +89,10 @@ export default function registerPage() {
             <input type="home" placeholder="Enter HomeID" value={newHome} onChange={handleHomeChange} />
           </div>
           <div className={styles.child}>
-            <button onClick={handleClick} className={styles.button} onClick={goToLogin}>Go Back to Login Page</button>
+            <button type="newuser" onClick={handleClick} className={styles.button}>Create Account</button>
           </div>
           <div className={styles.child}>
-            <button type="newuser" onClick={handleClick} className={styles.button}>Create Account</button>
+            <button className={styles.button} onClick={goToLogin}>Go Back to Login Page</button>
           </div>
           {error && (
             <p>
