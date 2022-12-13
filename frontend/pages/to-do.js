@@ -635,7 +635,7 @@ export default function ToDoView() {
                             if (newTask["deadline"] !== null && newTask["deadline"] !== undefined) {
                                 tt = {
                                     name: newTask["name"],
-                                    home: homeID,
+                                    home: currUser.home,
                                     deadline: newTask["deadline"],
                                     rotate: newTask["rotate"],
                                     assignee: newTask["assignee"],
@@ -645,7 +645,7 @@ export default function ToDoView() {
                             } else {
                                 tt = {
                                     name: newTask["name"],
-                                    home: homeID,
+                                    home: currUser.home,
                                     rotate: newTask["rotate"],
                                     assignee: newTask["assignee"],
                                     assigneeName: newTask["assigneeName"],
