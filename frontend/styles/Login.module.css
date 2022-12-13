@@ -1,0 +1,32 @@
+.container {
+    display: flex;
+    background-color: #69906b;
+    width: 500px;
+    height: 400px;
+    flex-wrap: wrap;
+    border-radius: 10%;
+    align-items: center;
+    justify-content: center;
+    place-items: center;
+    color: #ffffff;
+    vertical-align: middle;
+    font-size: 40;
+    margin: auto;
+}
+.body {
+    place-items: center;
+}
+.button {
+    background-color: #dce6dd;
+    border: none;
+    color: #221c42;
+    padding: 25px 20px;
+    text-align: center;
+    text-decoration: none;
+    /* display: inline-block; */
+    font-size: 16px;
+    border-color: #221c42;
+    border-radius: 5px;
+    margin: 10px;
+
+}
