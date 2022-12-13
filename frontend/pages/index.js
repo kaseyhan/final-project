@@ -71,7 +71,7 @@ const ItemCard = ({ id, title, color, isTask, isClickable }) => {
 };
 
 export default function Home() {
-  const userID = "63952f07f77a950017fe9466";
+  // const userID = "63952f07f77a950017fe9466";
   const router = useRouter();
 
   const [toDoData, setToDoData] = useState(null);
@@ -83,10 +83,14 @@ export default function Home() {
   const [homeData, setHomeData] = useState(null);
   const [userData, setUserData] = useState(null);
   const [isFirstTime, setIsFirstTime] = useState(true);
+  const [userID, setUserID] = useState(window.sessionStorage.getItem("userID"));
 
   const fetchData = async () => {
     try {
-      console.log(window.sessionStorage.getItem("userID"))
+      // console.log(window.sessionStorage.getItem("userID"))
+      // console.log("userID");
+      console.log(userID);
+      
       const res = await API.get(`users/${userID}`);
       if (res) {
         let data = res.data.data;
@@ -126,9 +130,16 @@ export default function Home() {
   }
 
   useEffect(() => {
-    setIsLoading(true);
-    fetchData();
-    setIsLoading(false);
+    const userID = window.sessionStorage.getItem("userID");
+    console.log(userID);
+    if (userID == null || userID == "undefined") {
+      // router.push("/login")
+    } else {
+      setUserID(userID);
+      setIsLoading(true);
+      fetchData();
+      setIsLoading(false);
+    }
   }, []);
 
   const openModal = () => {

@@ -39,11 +39,7 @@ export default function NameForm() {
     }
     console.log(p);
     const user_get = await api.get("/users", p).then(function (response) {
-      // console.log(response.data.data[0]._id)
-
       if (response.data.data.length == 1) {
-        // console.log(response);
-        // console.log(response.data.data[0]._id);
         window.sessionStorage.setItem("userID", response.data.data[0]._id)
         router.push('/');
 
