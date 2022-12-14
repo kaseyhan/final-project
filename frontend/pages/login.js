@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 
 export default function NameForm() {
 
-  const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
+  const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
   const api = axios.create({ baseURL: BASE_URL });
   const [loginEmail, setEmail] = useState('');
   const [loginPassword, setPassword] = useState('');

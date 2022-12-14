@@ -14,7 +14,7 @@ import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar'
 import styles from '../styles/Calendar.module.css'
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-const BASE_URL = 'https://gsk-final-project-api.herokuapp.com/api/';
+const BASE_URL = 'https://cs409-final-project.herokuapp.com/api/';
 const API = axios.create({ baseURL: BASE_URL });
 
 moment.tz.setDefault('America/Chicago');

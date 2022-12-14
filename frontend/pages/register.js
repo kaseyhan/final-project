@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar'
 import { useRouter } from 'next/router'
 
 export default function registerPage() {
-  const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
+  const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
   const api = axios.create({ baseURL: BASE_URL });
   const [newName, setName] = useState('');
   const [newEmail, setEmail] = useState('');

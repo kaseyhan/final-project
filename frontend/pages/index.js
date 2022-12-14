@@ -9,7 +9,7 @@ import { FaCreativeCommonsSamplingPlus } from 'react-icons/fa'
 import AnnouncementModal from '../components/AnnouncementModal'
 import styles from '../styles/Home.module.css'
 
-const BASE_URL = 'https://gsk-final-project-api.herokuapp.com/api/';
+const BASE_URL = 'https://cs409-final-project.herokuapp.com/api';
 const API = axios.create({ baseURL: BASE_URL });
 
 // cite: https://css-tricks.com/converting-color-spaces-in-javascript/

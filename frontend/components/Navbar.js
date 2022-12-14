@@ -12,7 +12,7 @@ import axios from 'axios';
 import styles from '../styles/Navbar.module.css'
 // icons by IconScout/unicon
 
-const BASE_URL = 'https://gsk-final-project-api.herokuapp.com/api/';
+const BASE_URL = 'https://cs409-final-project.herokuapp.com/api/';
 const API = axios.create({ baseURL: BASE_URL });
 
 // cite: https://mui.com/material-ui/react-avatar/

@@ -9,7 +9,7 @@ import styles from '../styles/to-do.module.css'
 
 export default function ToDoView() {
     // const BASE_URL = "http://localhost:4000/api";
-    const BASE_URL = "https://gsk-final-project-api.herokuapp.com/api";
+    const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
     const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(true);
