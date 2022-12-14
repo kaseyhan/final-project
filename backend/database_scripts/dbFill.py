@@ -152,7 +152,8 @@ def main(argv):
         if has_deadline:
             deadline = (mktime(date.today().timetuple()) + randint(86400,864000)) * 1000
         notes = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English."
-        rotate = ["none","daily","weekly","biweekly","monthly"]
+        rotate_options = ["none","daily","weekly","biweekly","monthly"]
+        rotate = choice(rotate_options) if assigned else "none"
         if has_deadline:
             params = urllib.parse.urlencode({'name': choice(taskNames), 'home': home, 'deadline': deadline, 'assigneeName': assigneeName, 'assignee': assigneeID, 'completed': str(completed).lower(), 'notes': notes, 'rotate': choice(rotate)})
         else:
