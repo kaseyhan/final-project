@@ -155,9 +155,9 @@ def main(argv):
         rotate_options = ["none","daily","weekly","biweekly","monthly"]
         rotate = choice(rotate_options) if assigned else "none"
         if has_deadline:
-            params = urllib.parse.urlencode({'name': choice(taskNames), 'home': home, 'deadline': deadline, 'assigneeName': assigneeName, 'assignee': assigneeID, 'completed': str(completed).lower(), 'notes': notes, 'rotate': choice(rotate)})
+            params = urllib.parse.urlencode({'name': choice(taskNames), 'home': home, 'deadline': deadline, 'assigneeName': assigneeName, 'assignee': assigneeID, 'completed': str(completed).lower(), 'notes': notes, 'rotate': rotate})
         else:
-            params = urllib.parse.urlencode({'name': choice(taskNames), 'home': home, 'assigneeName': assigneeName, 'assignee': assigneeID, 'completed': str(completed).lower(), 'notes': notes, 'rotate': choice(rotate)})
+            params = urllib.parse.urlencode({'name': choice(taskNames), 'home': home, 'assigneeName': assigneeName, 'assignee': assigneeID, 'completed': str(completed).lower(), 'notes': notes, 'rotate': rotate})
 
         # POST the task
         conn.request("POST", "/api/tasks", params, headers)

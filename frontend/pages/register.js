@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import Navbar from '../components/Navbar'
 import { useRouter } from 'next/router'
 
-export default function registerPage() {
+export default function Register() {
   const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
   const api = axios.create({ baseURL: BASE_URL });
   const [newName, setName] = useState('');
@@ -70,7 +70,7 @@ export default function registerPage() {
 
       <form className={styles.body}>
         <div className={styles.container} name="register-container">
-          <h2>Create a New User.</h2>
+          <h2>Create a New User</h2>
           <div className={styles.child}>
             <label style={{paddingRight: '10px'}}><b>Name: </b></label>
             <input type="text" placeholder="Enter Name" name="email" value={newName} onChange={handleNameChange} required />
@@ -84,7 +84,7 @@ export default function registerPage() {
             <input type="password" placeholder="Enter Password" value={newPassword} onChange={handlePasswordChange} required />
           </div>
           <div className={styles.child}>
-            <label style={{paddingRight: '10px'}}><b>If you want to join a current home group, enter the ID below: </b></label>
+            <label style={{paddingRight: '10px'}}><b>Home password (optional): </b></label>
             <input type="home" placeholder="Enter HomeID" value={newHome} onChange={handleHomeChange} />
           </div>
           <div className={styles.child}>

@@ -8,6 +8,7 @@ import axios from 'axios'
 import { FaCreativeCommonsSamplingPlus } from 'react-icons/fa'
 import AnnouncementModal from '../components/AnnouncementModal'
 import styles from '../styles/Home.module.css'
+import utils from '../components/utils'
 
 const BASE_URL = 'https://cs409-final-project.herokuapp.com/api';
 const API = axios.create({ baseURL: BASE_URL });
@@ -192,7 +193,7 @@ export default function Home() {
         <div className={styles.welcomeSign} style={{
           backgroundColor: userData ? hexToRGB(userData.color) : 'white'
         }}>
-          Welcome, {userData ? userData.name : 'User'}
+          Welcome, {userData ? utils.toTitleCase(userData.name) : 'User'}
         </div>
 
         {isLoading ? <CircularProgress style={{ marginTop: '100px' }} /> :

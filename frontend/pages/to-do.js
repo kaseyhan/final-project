@@ -6,8 +6,9 @@ import axios from 'axios'
 import React, {useState, useEffect} from 'react'
 import Modal from "../components/modal";
 import styles from '../styles/to-do.module.css'
+import utils from '../components/utils'
 
-export default function ToDoView() {
+export default function ToDo() {
     // const BASE_URL = "http://localhost:4000/api";
     const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
     const router = useRouter();
@@ -90,18 +91,18 @@ export default function ToDoView() {
         });
     }, [query,sortBy,sortOrder]);
 
-    function titleCase(str) {
-        if (str) {
-            return str.replace(
-            /\w\S*/g,
-            function(t) {
-                return t.charAt(0).toUpperCase() + t.substr(1).toLowerCase();
-            }
-            );
-        } else {
-            return "Unassigned"
-        }
-      }
+    // function titleCase(str) {
+    //     if (str) {
+    //         return str.replace(
+    //         /\w\S*/g,
+    //         function(t) {
+    //             return t.charAt(0).toUpperCase() + t.substr(1).toLowerCase();
+    //         }
+    //         );
+    //     } else {
+    //         return "Unassigned"
+    //     }
+    //   }
 
     function convertDeadline(deadline) {
         if (deadline !== undefined && deadline !== null) return new Date(deadline).toString().substring(0,25);
@@ -166,7 +167,7 @@ export default function ToDoView() {
                             let q = [...queryAssignees];
                             q.push(event.target.id);
                             setQueryAssignees(q);
-                        }}>{titleCase(userNames[index])}</button>
+                        }}>{utils.toTitleCase(userNames[index])}</button>
                     ))}
                     {/* <span className={styles.buttonSpacer}> </span> */}
                     <button className={activeAssigneeFilterButton[0]==="anyone" ? `${styles.assigneeButton} ${styles.active}` : 
@@ -350,7 +351,7 @@ export default function ToDoView() {
                     </div>
                     <div className={[styles.listColumn, styles.assignee].join(" ")}>
                         <span className={styles.assignees}>
-                            <p>{titleCase(task.assigneeName)}</p>
+                            <p>{utils.toTitleCase(task.assigneeName)}</p>
                         </span>
                         <span className={styles.rotate}>
                             <img id={task._id + 'Rotate'} src={task.rotate !== "none" ? rotateImage : blankImage} alt=" "></img>
@@ -441,7 +442,7 @@ export default function ToDoView() {
                                 setActiveAssigneeEditButton(user);
                             }
                             setTaskToEdit(t);
-                        }}>{titleCase(userNames[index])}</button>
+                        }}>{utils.toTitleCase(userNames[index])}</button>
                     ))}
                 </div>
                 <br></br>
@@ -564,7 +565,7 @@ export default function ToDoView() {
                                 setActiveAssigneeCreateButton(user);
                             }
                             setNewTask(t);
-                        }}>{titleCase(userNames[index])}</button>
+                        }}>{utils.toTitleCase(userNames[index])}</button>
                     ))}
                 </div>
                 <br></br>

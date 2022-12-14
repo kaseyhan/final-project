@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar'
 import { useRouter } from 'next/router'
 
 
-export default function NameForm() {
+export default function Login() {
 
   const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
   const api = axios.create({ baseURL: BASE_URL });
@@ -14,9 +14,6 @@ export default function NameForm() {
   const [error, setError] = useState('');
   const [query, setQuery] = useState({});
   const router = useRouter();
-  
-  // console.log("fjieowjfoiwjfioJiofjwiowejiof")
-
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -72,7 +69,7 @@ export default function NameForm() {
       <Navbar />
       <form className={styles.body}>
         <div className={styles.container} name="login-container">
-          <h2 className={styles.h2}>Login Below!</h2>
+          <h2 className={styles.h2}>Login</h2>
           <div className={styles.child}>
             <label style={{paddingRight: '10px'}}><b>Email: </b></label>
             <input className={styles.input} type="text" placeholder="Enter Email" name="email" value={loginEmail} onChange={handleEmailChange} required />
@@ -86,7 +83,7 @@ export default function NameForm() {
             <button onClick={handleClick} className={styles.button}>Login</button>
           </div>
           <div className={styles.child}>
-            <button type="newuser" id="registerRoute" className={styles.button} onClick={goToRegister}>Register a New User</button>
+            <button type="newuser" id="registerRoute" className={styles.button} onClick={goToRegister}>Register</button>
           </div>
           {error && (
             <p>

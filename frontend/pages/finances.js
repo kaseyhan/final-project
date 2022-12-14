@@ -6,6 +6,7 @@ import axios from 'axios'
 import React, {useState, useEffect} from 'react'
 import Modal from "../components/modal";
 import styles from '../styles/finances.module.css'
+import utils from '../components/utils'
 
 export default function Finances() {
 	// const BASE_URL = "http://localhost:4000/api";
@@ -79,21 +80,8 @@ export default function Finances() {
 		setOwesYou(o);
 	}
 
-	function titleCase(str) {
-		if (str) {
-				return str.replace(
-				/\w\S*/g,
-				function(t) {
-						return t.charAt(0).toUpperCase() + t.substr(1).toLowerCase();
-				}
-				);
-		} else {
-				return ""
-		}
-	}
-
 	function getUserName(id) {
-		return titleCase(getUser(id).name);
+		return utils.toTitleCase(getUser(id).name);
 	}
 	function getUser(id) {
 		const isUser = (element) => element._id == id;
