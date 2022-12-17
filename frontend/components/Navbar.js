@@ -8,6 +8,7 @@ import { Menu, MenuItem, IconButton } from '@mui/material'
 import { FaBars } from 'react-icons/fa';
 import { RxCross1 } from 'react-icons/rx'
 import axios from 'axios';
+import utils from './utils'
 
 import styles from '../styles/Navbar.module.css'
 // icons by IconScout/unicon
@@ -23,7 +24,8 @@ function stringAvatar(name, color) {
 			width: 48,
 			height: 48
 		},
-		children: name ? `${name.split(' ')[0][0].toUpperCase()}${name.split(' ')[1][0].toUpperCase()}` : null,
+		// children: name ? `${name.split(' ')[0][0].toUpperCase()}${name.split(' ')[1][0].toUpperCase()}` : null,
+		children: name ? utils.toTitleCase(name) : null
 	};
 }
 
@@ -127,13 +129,13 @@ export default function Navbar() {
 						</Menu>
 
 						<div className={styles.accountButtons}>
-								<Link href="/login" className={styles.accountButton} onClick={(event) => {
+								<Link href="/login" className={`${styles.accountButton} ${styles.logoutButton}`} onClick={(event) => {
 									window.sessionStorage.removeItem("userID");
 								}}>Logout</Link>
 								{/* <Link href="/login" className={styles.accountButton}> */}
-								{/* <div className={styles.accountButton}>
-									<Avatar {...stringAvatar(user ? user.name : "none none", user ? user.color : 'gray')} />
-								</div> */}
+								<div className={`${styles.accountButton} ${styles.accountIconButton}`}>
+									<Avatar {...stringAvatar(user ? user.name : null, user ? user.color : 'gray')} />
+								</div>
 								{/* </Link> */}
 							</div>
 					</div>
