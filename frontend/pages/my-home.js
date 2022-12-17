@@ -9,8 +9,8 @@ import styles from '../styles/my-home.module.css'
 import utils from '../components/utils'
 
 export default function MyHome() {
-	const BASE_URL = "http://localhost:4000/api";
-	// const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
+	// const BASE_URL = "http://localhost:4000/api";
+	const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
     const router = useRouter();
 
 	const [isLoading, setIsLoading] = useState(true);
