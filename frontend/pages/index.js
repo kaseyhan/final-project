@@ -87,9 +87,12 @@ export default function Home() {
   const [isFirstTime, setIsFirstTime] = useState(true);
 
   const fetchData = async () => {
+    var id = window.sessionStorage.getItem("userID");
+
+    if (!id || id === 'undefined') router.push('/login');
     try {
       // console.log(window.sessionStorage.getItem("userID"))
-      const res = await API.get(`users/${userID}`);
+      const res = await API.get(`users/${id}`);
       if (res) {
         let data = res.data.data;
         let homeID = data.home;
@@ -130,19 +133,9 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      var id = window.sessionStorage.getItem("userID");
-
-      if (!id || id === 'undefined') {
-        router.push('/login');
-      } else {
-        setUserID(id);
         setIsLoading(true);
-        fetchData();
-        setIsLoading(false);
-      }
-    }
-  }, [userID]);
+        fetchData().then(() => {setIsLoading(false)});
+  }, []);
 
   const openModal = () => {
     if (!homeData) {
@@ -198,76 +191,82 @@ export default function Home() {
 
         {isLoading ? <CircularProgress style={{ marginTop: '100px' }} /> :
           <div className={styles.dashboard}>
-            <div className={styles.left}>
-              <div
-                onClick={event => handleContainerClick(event, '/to-do')}
-                className={styles.toDoContainer}
-              >
-                <Typography style={{ fontSize: '36px' }}>Your To-Do's</Typography>
-                <div className={styles.list}>
-                  <div className={styles.listContent}>
-                    {(toDoData && toDoData.length > 0) ? (toDoData.map((task) => (
-                      <ItemCard
-                        key={task._id}
-                        id={task._id}
-                        title={task.name}
-                        color={userData.color}
-                        isTask
-                        isClickable
-                      />
-                    ))) : <h3>No Tasks...</h3>}
+            {homeData ?
+            <div className={styles.hasHomeContainer}>
+              <div className={styles.left}>
+                <div
+                  onClick={event => handleContainerClick(event, '/to-do')}
+                  className={styles.toDoContainer}
+                >
+                  <Typography style={{ fontSize: '36px' }}>Your To-Dos</Typography>
+                  <div className={styles.list}>
+                    <div className={styles.listContent}>
+                      {(toDoData && toDoData.length > 0) ? (toDoData.map((task) => (
+                        <ItemCard
+                          key={task._id}
+                          id={task._id}
+                          title={task.name}
+                          color={userData.color}
+                          isTask
+                          isClickable
+                        />
+                      ))) : <h3>No Tasks...</h3>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.right}>
+                <div className={styles.announcementsContainer}>
+                  <Typography style={{ fontSize: '24px' }}>Announcements</Typography>
+                  <IconButton onClick={openModal} style={{ position: 'absolute', top: 0, right: 0, padding: 0, margin: '7px' }}>
+                    <FaPlus size={25} />
+                  </IconButton>
+
+                  {showModal && (
+                    <AnnouncementModal
+                      handleSubmit={handleSubmit}
+                      closeModal={closeModal}
+                      handleInput={handleInput}
+                    />
+                  )}
+
+                  <div className={styles.list}>
+                    <div className={styles.listContent}>
+                      {(announcementsData && announcementsData.length > 0) ? (announcementsData.map((announcement, idx) => (
+                        <ItemCard
+                          key={idx}
+                          id={idx}
+                          title={announcement}
+                        />
+                      ))) : <h3>No Announcements...</h3>}
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  onClick={event => handleContainerClick(event, '/calendar')}
+                  className={styles.eventsContainer}
+                >
+                  <Typography style={{ fontSize: '24px' }}>Upcoming Events</Typography>
+                  <div className={styles.list}>
+                    <div className={styles.listContent}>
+                      {(eventsData && eventsData.length > 0) ? (eventsData.map((event) => (
+                        <ItemCard
+                          key={event._id}
+                          id={event._id}
+                          title={event.name}
+                          isClickable
+                        />
+                      ))) : <h3>No Upcoming Events...</h3>}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-
-            <div className={styles.right}>
-              <div className={styles.announcementsContainer}>
-                <Typography style={{ fontSize: '24px' }}>Announcements</Typography>
-                <IconButton onClick={openModal} style={{ position: 'absolute', top: 0, right: 0, padding: 0, margin: '7px' }}>
-                  <FaPlus size={25} />
-                </IconButton>
-
-                {showModal && (
-                  <AnnouncementModal
-                    handleSubmit={handleSubmit}
-                    closeModal={closeModal}
-                    handleInput={handleInput}
-                  />
-                )}
-
-                <div className={styles.list}>
-                  <div className={styles.listContent}>
-                    {(announcementsData && announcementsData.length > 0) ? (announcementsData.map((announcement, idx) => (
-                      <ItemCard
-                        key={idx}
-                        id={idx}
-                        title={announcement}
-                      />
-                    ))) : <h3>No Announcements...</h3>}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                onClick={event => handleContainerClick(event, '/calendar')}
-                className={styles.eventsContainer}
-              >
-                <Typography style={{ fontSize: '24px' }}>Upcoming Events</Typography>
-                <div className={styles.list}>
-                  <div className={styles.listContent}>
-                    {(eventsData && eventsData.length > 0) ? (eventsData.map((event) => (
-                      <ItemCard
-                        key={event._id}
-                        id={event._id}
-                        title={event.name}
-                        isClickable
-                      />
-                    ))) : <h3>No Upcoming Events...</h3>}
-                  </div>
-                </div>
-              </div>
-            </div>
+            : <div className={styles.noHomeContainer}>
+                <p>You are currently not in a Home. Visit "My Home" to create or join a Home.</p>
+              </div>}
           </div>
         }
       </div>

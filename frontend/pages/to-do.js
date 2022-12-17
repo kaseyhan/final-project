@@ -345,7 +345,7 @@ export default function ToDo() {
                 else if (first > second) return 1;
                 else return 0;
             }).map((task, index) => (
-                <div className={task.assignee === currUserID ? `${styles.listItem} ${styles.activeUser}` : styles.listItem}>
+                <div className={task.assignee == currUserID ? `${styles.listItem} ${styles.activeUser}` : styles.listItem}>
                     <div className={[styles.listColumn, styles.task].join(" ")}>
                         <p>{task.name}</p>
                     </div>

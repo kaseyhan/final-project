@@ -66,24 +66,23 @@ export default function Login() {
 
   return (
     <div>
-      <Navbar />
       <form className={styles.body}>
         <div className={styles.container} name="login-container">
           <h2 className={styles.h2}>Login</h2>
           <div className={styles.child}>
-            <label style={{paddingRight: '10px'}}><b>Email: </b></label>
-            <input className={styles.input} type="text" placeholder="Enter Email" name="email" value={loginEmail} onChange={handleEmailChange} required />
+            <label>Email: </label>
+            <input className={styles.input} type="text" placeholder="Enter email" name="email" value={loginEmail} onChange={handleEmailChange} required />
           </div>
           <div className={styles.child}>
-            <label style={{paddingRight: '10px'}}><b>Password: </b></label>
-            <input className={styles.input} type="password" placeholder="Enter Password" name="psw" value={loginPassword} onChange={handlePasswordChange} required />
+            <label>Password: </label>
+            <input className={styles.input} type="password" placeholder="Enter password" name="psw" value={loginPassword} onChange={handlePasswordChange} required />
           </div>
 
           <div className={styles.child}>
-            <button onClick={handleClick} className={styles.button}>Login</button>
+            <button onClick={handleClick} className={styles.loginButton}>Login</button>
           </div>
           <div className={styles.child}>
-            <button type="newuser" id="registerRoute" className={styles.button} onClick={goToRegister}>Register</button>
+            <button id="registerRoute" className={styles.registerButton} onClick={goToRegister}>Register</button>
           </div>
           {error && (
             <p>

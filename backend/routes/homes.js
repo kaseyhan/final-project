@@ -259,16 +259,14 @@ module.exports = function (router) {
                         }
                     }
                 }
-                if (req.body.members.length > 0) {
-                    for (let i = 0; i < req.body.members.length; i++) {
-                        let user = await User.findById(req.body.members[i]);
-                        user.home = data._id;
-                        try {
-                            let userToSave = await user.save();
-                        } catch (error) {
-                            res.status(500).json({message:"Error saving",data:{}});
-                            return;
-                        }
+                for (let i = 0; i < req.body.members.length; i++) {
+                    let user = await User.findById(req.body.members[i]);
+                    user.home = data._id;
+                    try {
+                        let userToSave = await user.save();
+                    } catch (error) {
+                        res.status(500).json({message:"Error saving",data:{}});
+                        return;
                     }
                 }
                 data.members = req.body.members;

@@ -1,0 +1,147 @@
+.pageContents {
+    padding: 0 2rem;
+    width: 100%;
+    margin: auto;
+    margin-top: 150px;
+    color: #221c42;
+  }
+
+.pageContents h1 {
+    text-align: center;
+    line-height: 1.15;
+    font-size: 3rem;
+    color: #221c42;
+}
+
+.homeInfoContainer {
+ width: 40%;
+ margin: auto;
+ background-color: #dce6dd;
+ border-radius: 10px;
+ padding: 20px;
+}
+
+.pageContents span {
+    padding-right: 4px;
+}
+
+.spacer {
+  padding: 5px;
+}
+
+.modalContents {
+    margin: auto;
+}
+
+.info {
+    width: 65%;
+    margin: auto;
+    padding-bottom: 10px;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+/* .modalContents {
+
+} */
+.submitButtons {
+    margin: auto;
+    padding-top: 30px;
+}
+.modalButton {
+    margin: auto;
+    text-align: center;
+    background-color: #69906b;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+    border: none;
+  }
+.modalButton:hover {
+    background-color: #dce6dd;
+    color: black;
+  }
+
+
+.active {
+    background-color: #69906b;
+  }
+
+.bottom {
+    margin: auto;
+    width: 100%;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+.editButton {
+    margin: auto;
+    background-color: #69906b;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+}
+.editButton:hover {
+    background-color: #dce6dd;
+    color: black;
+}
+
+.leaveButton {
+    margin: auto;
+    margin-top: 10px;
+    background-color: #ffa8a8;
+    border: none;
+    color: black;
+    padding: 12px 15px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 12;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+}
+.leaveButton:hover {
+    background-color: #eb5c5c;
+    color: white;
+}
+
+
+.noHomeContainer {
+    margin: auto;
+    width: 40%;
+    justify-content: center;
+    text-align: center;
+}
+
+.buttons {
+    display: inline-block;
+    margin: auto;
+}
+
+.createHomeButton, .joinHomeButton {
+    margin: auto;
+    margin-left: 5px;
+    background-color: #69906b;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    display: inline-block;
+    justify-content: center;
+    border-radius: 10px;
+}
+.createHomeButton:hover, .joinHomeButton:hover {
+    background-color: #dce6dd;
+    color: black;
+}

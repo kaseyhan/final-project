@@ -326,18 +326,20 @@ module.exports = function (router) {
 			if (req.body.color) data.color = req.body.color;
 
 			if (req.body.home && req.body.home !== data.home) {
-				let old_home = await Home.findById(data.home);
-				for (let i = 0; i < old_home.members.length; i++) {
-					if (old_home.members[i] === data._id) {
-						old_home.members.splice(i, 1);
-						break;
+				if (data.home !== "none") {
+					let old_home = await Home.findById(data.home);
+					for (let i = 0; i < old_home.members.length; i++) {
+						if (old_home.members[i] === data._id) {
+							old_home.members.splice(i, 1);
+							break;
+						}
 					}
-				}
-				try {
-					let homeToSave = await old_home.save();
-				} catch (error) {
-					res.status(500).json({ message: "Error saving", data: {} })
-					return;
+					try {
+						let homeToSave = await old_home.save();
+					} catch (error) {
+						res.status(500).json({ message: "Error saving", data: {} })
+						return;
+					}
 				}
 				let new_home = await Home.findById(req.body.home);
 				if (new_home) {

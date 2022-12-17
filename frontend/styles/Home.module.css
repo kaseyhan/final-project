@@ -145,3 +145,17 @@
   gap: 10px;
   /* border: 3px blue solid; */
 }
+
+.hasHomeContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  padding: 20px 0;
+  gap: 10px;
+}
+
+.noHomeContainer {
+  margin: auto;
+  margin-top: 20px;
+  text-align: center;
+}

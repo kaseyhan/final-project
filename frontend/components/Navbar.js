@@ -35,6 +35,8 @@ export default function Navbar() {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [user, setUser] = useState(null)
 	const open = Boolean(anchorEl);
+	const [isLoading, setIsLoading] = useState(true);
+	
 	const handleOpenMenu = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
@@ -42,84 +44,101 @@ export default function Navbar() {
 		setAnchorEl(null);
 	};
 
-	const fetchData = async () => {
-		const res = await API.get(`users/${currUserID}`);
-		setUser(res.data.data);
-	}
-
 	useEffect(() => {
-		if (typeof window !== 'undefined') currUserID = window.sessionStorage.getItem("userID");
-        // if (currUserID === "undefined" || currUserID == null) router.push('/login');    
-		fetchData();
+		const fetchData = async () => {
+			if (typeof window !== 'undefined') currUserID = window.sessionStorage.getItem("userID");
+			if (currUserID === "undefined" || currUserID == null) console.log("EMPTY")   
+			
+			try {
+				const res = await API.get(`users/${currUserID}`);
+				setUser(res.data.data);
+			} catch (error) {
+				console.log(error)
+			}
+		}
+
+		setIsLoading(true);
+			fetchData().then(() => {
+					setIsLoading(false);	
+			});
 	}, []);
 
-	return (
-		<>
-			<div className={styles.navbar}>
-				<div className={styles.logoBox}>
-					<Link href="/">
-						<Image src="/assets/logo.png" alt="ourhouse_logo" width='200' height='60' />
-					</Link>
-				</div>
-				<div className={styles.links}>
-					<NavLink name="My Home" href="/" icon='/assets/house-user.svg' />
-					<NavLink name="To-Do" href="/to-do" icon='/assets/list-ul.svg' />
-					<NavLink name="Calendar" href="/calendar" icon='/assets/schedule.svg' />
-					{/* <NavLink name="Chat" href="/chat" icon='/assets/comments-alt.svg' /> */}
-					<NavLink name="Finances" href="/finances" icon='/assets/dollar-alt.svg' />
-					{/* <NavLink name="Analytics" href="/analytics" icon='/assets/chart-line.svg' /> */}
-				</div>
-
-				<div className={styles.userBox}>
-					<div className={styles.bars}>
-						<IconButton
-							aria-label="more"
-							id="long-button"
-							aria-controls={open ? 'long-menu' : undefined}
-							aria-expanded={open ? 'true' : undefined}
-							aria-haspopup="true"
-							onClick={handleOpenMenu}
-						>
-							<FaBars />
-						</IconButton>
+	if (isLoading) {
+		return <div className={styles.pageContents}>Loading...</div>;
+	} else {
+		return (
+			<>
+				<div className={styles.navbar}>
+					<div className={styles.logoBox}>
+						<Link href="/">
+							<Image src="/assets/logo.png" alt="ourhouse_logo" width='200' height='60' />
+						</Link>
 					</div>
+					{user.home !== "none" ? 
+					<div className={styles.links}>
+						<NavLink name="My Home" href="/my-home" icon='/assets/house-user.svg' />
+						<NavLink name="To-Do" href="/to-do" icon='/assets/list-ul.svg' />
+						<NavLink name="Calendar" href="/calendar" icon='/assets/schedule.svg' />
+						{/* <NavLink name="Chat" href="/chat" icon='/assets/comments-alt.svg' /> */}
+						<NavLink name="Finances" href="/finances" icon='/assets/dollar-alt.svg' />
+						{/* <NavLink name="Analytics" href="/analytics" icon='/assets/chart-line.svg' /> */}
+					</div>
+					: <div className={styles.links}>
+						<NavLink name="My Home" href="/my-home" icon='/assets/house-user.svg' />
+					</div>
+					}
 
-					<Menu
-						id="long-menu"
-						MenuListProps={{
-							'aria-labelledby': 'long-button',
-						}}
-						anchorEl={anchorEl}
-						open={open}
-						onClose={handleCloseMenu}
-					>
-						<IconButton onClick={handleCloseMenu}><RxCross1 /></IconButton>
-						<MenuItem onClick={handleCloseMenu}><Link href="/">My Home</Link></MenuItem>
-						<MenuItem onClick={handleCloseMenu}><Link href="/to-do">To-Do</Link></MenuItem>
-						<MenuItem onClick={handleCloseMenu}><Link href="/calendar">Calendar</Link></MenuItem>
-						{/* <MenuItem onClick={handleCloseMenu}><Link href="/chat">Chat</Link></MenuItem> */}
-						<MenuItem onClick={handleCloseMenu}><Link href="/finances">Finances</Link></MenuItem>
-						{/* <MenuItem onClick={handleCloseMenu}><Link href="/analytics">Analytics</Link></MenuItem> */}
-					</Menu>
+					<div className={styles.userBox}>
+						<div className={styles.bars}>
+							<IconButton
+								aria-label="more"
+								id="long-button"
+								aria-controls={open ? 'long-menu' : undefined}
+								aria-expanded={open ? 'true' : undefined}
+								aria-haspopup="true"
+								onClick={handleOpenMenu}
+							>
+								<FaBars />
+							</IconButton>
+						</div>
 
-					{currUserID !== "undefined" && currUserID !== null ? 
-						(<div className={styles.accountButtons}>
-							<Link href="/login" className={styles.accountButton} onClick={(event) => {
-								window.sessionStorage.removeItem("userID");
-							}}>Logout</Link>
-							{/* <Link href="/login" className={styles.accountButton}> */}
-							<div className={styles.accountButton}>
-								<Avatar {...stringAvatar(user ? user.name : null, user ? user.color : 'gray')} />
+						<Menu
+							id="long-menu"
+							MenuListProps={{
+								'aria-labelledby': 'long-button',
+							}}
+							anchorEl={anchorEl}
+							open={open}
+							onClose={handleCloseMenu}
+						>
+							<IconButton onClick={handleCloseMenu}><RxCross1 /></IconButton>
+							{user.home !== "none" ? 
+							(<div>
+								<MenuItem onClick={handleCloseMenu}><Link href="/">My Home</Link></MenuItem>
+								<MenuItem onClick={handleCloseMenu}><Link href="/to-do">To-Do</Link></MenuItem>
+								<MenuItem onClick={handleCloseMenu}><Link href="/calendar">Calendar</Link></MenuItem>
+								{/* <MenuItem onClick={handleCloseMenu}><Link href="/chat">Chat</Link></MenuItem> */}
+								<MenuItem onClick={handleCloseMenu}><Link href="/finances">Finances</Link></MenuItem>
+								{/* <MenuItem onClick={handleCloseMenu}><Link href="/analytics">Analytics</Link></MenuItem> */}
+							</div>)
+							: <div>
+								<MenuItem onClick={handleCloseMenu}><Link href="/">My Home</Link></MenuItem>
+							</div>}
+						</Menu>
+
+						<div className={styles.accountButtons}>
+								<Link href="/login" className={styles.accountButton} onClick={(event) => {
+									window.sessionStorage.removeItem("userID");
+								}}>Logout</Link>
+								{/* <Link href="/login" className={styles.accountButton}> */}
+								{/* <div className={styles.accountButton}>
+									<Avatar {...stringAvatar(user ? user.name : "none none", user ? user.color : 'gray')} />
+								</div> */}
+								{/* </Link> */}
 							</div>
-							{/* </Link> */}
-						</div>) : 
-						(<div className={styles.accountButtons}>
-							<Link href="/login" className={styles.accountButton} onClick={(event) => {
-								window.sessionStorage.removeItem("userID");
-							}}>Logout</Link>
-						</div>)}
+					</div>
 				</div>
-			</div>
-		</>
-	)
+			</>
+		)
+	}
 }

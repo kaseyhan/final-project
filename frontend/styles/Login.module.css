@@ -23,7 +23,7 @@
 }
 .child {
     width: 100%;
-    /* padding: 12px 20px; */
+    padding: 12px 20px;
     /* margin: 8px 0; */
     display: inline-block;
     justify-content: center;
@@ -37,10 +37,10 @@
 .container {
     display: flex;
     background-color: #69906b;
-    width: 900px;
-    height: 700px;
+    width: 60%;
+    /* height: 700px; */
     flex-wrap: wrap;
-    border-radius: 10%;
+    border-radius: 10px;
     align-items: center;
     justify-content: center;
     place-items: center;
@@ -68,6 +68,10 @@
     margin-top: 150px;
 }
 
+.container label {
+    padding-right: 10px;
+}
+
 .h2 {
     font-size: 40px;
     /* position: absolute;
@@ -75,18 +79,37 @@
     transform: translate(-30%, 0); */
 }
 
-.button {
+.loginButton {
     background-color: #dce6dd;
     border: none;
     color: #221c42;
-    padding: 15px 20px;
+    padding: 12px 15px;
     text-align: center;
     text-decoration: none;
     /* display: inline-block; */
     font-size: 16px;
     border-color: #221c42;
     border-radius: 5px;
-    margin: 10px;
+    /* margin: 10px; */
 
 }
 
+.registerButton {
+    background-color: #dce6dd;
+    border: none;
+    color: #221c42;
+    padding: 8px 10px;
+    text-align: center;
+    text-decoration: none;
+    /* display: inline-block; */
+    font-size: 12px;
+    border-color: #221c42;
+    border-radius: 5px;
+    /* margin: 10px; */
+
+}
+
+.loginButton:hover, .registerButton:hover {
+    background-color: white;
+
+}
