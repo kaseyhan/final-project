@@ -24,8 +24,8 @@ function stringAvatar(name, color) {
 			width: 48,
 			height: 48
 		},
-		// children: name ? `${name.split(' ')[0][0].toUpperCase()}${name.split(' ')[1][0].toUpperCase()}` : null,
-		children: name ? utils.toTitleCase(name) : null
+		children: name ? `${name.split(' ')[0][0].toUpperCase()}${name.split(' ')[1][0].toUpperCase()}` : null,
+		// children: name ? utils.toTitleCase(name) : null
 	};
 }
 
@@ -73,7 +73,7 @@ export default function Navbar() {
 				<div className={styles.navbar}>
 					<div className={styles.logoBox}>
 						<Link href="/">
-							<Image src="/assets/logo.png" alt="ourhouse_logo" width='200' height='60' />
+							<Image src="/assets/logo.png" alt="homesweethome_logo" width='200' height='60' />
 						</Link>
 					</div>
 					{user.home !== "none" ? 

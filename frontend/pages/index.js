@@ -103,7 +103,7 @@ export default function Home() {
         if (homeID && homeID !== 'none') {
           API.get(`homes/${homeID}`)
             .then(response => {
-              setAnnouncementsData(response.data.data.announcements);
+              response.data.data.announcements ? setAnnouncementsData(response.data.data.announcements) : setAnnouncementsData([]);
               setHomeData(response.data.data);
             })
             .catch(error => console.error(error));
