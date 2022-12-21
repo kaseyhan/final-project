@@ -474,7 +474,6 @@ export default function ToDo() {
                     <option value="none">None</option>
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
-                    <option value="biweekly">Biweekly</option>
                     <option value="monthly">Monthly</option>
                 </select><br></br>
                 <br></br>
@@ -596,7 +595,6 @@ export default function ToDo() {
                     <option value="none">None</option>
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
-                    <option value="biweekly">Biweekly</option>
                     <option value="monthly">Monthly</option>
                 </select>
                 <br></br>

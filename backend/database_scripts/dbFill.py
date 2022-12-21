@@ -152,7 +152,7 @@ def main(argv):
         if has_deadline:
             deadline = (mktime(date.today().timetuple()) + randint(86400,864000)) * 1000
         notes = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English."
-        rotate_options = ["none","daily","weekly","biweekly","monthly"]
+        rotate_options = ["none","daily","weekly","monthly"]
         rotate = choice(rotate_options) if assigned else "none"
         if has_deadline:
             params = urllib.parse.urlencode({'name': choice(taskNames), 'home': home, 'deadline': deadline, 'assigneeName': assigneeName, 'assignee': assigneeID, 'completed': str(completed).lower(), 'notes': notes, 'rotate': rotate})
@@ -186,7 +186,7 @@ def main(argv):
         hostName = userNames[userIDs.index(hostID)] if hosted else 'none'
         start = (mktime(date.today().timetuple()) + randint(3600,864000)) * 1000
         end = start + randint(86400,864000) * 1000
-        locations = ["", "kitchen", "living room", "my room"]
+        locations = ["", "", "kitchen", "kitchen", "kitchen", "living room", "living room", "living room", "my room", "dining room", "basement", "backyard"]
         num_guests = randint(0,10)
         guests = []
         # for j in range(num_guests):
@@ -194,7 +194,7 @@ def main(argv):
         #     y = randint(0,99)
         #     guests.append(firstNames[x]+" "+lastNames[y])
         notes = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English."
-        repeat = ["none","daily","weekly","biweekly","monthly"]
+        repeat = ["none","none","none","daily","weekly","monthly"]
         params = urllib.parse.urlencode({'name': choice(eventNames), 'home': home, 'start': start, 'end': end, 'host': hostID, 'hostName': hostName, 'notes': notes, 'repeat': choice(repeat), 'location': choice(locations), 'guests': guests})
         # print(params)
         conn.request("POST", "/api/events", params, headers)

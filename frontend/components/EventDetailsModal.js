@@ -38,7 +38,6 @@ const FormItem = ({ title, defaultValue, numRows, id, type, handleFormChange }) 
             <MenuItem value={'none'}>None</MenuItem>
             <MenuItem value={'daily'}>Daily</MenuItem>
             <MenuItem value={'weekly'}>Weekly</MenuItem>
-            <MenuItem value={'biweekly'}>Bi-Weekly</MenuItem>
             <MenuItem value={'monthly'}>Monthly</MenuItem>
           </Select>
         </FormControl>
