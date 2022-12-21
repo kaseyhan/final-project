@@ -79,7 +79,7 @@ module.exports = function (router) {
                     res.status(406).json({message:"Error: cannot assign tasks to a user from a different home",data:{}});
                     return;
                 } else {
-                    if (!data.assigneeName) data.assigneeName = user.name;
+                    if (!req.body.assigneeName) data.assigneeName = user.name;
                     user.pendingTasks.push(data._id);
                 }
             } else {
