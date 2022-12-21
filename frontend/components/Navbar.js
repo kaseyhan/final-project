@@ -73,7 +73,7 @@ export default function Navbar() {
 				<div className={styles.navbar}>
 					<div className={styles.logoBox}>
 						<Link href="/">
-							<Image src="/assets/logo.png" alt="homesweethome_logo" width='200' height='60' />
+							<Image src="/assets/logo.png" alt="homesweethome_logo" height='100' width='100' />
 						</Link>
 					</div>
 					{user.home !== "none" ? 

@@ -8,16 +8,16 @@ module.exports = function (router) {
         let new_username = req.body.assigneeName && req.body.assigneeName !== "unassigned"
         
         if (req.body.completed==="true" && (req.body.assignee !== "" || new_username)) {
-            res.status(400).json({
+            res.status(401).json({
                 message: "Error: cannot assign a completed task to a user's pendingTasks", data: {}})
             return;
         }
         if ((req.body.assigneeName && req.body.assigneeName !== "unassigned") && !req.body.assignee) {
-            res.status(400).json({message: "Error: must provide assignee id", data:{}})
+            res.status(402).json({message: "Error: must provide assignee id", data:{}})
             return;
         }
         if (!req.body.home || !mongoose.Types.ObjectId.isValid(req.body.home)) {
-            res.status(400).json({message: "Error: must provide valid home id", data:{}})
+            res.status(403).json({message: "Error: must provide valid home id", data:{}})
             return;
         }
         let data;
@@ -67,23 +67,23 @@ module.exports = function (router) {
         let user;
         if (data.assignee) {
             if (!mongoose.Types.ObjectId.isValid(data.assignee)) {
-                res.status(400).json({message:"Error: invalid user id", data:{}});
+                res.status(404).json({message:"Error: invalid user id", data:{}});
                 return;
             }
             user = await User.findById(data.assignee);
             if (user) {
                 if (user.name !== data.assigneeName) {
-                    res.status(400).json({message: "Error: provided assigneeName does not match records for assignee", data:{}});
+                    res.status(405).json({message: "Error: provided assigneeName does not match records for assignee", data:{}});
                     return;
                 } else if (user.home !== req.body.home) {
-                    res.status(400).json({message:"Error: cannot assign tasks to a user from a different home",data:{}});
+                    res.status(406).json({message:"Error: cannot assign tasks to a user from a different home",data:{}});
                     return;
                 } else {
                     if (!data.assigneeName) data.assigneeName = user.name;
                     user.pendingTasks.push(data._id);
                 }
             } else {
-                res.status(400).json({message: "Error: invalid assigned user", data: {}});
+                res.status(407).json({message: "Error: invalid assigned user", data: {}});
                 return;
             }
         }
@@ -100,7 +100,7 @@ module.exports = function (router) {
             })
         } catch (error) {
             if (!data.name || !data.home) {
-                res.status(400).json({
+                res.status(408).json({
                     message: "Error: missing name or home",
                     data: {name: data.name, deadline: data.home}})
             } else {
