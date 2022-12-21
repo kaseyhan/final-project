@@ -72,7 +72,7 @@ module.exports = function (router) {
             }
             user = await User.findById(data.assignee);
             if (user) {
-                if (user.name !== data.assigneeName) {
+                if (data.assigneeName && data.assigneeName !== "unassigned" && user.name !== data.assigneeName) {
                     res.status(405).json({message: "Error: provided assigneeName does not match records for assignee", data:{}});
                     return;
                 } else if (user.home !== req.body.home) {
