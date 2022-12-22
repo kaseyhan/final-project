@@ -321,18 +321,18 @@ module.exports = function (router) {
             }
             
             
-            data.completed = req.body.completed;
+            if (req.body.completed == true || req.body.completed == false) data.completed = req.body.completed;
             let old_user;
             if (data.assignee !== "") {
-                old_user = await User.findById(data.assignee); // FIX??????????
+                old_user = await User.findById(data.assignee);
                 if (!old_user) {
-                    let j = "assignee: " + data.assignee;
-                    // res.status(404).json({message:"Error: old assignee not found", data:{}});
-                    res.status(404).json({message: j, data:{}})
+                    // let j = "assignee: " + data.assignee;
+                    res.status(404).json({message:"Error: old assignee not found", data:{}});
+                    // res.status(404).json({message: j, data:{}})
                     return;
                 }
             }
-            if (req.body.completed && old_user) { // TO DO: IF TASK ROTATES, REASSIGN TASK EVEN AFTER IT'S COMPLETED
+            if (req.body.completed && old_user) {
                 for (let i = 0; i < old_user.pendingTasks.length; i++) {
                     if (old_user.pendingTasks[i] === req.params.id) {
                         old_user.pendingTasks.splice(i,1);
@@ -345,14 +345,10 @@ module.exports = function (router) {
                     res.status(500).json({message: "Error saving", data:{}})
                     return;
                 }
-                data.assignee = "";
-                data.assigneeName = "";
+                // data.assignee = "";
+                // data.assigneeName = "";
             }
-
-            // TO DO: ROTATION
-            // WHEN A TASK ROTATES, LEAVE THAT TASK AS COMPLETED WITH ITS ASSIGNEE AND CREATE A DUPLICATE OF IT AND ASSIGN IT TO THE NEXT USER IN THE ROTATION, SET DATECREATED=OLD_TASK.DATECREATED
-            // if (req.body.rotate && )
-
+            
             if (req.body.assignee && req.body.assignee !== data.assignee && !data.completed) { // if a new user is provided
                 if (data.assignee) {
                     // let old_user = await User.findById(data.assignee);
