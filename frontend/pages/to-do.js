@@ -9,8 +9,8 @@ import styles from '../styles/to-do.module.css'
 import utils from '../components/utils'
 
 export default function ToDo() {
-    // const BASE_URL = "http://localhost:4000/api";
-    const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
+    const BASE_URL = "http://localhost:4000/api";
+    // const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
     const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(true);
@@ -389,7 +389,6 @@ export default function ToDo() {
                         </span>
                         <span className={styles.taskButton}>
                             <img className={styles.checkButton} id={task._id + 'Check'} src={task.completed ? checkedImage : uncheckedImage} width="20px" height="20px" onClick={(event) => {
-                                console.log(tasks);
                                 let taskToEditID = task._id;
                                 let endpoint = 'tasks/' + taskToEditID;
 
@@ -397,16 +396,19 @@ export default function ToDo() {
                                 const isTaskToEdit = (element) => element._id === taskToEditID;
                                 let idx = new_tasks.findIndex(isTaskToEdit);
                                 
-                                let taskToEdit = new_tasks[idx];
-                                taskToEdit.completed = !taskToEdit.completed;
-                                if (taskToEdit.completed) {
-                                    delete taskToEdit.assignee;
-                                    delete taskToEdit.assigneeName;
-                                }
+                                // let taskToEdit = new_tasks[idx];
+                                let t = new_tasks[idx];
+                                let taskToEdit = {name: t.name, home: t.home}
+                                // taskToEdit.completed = !taskToEdit.completed;
+                                taskToEdit.completed = !t.completed;
+                                // if (taskToEdit.completed) {
+                                //     delete taskToEdit.assignee;
+                                //     delete taskToEdit.assigneeName;
+                                // }
 
                                 api.put(endpoint, taskToEdit).then(function(response) {
                                     let x = new_tasks.splice(idx,1);
-                                    new_tasks.push(taskToEdit);
+                                    new_tasks.push(response.data.data);
                                     setTasks(new_tasks);
                                 }).catch(function(error) {
                                     console.log(error);

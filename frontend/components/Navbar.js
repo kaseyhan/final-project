@@ -83,7 +83,7 @@ export default function Navbar() {
 						<NavLink name="Calendar" href="/calendar" icon='/assets/schedule.svg' />
 						{/* <NavLink name="Chat" href="/chat" icon='/assets/comments-alt.svg' /> */}
 						<NavLink name="Finances" href="/finances" icon='/assets/dollar-alt.svg' />
-						{/* <NavLink name="Analytics" href="/analytics" icon='/assets/chart-line.svg' /> */}
+						<NavLink name="Analytics" href="/analytics" icon='/assets/chart-line.svg' />
 					</div>
 					: <div className={styles.links}>
 						<NavLink name="My Home" href="/my-home" icon='/assets/house-user.svg' />
