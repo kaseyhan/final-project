@@ -11,8 +11,8 @@ import { Bar, Pie } from "react-chartjs-2";
 import Chart from 'chart.js/auto';
 
 export default function Analytics() {
-	const BASE_URL = "http://localhost:4000/api";
-	// const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
+	// const BASE_URL = "http://localhost:4000/api";
+	const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
     const router = useRouter();
 
 	const [isLoading, setIsLoading] = useState(true);
