@@ -140,7 +140,7 @@ export default function Analytics() {
 						<label htmlFor="metricDropdown">Metric: </label>
 						<select id="metricDropdown" defaultValue="completedTasks" onChange={event => {
 							setMetric(event.target.value);
-							// getData(event.target.value,users);
+							getData(event.target.value,users);
 						}}>
 							<option value="completedTasks">Completed tasks</option>
 							<option value="uncompletedTasks">Uncompleted tasks</option>
