@@ -48,7 +48,6 @@ export default function ToDo() {
         const fetchData = async() => {
             try {
                 if (typeof window !== 'undefined') currUserID = window.sessionStorage.getItem("userID");
-                console.log(currUserID);
                 if (currUserID === "undefined" || currUserID == null) {
                     router.push('/login');
                 } else {
