@@ -65,10 +65,8 @@ export default function Analytics() {
 			}
 		}
 			setIsLoading(true);
-			console.log("LOADING");
 			fetchData().then(() => {
 				setIsLoading(false);
-				console.log("DONE")
 			});
 	}, []);
 

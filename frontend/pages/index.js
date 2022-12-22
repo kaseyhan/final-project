@@ -47,7 +47,6 @@ const ItemCard = ({ id, title, color, isTask, isClickable }) => {
   }
 
   const handleItemCardClick = (event, id) => {
-    console.log(id)
     event.preventDefault();
     event.stopPropagation();
   }
