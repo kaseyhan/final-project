@@ -13,6 +13,7 @@ import 'moment-timezone'
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar'
 import styles from '../styles/Calendar.module.css'
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import utils from '../components/utils'
 
 const BASE_URL = 'https://cs409-final-project.herokuapp.com/api/';
 const API = axios.create({ baseURL: BASE_URL });
@@ -30,6 +31,7 @@ export default function Calendar() {
   const [showCreateEventModal, setShowCreateEventModal] = useState(false);
   const [activeEventDetails, setActiveEventDetails] = useState(null);
   const [reload, setReload] = useState(false);
+  const [users, setUsers] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -40,15 +42,20 @@ export default function Calendar() {
         let homeID = data.home;
 
         setUser(data);
-        console.log(user)
 
         // get home data
         if (homeID && homeID.length > 4) {
-          API.get(`homes/${homeID}`)
-            .then(response => {
-              setHome(response.data.data);
-            })
-            .catch(error => console.error(error));
+          // API.get(`homes/${homeID}`)
+          //   .then(response => {
+          //     setHome(response.data.data);
+          //   })
+          //   .catch(error => console.error(error));
+          let homeGet = await API.get(`homes/${homeID}`);
+          setHome(homeGet.data.data);
+
+          let p = {"params": {"where": JSON.stringify({"home":homeID})}};
+          let usersGet = await API.get("users",p);
+          setUsers(usersGet.data.data);
         }
 
 
@@ -118,8 +125,9 @@ export default function Calendar() {
         setUserID(id);
         // console.log(id, userID)
         setIsLoading(true);
-        fetchData();
-        setIsLoading(false);
+        fetchData().then(()=> {
+          setIsLoading(false);
+        })
       }
     }
   }, [userID, reload]);
@@ -212,38 +220,51 @@ export default function Calendar() {
       },
     };
   };
-
-  return (
+  
+  if (isLoading) {
+    return <div className={styles.pageContents}>Loading...</div>;
+  } else return (
     <div className={styles.container}>
       <Navbar />
       <div className={styles.pageContent}>
+        <h1>Calendar</h1>
         {events && !isLoading ?
-          <div className={styles.column}>
-            <BigCalendar
-              localizer={localizer}
-              defaultDate={new Date()}
-              defaultView="month"
-              events={events}
-              onSelectEvent={openEventDetailModal}
-              eventPropGetter={getEventStyle}
-              style={{ height: "calc(90vh - 150px)", width: "90vw", }}
-              popup
-            />
-            {showEventDetailModal &&
-              <EventDetailsModal
-                handleSubmit={handleEventDetailFormSubmit}
-                closeModal={closeEventDetailModal}
-                eventData={activeEventDetails}
-                handleDelete={handleEventDetailFormDelete}
-              />}
+          <div>
+            <div className={styles.column}>
+              <BigCalendar
+                localizer={localizer}
+                defaultDate={new Date()}
+                defaultView="month"
+                events={events}
+                onSelectEvent={openEventDetailModal}
+                eventPropGetter={getEventStyle}
+                style={{ height: "400px", width: "1000px", }}
+                popup
+              />
+              {showEventDetailModal &&
+                <EventDetailsModal
+                  handleSubmit={handleEventDetailFormSubmit}
+                  closeModal={closeEventDetailModal}
+                  eventData={activeEventDetails}
+                  handleDelete={handleEventDetailFormDelete}
+                />}
 
-            {showCreateEventModal &&
-              <CreateEventModal
-                handleCreate={handleCreateEvent}
-                closeModal={closeCreateEventModal}
-              />}
-            <div className={styles.row}>
-              <Button onClick={openCreateEventModal} variant='contained'>Create Event</Button>
+              {showCreateEventModal &&
+                <CreateEventModal
+                  handleCreate={handleCreateEvent}
+                  closeModal={closeCreateEventModal}
+                />}
+              <div className={styles.row}>
+                <Button onClick={openCreateEventModal} variant='contained'>Create Event</Button>
+              </div>
+            </div>
+            <div className={styles.key}>
+              {users.map((user) => (
+                <div className={styles.key}>
+                  <div className={styles.keyColor} style={{backgroundColor: user.color, width: "40px", height: "15px"}}/>
+                  <p className={styles.keyLabel}>{utils.toTitleCase(user.name)}</p>
+                </div>
+              ))}
             </div>
           </div>
           : <CircularProgress />}
