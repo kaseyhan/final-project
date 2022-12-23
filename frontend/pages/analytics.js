@@ -160,7 +160,7 @@ export default function Analytics() {
 				</div>
 				<div className={styles.chart}>
 					{chartType === "bar" ?
-						<Bar id="chart" data={data} className={styles.barChart} />
+						<Bar id="chart" data={data} height={400} width={800} options={{responsive:false}} className={styles.barChart} />
 						: <Pie id="chart" data={data} height={400} options={{responsive:false}} className={styles.pieChart} />
 					}
 				</div>

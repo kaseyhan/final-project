@@ -37,6 +37,6 @@
     padding: 30px;
 }
 
-.pieChart {
+.barChart, .pieChart {
     margin: auto;
 }
