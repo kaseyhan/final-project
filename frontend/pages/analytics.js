@@ -113,7 +113,7 @@ export default function Analytics() {
 		else l = "# completed tasks" // ???
 
 		const dataWrapper = {
-			labels: users.map((user) => user.name),
+			labels: users.map((user) => utils.toTitleCase(user.name)),
 			datasets: [{
 				label: l,
 				data: d,
@@ -138,7 +138,7 @@ export default function Analytics() {
 				<div className={styles.dropdowns}>
 					<div className={styles.metricDropDiv}>
 						<label htmlFor="metricDropdown">Metric: </label>
-						<select id="metricDropdown" defaultValue="completedTasks" onChange={event => {
+						<select id="metricDropdown" defaultValue={metric} onChange={event => {
 							setMetric(event.target.value);
 							getData(event.target.value,users);
 						}}>
@@ -150,7 +150,7 @@ export default function Analytics() {
 					</div>
 					<div className={styles.chartDropDiv}>
 						<label htmlFor="chartDropdown">Chart type: </label>
-						<select id="chartDropdown" defaultValue="bar" onChange={event => {
+						<select id="chartDropdown" defaultValue={chartType} onChange={event => {
 							setChartType(event.target.value);
 						}}>
 							<option value="bar">Bar</option>
@@ -168,3 +168,5 @@ export default function Analytics() {
 		</Layout>
 	)
 } 
+
+//hi

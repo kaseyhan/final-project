@@ -79,33 +79,62 @@ export default function CreateEventModal({ handleCreate, closeModal }) {
   const [isValid, setIsValid] = useState(true);
 
   const handleFormChange = (event, param) => {
-    if (param === 'date') {
+    if (param === 'startDate') {
       let newDate = new Date(event.target.value);
-      let time = newEventDetails.time
-        ? newEventDetails.time
+      let time = newEventDetails.startTime
+        ? newEventDetails.startTime
         : newDate.toLocaleTimeString('en-US', { hour12: false });
 
       let newStartDate = new Date(`${event.target.value} ${time}`);
-      let newEndDate = new Date(newStartDate.getTime() + 60 * 60 * 1000);
+      // let newEndDate = new Date(newStartDate.getTime() + 60 * 60 * 1000);
 
       setNewEventDetails(newEventDetails => ({
         ...newEventDetails,
-        start: newStartDate,
+        start: newStartDate//,
+        // end: newEndDate
+      }));
+    } else if (param === 'endDate') {
+      let newDate = new Date(event.target.value);
+      let time = newEventDetails.endTime
+        ? newEventDetails.endTime
+        : newDate.toLocaleTimeString('en-US', { hour12: false });
+
+      let newEndDate = new Date(`${event.target.value} ${time}`);
+      // let newEndDate = new Date(newStartDate.getTime() + 60 * 60 * 1000);
+
+      setNewEventDetails(newEventDetails => ({
+        ...newEventDetails,
+        // start: newStartDate//,
         end: newEndDate
       }));
-    } else if (param === 'time') {
+    } else if (param === 'startTime') {
       let parts = event.target.value.split(':'); // HH:MM:SS
 
       let s = parts[2] ? parts[2] : 0;
       let newStartDate = new Date(newEventDetails.start);
       newStartDate.setHours(parts[0], parts[1], s);
 
+      // let newEndDate = new Date(newEventDetails.end);
+      // newEndDate.setHours(parts[0], parts[1], s);
+
+      setNewEventDetails(newEventDetails => ({
+        ...newEventDetails,
+        start: newStartDate//,
+        // end: newEndDate
+      }));
+    } else if (param === 'endTime') {
+      let parts = event.target.value.split(':'); // HH:MM:SS
+
+      let s = parts[2] ? parts[2] : 0;
+      // let newStartDate = new Date(newEventDetails.start);
+      // newStartDate.setHours(parts[0], parts[1], s);
+
       let newEndDate = new Date(newEventDetails.end);
       newEndDate.setHours(parts[0], parts[1], s);
 
       setNewEventDetails(newEventDetails => ({
         ...newEventDetails,
-        start: newStartDate,
+        // start: newStartDate,
         end: newEndDate
       }));
     } else {
@@ -160,18 +189,38 @@ export default function CreateEventModal({ handleCreate, closeModal }) {
             </div>
             <div className={styles.row}>
               <FormItem
-                title="Date"
+                title="Start date"
                 numRows={1}
-                id="date"
+                id="startDate"
                 type="date"
                 handleFormChange={handleFormChange}
                 required
               // defaultValue={moment().format("YYYY/MM/DD").replaceAll('/', '-')}
               />
               <FormItem
-                title="Time"
+                title="End date"
                 numRows={1}
-                id="time"
+                id="endDate"
+                type="date"
+                handleFormChange={handleFormChange}
+                required
+              // defaultValue={moment().format("HH:mm:ss")}
+              />
+            </div>
+            <div className={styles.row}>
+              <FormItem
+                title="Start time"
+                numRows={1}
+                id="startTime"
+                type="time"
+                handleFormChange={handleFormChange}
+                required
+              // defaultValue={moment().format("YYYY/MM/DD").replaceAll('/', '-')}
+              />
+              <FormItem
+                title="End time"
+                numRows={1}
+                id="endTime"
                 type="time"
                 handleFormChange={handleFormChange}
                 required

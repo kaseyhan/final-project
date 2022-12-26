@@ -90,29 +90,56 @@ export default function EventDetailsModal({ handleSubmit, closeModal, eventData,
 
 
   const handleFormChange = (event, param) => {
-    if (param === 'date') {
+    if (param === 'startDate') {
       let oldTime = newEventDetails.start.toLocaleTimeString('en-US', { hour12: false });
 
       let newStartDate = new Date(`${event.target.value} ${oldTime}`);
-      let newEndDate = new Date(newStartDate.getTime() + 60 * 60 * 1000);
+      // let newEndDate = new Date(newStartDate.getTime() + 60 * 60 * 1000);
 
       setNewEventDetails(newEventDetails => ({
         ...newEventDetails,
-        start: newStartDate,
+        start: newStartDate//,
+        // end: newEndDate
+      }));
+    } else if (param === 'endDate') {
+      let oldTime = newEventDetails.start.toLocaleTimeString('en-US', { hour12: false });
+
+      // let newStartDate = new Date(`${event.target.value} ${oldTime}`);
+      let newEndDate = new Date(`${event.target.value} ${oldTime}`);
+
+      setNewEventDetails(newEventDetails => ({
+        ...newEventDetails,
+        // start: newStartDate,
         end: newEndDate
       }));
-    } else if (param === 'time') {
+    } else if (param === 'startTime') {
       let parts = event.target.value.split(':'); // HH:MM:SS
 
+      let s = parts[2] ? parts[2] : 0;
       let newStartDate = new Date(newEventDetails.start);
-      newStartDate.setHours(parts[0], parts[1], parts[2]);
+      newStartDate.setHours(parts[0], parts[1], s);
 
-      let newEndDate = new Date(newEventDetails.end);
-      newEndDate.setHours(parts[0], parts[1], parts[2]);
+      // let newEndDate = new Date(newEventDetails.end);
+      // newEndDate.setHours(parts[0], parts[1], parts[2]);
 
       setNewEventDetails(newEventDetails => ({
         ...newEventDetails,
-        start: newStartDate,
+        start: newStartDate//,
+        // end: newEndDate
+      }));
+    } else if (param === 'endTime') {
+      let parts = event.target.value.split(':'); // HH:MM:SS
+
+      // let newStartDate = new Date(newEventDetails.start);
+      // newStartDate.setHours(parts[0], parts[1], parts[2]);
+
+      let s = parts[2] ? parts[2] : 0;
+      let newEndDate = new Date(newEventDetails.end);
+      newEndDate.setHours(parts[0], parts[1], s);
+
+      setNewEventDetails(newEventDetails => ({
+        ...newEventDetails,
+        // start: newStartDate,
         end: newEndDate
       }));
     } else {
@@ -174,18 +201,36 @@ export default function EventDetailsModal({ handleSubmit, closeModal, eventData,
             </div>
             <div className={styles.row}>
               <FormItem
-                title="Date"
+                title="Start date"
                 defaultValue={eventData.start.toLocaleDateString('en-CA')}
                 numRows={1}
-                id="date"
+                id="startDate"
                 type="date"
                 handleFormChange={handleFormChange}
               />
               <FormItem
-                title="Time"
+                title="End date"
+                defaultValue={eventData.end.toLocaleDateString('en-CA')}
+                numRows={1}
+                id="endDate"
+                type="date"
+                handleFormChange={handleFormChange}
+              />
+            </div>
+            <div className={styles.row}>
+              <FormItem
+                title="Start time"
                 defaultValue={eventData.start.toLocaleTimeString('en-US', { hour12: false })}
                 numRows={1}
-                id="time"
+                id="startTime"
+                type="time"
+                handleFormChange={handleFormChange}
+              />
+              <FormItem
+                title="End time"
+                defaultValue={eventData.end.toLocaleTimeString('en-US', { hour12: false })}
+                numRows={1}
+                id="endTime"
                 type="time"
                 handleFormChange={handleFormChange}
               />
