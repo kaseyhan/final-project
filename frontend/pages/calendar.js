@@ -44,19 +44,19 @@ export default function Calendar() {
         setUser(data);
 
         // get home data
-        if (homeID && homeID.length > 4) {
+        // if (homeID && homeID.length > 4) {
           // API.get(`homes/${homeID}`)
           //   .then(response => {
           //     setHome(response.data.data);
           //   })
           //   .catch(error => console.error(error));
-          let homeGet = await API.get(`homes/${homeID}`);
-          setHome(homeGet.data.data);
+        let homeGet = await API.get(`homes/${homeID}`);
+        setHome(homeGet.data.data);
 
-          let p = {"params": {"where": JSON.stringify({"home":homeID})}};
-          let usersGet = await API.get("users",p);
-          setUsers(usersGet.data.data);
-        }
+        let p = {"params": {"where": JSON.stringify({"home":homeID})}};
+        let usersGet = await API.get("users",p);
+        setUsers(usersGet.data.data);
+        // }
 
 
         // get upcoming user events
@@ -75,17 +75,19 @@ export default function Calendar() {
             guests: curEvent.guests,
             notes: curEvent.notes,
             repeat: curEvent.repeat,
-            color: userColor || '#9CAF88'
+            color: userColor || "#cccccc"
           }
           upcomingEvents.push(eventData)
         })
 
         // get home events
-        if (homeID && homeID.length > 2 && home && home.events.length > 0) {
-          const homeRequests = home.events.map(id => API.get(`events/${id}`));
+        if (homeID && homeID.length > 2 && homeGet.data.data && homeGet.data.data.events.length > 0) {
+          const homeRequests = homeGet.data.data.events.map(id => API.get(`events/${id}`));
           const homeResults = await Promise.all(homeRequests);
           homeResults.map(res => {
             let curEvent = res.data.data;
+            let u = usersGet.data.data.find(element => element._id === curEvent.host);
+            let c = u ? u.color : "#cccccc"
             let eventData = {
               id: curEvent._id,
               title: curEvent.name,
@@ -96,7 +98,7 @@ export default function Calendar() {
               guests: curEvent.guests,
               notes: curEvent.notes,
               repeat: curEvent.repeat,
-              color: '#9CAF88'
+              color: c
             }
 
             // avoid adding Home events that are also one of the logged in
