@@ -57,9 +57,17 @@ export default function ToDo() {
                     let homeID = currUserGet.data.data.home;
 
                     query["home"] = homeID;
+                    let order = sortOrder === "asc" ? 1 : -1;
+                    let sort;
+                    if (sortBy === "name") sort = {name: order};
+                    else if (sortBy === "deadline") sort = {"deadline": order};
+                    else if (sortBy === "dateCreated") sort = {"dateCreated": order};
+                    else if (sortBy === "assignee") sort = {"assignee": order};
+
                     let p = {
                         "params": {
-                            "where": JSON.stringify(query)
+                            "where": JSON.stringify(query),
+                            // "sort": JSON.stringify(sort)
                         }
                     }
         
@@ -108,6 +116,17 @@ export default function ToDo() {
         else return null;
     }
 
+    function convertDeadlineYYYYMMDD(date) {
+        if (date !== undefined && date !== null) return date.split('T')[0];
+        else return null;
+    }
+
+    function convertTime(date) {
+        // console.log(date)
+        if (date !== undefined && date !== null) return date.split('T')[1].split('.')[0].substring(0,5);
+        else return null;
+    }
+
   if (isLoading) {
     return <div className={styles.pageContents}>Loading...</div>;
   } else {
@@ -122,19 +141,19 @@ export default function ToDo() {
         <div className={styles.options}>
             <div className={styles.sort}>
                 <p>Sort by: </p>
-                <select name="selectList" id="select" defaultValue="deadline" onChange={event => {
+                <select name="selectList" id="select" defaultValue={sortBy} onChange={event => {
                     setSortBy(event.target.value);}}>
-                    <option value="title">Title</option>
+                    <option value="name">Title</option>
                     <option value="deadline">Deadline</option>
                     <option value="dateCreated">Date Created</option>
                     <option value="assignee">Assignee</option>
                 </select>
             </div>
-            <div className={styles.radioButtons} defaultValue="asc" onChange={event => {
+            <div className={styles.radioButtons} onChange={event => {
                             setSortOrder(event.target.value);}}>
-                <input className={styles.rad} type="radio" value="asc" name="sort"/> ascending
+                <input className={styles.rad} type="radio" value="asc" name="sort" checked={sortOrder==="asc" ? "checked" : false}/> ascending
                 <span className={styles.spacer}>     </span>
-                <input className={styles.rad} type="radio" value="desc" name="sort"/> descending
+                <input className={styles.rad} type="radio" value="desc" name="sort" checked={sortOrder==="desc" ? "checked" : false}/> descending
             </div>
             <div className={styles.rightButtons}>
                 <button className={styles.filterButton} onClick={()=> setShowFilter(true)}>Filter Tasks</button>
@@ -144,7 +163,7 @@ export default function ToDo() {
         </div>
 
         <Modal title="Filter Tasks" button="Apply Filters" onClose={() => setShowFilter(false)} show={showFilter}>
-                <label htmlFor="assignees">Assignee</label>
+                <label htmlFor="assignees">Assignee </label>
                 <br></br>
                 <div id="assignees" className={styles.assigneeButtons}>
                     {users.map((user, index) => (
@@ -449,11 +468,11 @@ export default function ToDo() {
                 <br></br>
 
                 <label htmlFor="deadlineInput">Deadline (optional)</label><br></br>
-                <input type="date" className={styles.deadlineInput} id="deadlineInputDateEdit" onChange={event => {
+                <input type="date" className={styles.deadlineInput} id="deadlineInputDateEdit" defaultValue={convertDeadlineYYYYMMDD(taskToEdit.deadline)} onChange={event => {
                     let t = {...taskToEdit}
                     t["deadlineDate"] = event.target.value;
                     setTaskToEdit(t)}}></input>
-                <input type="time" className={styles.deadlineInput} id="deadlineInputTimeEdit" onChange={event => {
+                <input type="time" className={styles.deadlineInput} id="deadlineInputTimeEdit" defaultValue={convertTime(taskToEdit.deadline)} onChange={event => {
                     let t = {...taskToEdit}
                     t["deadlineTime"] = event.target.value;
                     setTaskToEdit(t)}}></input><br></br>
@@ -468,7 +487,7 @@ export default function ToDo() {
                 <br></br>
 
                 <label htmlFor="selectRotationEdit">Rotate</label>
-                <select id="selectRotationEdit" onChange={event => {
+                <select id="selectRotationEdit" defaultValue={taskToEdit.rotate} onChange={event => {
                     let t = {...taskToEdit}
                     t["rotate"] = event.target.value;
                     setTaskToEdit(t);}}>
@@ -480,11 +499,10 @@ export default function ToDo() {
                 <br></br>
 
                 <label htmlFor="completed">Completed?</label>
-                <input type="checkbox" id="completed" onChange={event => {
+                <input type="checkbox" id="completed" defaultChecked={taskToEdit.completed} onChange={event => {
                     let t = {...taskToEdit};
                     t["completed"] = event.target.value;
-                    setTaskToEdit(t);
-                }}></input>
+                    setTaskToEdit(t);}}></input>
                 <br></br>
                 <br></br>
                 <br></br>
@@ -517,9 +535,12 @@ export default function ToDo() {
                         else tt["assigneeName"] = "unassigned";
                         if (taskToEdit["notes"]) tt["notes"] = taskToEdit["notes"];
 
+                        // console.log(tt);
+
                         let endpoint = 'tasks/' + taskToEdit._id;
                         api.put(endpoint, tt)
                           .then(function (response) {
+                            // console.log(response);
                             let new_tasks = [...tasks];
                             const isTaskToEdit = (element) => element._id === taskToEdit._id;
                             let idx = new_tasks.findIndex(isTaskToEdit);

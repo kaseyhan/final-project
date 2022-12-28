@@ -36,10 +36,6 @@
 }
 
 
-.active {
-    background-color: #69906b;
-    color: white;
-  }
 
 .radioButtons {
     display: inline-block;
@@ -122,26 +118,57 @@
     margin: auto;
     padding: 4px;
 }
-/* .assigneeButton {
+.assigneeButton {
     background-color: #dce6dd;
-    border: none;
+    /* border: none; */
     color: black;
     padding: 5px 5px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 14px;
-} */
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
 .statusButtons {
     display: inline-block;
     margin: auto;
     padding: 4px;
+}
+.statusButton {
+    background-color: #dce6dd;
+    /* border: none; */
+    color: black;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin-right: 5px;
+    margin-bottom: 5px;
 }
 
 .deadlineButtons {
     display: inline-block;
     margin: auto;
     padding: 4px;
+}
+.deadlineButton {
+    background-color: #dce6dd;
+    color: black;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.active {
+    background-color: #69906b;
+    color: white;
 }
 
 .taskButtons {
@@ -184,4 +211,10 @@
     width: 100%;
     padding-top: 30px;
     padding-bottom: 30px;
+}
+
+.deadlineInput {
+    padding: 3px;
+    width: 35%;
+    margin-right: 5px;
 }

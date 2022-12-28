@@ -141,6 +141,7 @@ module.exports = function (router) {
 				  }
 				
 			}
+            
             let data = await Task.find(query, select, other);         
 
             if (count) data = {count: data.length};
@@ -265,6 +266,7 @@ module.exports = function (router) {
             data.name = req.body.name;
             if (req.body.deadline) data.deadline = req.body.deadline;
             if (req.body.notes) data.notes = req.body.notes;
+            if (req.body.rotate) data.rotate = req.body.rotate;
             if (req.body.home !== data.home) {
                 let old_home = await Home.findById(data.home);
                 for (let i = 0; i < old_home.tasks.length; i++) {
