@@ -249,12 +249,7 @@ export default function Home() {
                   <div className={styles.list}>
                     <div className={styles.listContent}>
                       {(announcementsData && announcementsData.length > 0) ? (announcementsData.map((announcement, idx) => (
-                        <ItemCard
-                          key={idx}
-                          id={idx}
-                          title={announcement.message}
-                          color={userColors[announcement.user]}
-                        />
+                        <p>HI</p>
                       ))) : <h3>No Announcements...</h3>}
                     </div>
                   </div>
