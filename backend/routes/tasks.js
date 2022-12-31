@@ -324,7 +324,7 @@ module.exports = function (router) {
             }
             
             
-            if (req.body.completed == true || req.body.completed == false) data.completed = req.body.completed;
+            if (req.body.completed === true || req.body.completed === false) data.completed = req.body.completed;
             let old_user;
             if (data.assignee !== "") {
                 old_user = await User.findById(data.assignee);
@@ -350,6 +350,16 @@ module.exports = function (router) {
                 }
                 // data.assignee = "";
                 // data.assigneeName = "";
+            }
+            if (!data.completed && data.assignee && !req.body.assignee) {
+                let a = await User.findById(data.assignee);
+                a.pendingTasks.push(data._id);
+                try {
+                    let userToSave = await a.save();
+                } catch (error) {
+                    res.status(500).json({message: "Error saving", data:{}})
+                    return;
+                }
             }
             
             if (req.body.assignee && req.body.assignee !== data.assignee && !data.completed) { // if a new user is provided

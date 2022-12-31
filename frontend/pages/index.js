@@ -124,13 +124,24 @@ export default function Home() {
         }
 
         // get to-do tasks
-        let toDoTasks = [];
-        const tasksRequests = data.pendingTasks.map(id => API.get(`tasks/${id}`));
-        const tasksResults = await Promise.all(tasksRequests);
-        tasksResults.forEach(res => {
-          toDoTasks.push(res.data.data);
-        })
-        setToDoData(toDoTasks);
+        // let toDoTasks = [];
+        // const tasksRequests = data.pendingTasks.map(id => API.get(`tasks/${id}`));
+        // const tasksResults = await Promise.all(tasksRequests);
+        // tasksResults.forEach(res => {
+        //   toDoTasks.push(res.data.data);
+        // })
+        let query = {
+          "_id": {
+            "$in" : data.pendingTasks
+          }
+        }
+        let params = {
+          "params": {
+            "where": JSON.stringify(query)
+          }
+        }
+        const taskGet = await API.get('tasks', params);
+        setToDoData(taskGet.data.data);
 
         // get upcoming events
         let upcomingEvents = [];
@@ -178,7 +189,6 @@ export default function Home() {
         "password": homeData.password,
         "announcements": updatedAnnouncements
       }
-      console.log(params);
       API.put(`homes/${homeData._id}`, params)
         .then(response => {
           setAnnouncementsData(updatedAnnouncements);

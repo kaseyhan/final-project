@@ -414,9 +414,9 @@ export default function ToDo() {
                                 
                                 // let taskToEdit = new_tasks[idx];
                                 let t = new_tasks[idx];
-                                let taskToEdit = {name: t.name, home: t.home}
+                                let taskToEdit = {name: t.name, home: t.home, completed: !t.completed};
                                 // taskToEdit.completed = !taskToEdit.completed;
-                                taskToEdit.completed = !t.completed;
+                                // taskToEdit.completed = !t.completed;
                                 // if (taskToEdit.completed) {
                                 //     delete taskToEdit.assignee;
                                 //     delete taskToEdit.assigneeName;
