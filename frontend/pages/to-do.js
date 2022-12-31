@@ -9,8 +9,8 @@ import styles from '../styles/to-do.module.css'
 import utils from '../components/utils'
 
 export default function ToDo() {
-    const BASE_URL = "http://localhost:4000/api";
-    // const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
+    // const BASE_URL = "http://localhost:4000/api";
+    const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
     const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(true);
@@ -164,11 +164,9 @@ export default function ToDo() {
                         styles.assigneeButton} id={user} key={index} onClick={(event) => {
                             let q = [...queryAssignees];
                             if (activeAssigneeFilterButton.includes("anyone") || activeAssigneeFilterButton.includes("unassigned")) {
-                                // console.log("A")
                                 setActiveAssigneeFilterButton([user]);
                                 q = [user];
                             } else if (activeAssigneeFilterButton.includes(user)) {
-                                // console.log("B")
                                 let a = [...activeAssigneeFilterButton];
                                 const isAssigneeToDelete = (element) => element === user;
                                 let idx = a.findIndex(isAssigneeToDelete);
@@ -177,7 +175,6 @@ export default function ToDo() {
                                 x = q.splice(idx,1);
                                 setActiveAssigneeFilterButton(a);
                             } else {
-                                // console.log("C")
                                 let a = [...activeAssigneeFilterButton];
                                 a.push(user);
                                 setActiveAssigneeFilterButton(a);
