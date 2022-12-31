@@ -141,8 +141,9 @@ module.exports = function (router) {
 				  }
 				
 			}
-            
-            let data = await Task.find(query, select, other);         
+
+            let data = await Task.find(query, select, other);
+            // console.log(data)     
 
             if (count) data = {count: data.length};
             res.status(200)
@@ -382,6 +383,8 @@ module.exports = function (router) {
                     return;
                 }
             }
+            
+            if (req.body.assignee) data.assignee = req.body.assignee;
             
         } else {
             res.status(404).json({

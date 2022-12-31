@@ -9,8 +9,8 @@ import styles from '../styles/to-do.module.css'
 import utils from '../components/utils'
 
 export default function ToDo() {
-    // const BASE_URL = "http://localhost:4000/api";
-    const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
+    const BASE_URL = "http://localhost:4000/api";
+    // const BASE_URL = "https://cs409-final-project.herokuapp.com/api";
     const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(true);
@@ -62,21 +62,26 @@ export default function ToDo() {
                     if (sortBy === "name") sort = {name: order};
                     else if (sortBy === "deadline") sort = {"deadline": order};
                     else if (sortBy === "dateCreated") sort = {"dateCreated": order};
-                    else if (sortBy === "assignee") sort = {"assignee": order};
+                    else if (sortBy === "assigneeName") sort = {"assigneeName": order};
 
                     let p = {
                         "params": {
                             "where": JSON.stringify(query),
-                            // "sort": JSON.stringify(sort)
+                            "sort": JSON.stringify(sort)
                         }
                     }
-        
                     const task_get = await api.get('tasks', p);
                     setTasks(task_get.data.data);
         
                     const home_get = await api.get('homes/'+homeID);
                     setHome(home_get.data.data);
-
+                    
+                    let q = {"home": homeID};
+                    p = {
+                        "params": {
+                            "where": JSON.stringify(q)
+                        }
+                    }
                     const usersGet = await api.get('users',p);
                     let u = [];
                     let un = [];
@@ -97,19 +102,6 @@ export default function ToDo() {
             setIsLoading(false);
         });
     }, [query,sortBy,sortOrder]);
-
-    // function titleCase(str) {
-    //     if (str) {
-    //         return str.replace(
-    //         /\w\S*/g,
-    //         function(t) {
-    //             return t.charAt(0).toUpperCase() + t.substr(1).toLowerCase();
-    //         }
-    //         );
-    //     } else {
-    //         return "Unassigned"
-    //     }
-    //   }
 
     function convertDeadline(deadline) {
         if (deadline !== undefined && deadline !== null) return new Date(deadline).toString().substring(0,25);
@@ -146,14 +138,15 @@ export default function ToDo() {
                     <option value="name">Title</option>
                     <option value="deadline">Deadline</option>
                     <option value="dateCreated">Date Created</option>
-                    <option value="assignee">Assignee</option>
+                    <option value="assigneeName">Assignee</option>
                 </select>
             </div>
-            <div className={styles.radioButtons} onChange={event => {
-                            setSortOrder(event.target.value);}}>
-                <input className={styles.rad} type="radio" value="asc" name="sort" checked={sortOrder==="asc" ? "checked" : false}/> ascending
+            <div className={styles.radioButtons} >
+                <input className={styles.rad} type="radio" value="asc" name="sort" checked={sortOrder==="asc" ? "checked" : false} onChange={event => {
+                            setSortOrder(event.target.value);}}/> ascending
                 <span className={styles.spacer}>     </span>
-                <input className={styles.rad} type="radio" value="desc" name="sort" checked={sortOrder==="desc" ? "checked" : false}/> descending
+                <input className={styles.rad} type="radio" value="desc" name="sort" checked={sortOrder==="desc" ? "checked" : false} onChange={event => {
+                            setSortOrder(event.target.value);}}/> descending
             </div>
             <div className={styles.rightButtons}>
                 <button className={styles.filterButton} onClick={()=> setShowFilter(true)}>Filter Tasks</button>
@@ -169,21 +162,27 @@ export default function ToDo() {
                     {users.map((user, index) => (
                         <button className={activeAssigneeFilterButton.includes(user) ? `${styles.assigneeButton} ${styles.active}` : 
                         styles.assigneeButton} id={user} key={index} onClick={(event) => {
+                            let q = [...queryAssignees];
                             if (activeAssigneeFilterButton.includes("anyone") || activeAssigneeFilterButton.includes("unassigned")) {
+                                // console.log("A")
                                 setActiveAssigneeFilterButton([user]);
+                                q = [user];
                             } else if (activeAssigneeFilterButton.includes(user)) {
+                                // console.log("B")
                                 let a = [...activeAssigneeFilterButton];
                                 const isAssigneeToDelete = (element) => element === user;
                                 let idx = a.findIndex(isAssigneeToDelete);
                                 let x = a.splice(idx,1);
+                                idx = q.findIndex(isAssigneeToDelete);
+                                x = q.splice(idx,1);
                                 setActiveAssigneeFilterButton(a);
                             } else {
+                                // console.log("C")
                                 let a = [...activeAssigneeFilterButton];
                                 a.push(user);
                                 setActiveAssigneeFilterButton(a);
+                                q.push(event.target.id);
                             }
-                            let q = [...queryAssignees];
-                            q.push(event.target.id);
                             setQueryAssignees(q);
                         }}>{utils.toTitleCase(userNames[index])}</button>
                     ))}
@@ -293,7 +292,7 @@ export default function ToDo() {
                         
                         setQuery(newQuery);
                         setNewQuery({});
-                        setQueryAssignees([]);       
+                        // setQueryAssignees([]);       
                         setQueryDeadline("");                     
                         setShowFilter(false)}}>Apply Filters</button>
                 </div>
@@ -312,13 +311,13 @@ export default function ToDo() {
                 let first;
                 let second;
                 switch (sortBy) {
-                    case "title":
+                    case "name":
                         if (sortOrder === "asc") {
-                            first = a.title;
-                            second = b.title;
+                            first = utils.toTitleCase(a.name);
+                            second = utils.toTitleCase(b.name);
                         } else {
-                            first = b.title;
-                            second = a.title;
+                            first = utils.toTitleCase(b.name);
+                            second = utils.toTitleCase(a.name);
                         }
                         break;
                     case "deadline":
@@ -330,7 +329,7 @@ export default function ToDo() {
                             second = a.deadline;
                         }
                         break;
-                    case "date_created":
+                    case "dateCreated":
                         if (sortOrder === "asc") {
                             first = Date.parse(a.dateCreated);
                             second = Date.parse(b.dateCreated);
@@ -339,13 +338,13 @@ export default function ToDo() {
                             second = Date.parse(a.dateCreated);
                         }
                         break;
-                    case "assignee":
+                    case "assigneeName":
                         if (sortOrder === "asc") {
-                            first = a.assigneeName;
-                            second = b.assigneeName;
+                            first = utils.toTitleCase(a.assigneeName);
+                            second = utils.toTitleCase(b.assigneeName);
                         } else {
-                            first = b.assigneeName;
-                            second = a.assigneeName;
+                            first = utils.toTitleCase(b.assigneeName);
+                            second = utils.toTitleCase(a.assigneeName);
                         }
                         break;
                     default:
@@ -357,9 +356,11 @@ export default function ToDo() {
                             second = a.deadline;
                         }
                         break;
-                        
                 }
-                if (first < second) return -1;
+                if (!first && !second) return 0;
+                else if (first && !second) return -1;
+                else if (!first && second) return 1;
+                else if (first < second) return -1;
                 else if (first > second) return 1;
                 else return 0;
             }).map((task, index) => (
@@ -535,7 +536,7 @@ export default function ToDo() {
                         else tt["assigneeName"] = "unassigned";
                         if (taskToEdit["notes"]) tt["notes"] = taskToEdit["notes"];
 
-                        // console.log(tt);
+                        console.log(tt);
 
                         let endpoint = 'tasks/' + taskToEdit._id;
                         api.put(endpoint, tt)
