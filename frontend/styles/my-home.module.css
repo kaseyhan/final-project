@@ -57,9 +57,11 @@
     visibility: hidden;
 }
 
-/* .modalContents {
+.err {
+    text-align: center;
+    padding: 10px;
+}
 
-} */
 .submitButtons {
     margin: auto;
     padding-top: 30px;

@@ -121,10 +121,10 @@ export default function MyHome() {
                         {/* <p>Lease link: {home.leaseLink ? home.leaseLink : "None"}</p> */}
                     </div>
                 </div>
-                <Modal title="Edit Home details" button="Save Changes" onClose={() => setShow(false)} show={show}>
+                <Modal title="Edit Home details" button="Save Changes" onClose={() => {setShow(false); setError("")}} show={show}>
                     <div className={styles.modalContents}>
                         <div className={styles.infoModal}>
-                            <label htmlFor="nameInput">Name:</label>
+                            <label htmlFor="nameInput">Name (required):</label>
                             <input type="text" id="nameInput" defaultValue={home.name} onChange={(event) => {
                                 let h = {...editHome};
                                 h["name"] = event.target.value;
@@ -132,7 +132,7 @@ export default function MyHome() {
                             }}/>
                         </div>
                         <div className={styles.infoModal}>
-                            <label htmlFor="passwordInput">Password:</label>
+                            <label htmlFor="passwordInput">Password (required):</label>
                             <input type="password" id="passwordInput" defaultValue={home.password} onChange={(event) => {
                                 let h = {...editHome};
                                 h["password"] = event.target.value;
@@ -189,27 +189,38 @@ export default function MyHome() {
                                 leaseLink: editHome.leaseLink
                             };
 
+                            if (!h.name || !h.password) {
+                                setError("Name and password are required.")
+                                return;
+                            } else {
+                                api.put('homes/' + home._id, h)
+                                .then(function(response) {
+                                    setHome(h);
+                                    let u = {...currUser};
+                                    u.home = "none";
+                                    setCurrUser(u);
+                                    setReload(!reload);
+                                    setEditHome({});  
+                                    setError("");  
+                                    setShow(false);
+                                })
+                                .catch(function(response) {
+                                    console.log(response);
+                                    setError("Error");
+                                })
+                            }
+
                             // if (editHome.name) h["name"] = editHome.name;
                             // if (editHome.password) h["password"] = editHome.password;
                             // if (editHome.address) h["address"] = editHome.address;
                             // if (editHome.landlordName) h["landlordName"] = editHome.landlordName;
                             // if (editHome.landlordPhoneNumber) h["landlordPhoneNumber"] = editHome.landlordPhoneNumber;
                             // if (editHome.leaseLink) h["leaseLink"] = editHome.leaseLink;
-                            console.log(h)
-                            api.put('homes/' + home._id, h)
-                            .then(function(response) {
-                                setHome(h);
-                                let u = {...currUser};
-                                u.home = "none";
-                                setCurrUser(u);
-                                setReload(!reload);
-                                setEditHome({});    
-                                setShow(false)
-                            })
-                            .catch(function(response) {
-                                console.log(response);
-                            })
+                            
                         }}>Save changes</button>
+                    </div>
+                    <div className={styles.err}>
+                        {error}
                     </div>
                 </Modal>
                 <Modal title="Warning" button="Leave" onClose={() => setShowWarning(false)} show={showWarning}>

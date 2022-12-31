@@ -10,6 +10,7 @@ import AnnouncementModal from '../components/AnnouncementModal'
 import styles from '../styles/Home.module.css'
 import utils from '../components/utils'
 
+// const BASE_URL = 'http://localhost:4000/api'
 const BASE_URL = 'https://cs409-final-project.herokuapp.com/api';
 const API = axios.create({ baseURL: BASE_URL });
 
@@ -76,7 +77,7 @@ export default function Home() {
 
   const [userID, setUserID] = useState(null);
   const [toDoData, setToDoData] = useState(null);
-  const [announcementsData, setAnnouncementsData] = useState(null);
+  const [announcementsData, setAnnouncementsData] = useState();
   const [eventsData, setEventsData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -84,6 +85,7 @@ export default function Home() {
   const [homeData, setHomeData] = useState(null);
   const [userData, setUserData] = useState(null);
   const [isFirstTime, setIsFirstTime] = useState(true);
+  const [userColors, setUserColors] = useState([]);
 
   const fetchData = async () => {
     var id = window.sessionStorage.getItem("userID");
@@ -97,6 +99,19 @@ export default function Home() {
         let homeID = data.home;
 
         setUserData(data);
+
+        let q = {"home": homeID};
+        let p = {
+            "params": {
+                "where": JSON.stringify(q)
+            }
+        }
+        const usersGet = await API.get('users',p);
+        let colors = {};
+        for (let i = 0; i < usersGet.data.data.length; i++) {
+          colors[usersGet.data.data[i]._id] = usersGet.data.data[i].color;
+        }
+        setUserColors(colors);
 
         // get announcements
         if (homeID && homeID !== 'none') {
@@ -156,13 +171,14 @@ export default function Home() {
     if (homeData) {
       setIsLoading(true);
 
-      setNewAnnouncement(data)
-      let updatedAnnouncements = [...announcementsData, newAnnouncement];
+      setNewAnnouncement(data);
+      let updatedAnnouncements = [...announcementsData, {user: userData._id, message: newAnnouncement}];
       let params = {
         "name": homeData.name,
         "password": homeData.password,
         "announcements": updatedAnnouncements
       }
+      console.log(params);
       API.put(`homes/${homeData._id}`, params)
         .then(response => {
           setAnnouncementsData(updatedAnnouncements);
@@ -236,7 +252,8 @@ export default function Home() {
                         <ItemCard
                           key={idx}
                           id={idx}
-                          title={announcement}
+                          title={announcement.message}
+                          color={userColors[announcement.user]}
                         />
                       ))) : <h3>No Announcements...</h3>}
                     </div>

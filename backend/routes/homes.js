@@ -237,10 +237,15 @@ module.exports = function (router) {
         const data = await Home.findById(req.params.id);
         if (data) {
             data.name = req.body.name;
-            if (req.body.address) data.address = req.body.address;
-            if (req.body.landlordName) data.landlordName = req.body.landlordName;
-            if (req.body.landlordPhoneNumber) data.landlordPhoneNumber = req.body.landlordPhoneNumber;
-            if (req.body.leaseLink) data.leaseLink = req.body.leaseLink;
+            data.password = req.body.password;
+            data.address = req.body.address;
+            data.landlordName = req.body.landlordName;
+            data.landlordPhoneNumber = req.body.landlordPhoneNumber;
+            data.leaseLink = req.body.leaseLink;
+            // if (req.body.address) data.address = req.body.address;
+            // if (req.body.landlordName) data.landlordName = req.body.landlordName;
+            // if (req.body.landlordPhoneNumber) data.landlordPhoneNumber = req.body.landlordPhoneNumber;
+            // if (req.body.leaseLink) data.leaseLink = req.body.leaseLink;
             if (req.body.announcements) data.announcements = req.body.announcements;
 
             if (req.body.members) {
