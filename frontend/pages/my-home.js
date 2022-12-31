@@ -43,6 +43,7 @@ export default function MyHome() {
                 if (homeID !== "none") {
                     const homeGet = await api.get('homes/'+homeID);
                     setHome(homeGet.data.data);
+                    setEditHome(homeGet.data.data);
                     const members = homeGet.data.data.members;
                     let query = {
                         "_id": {
@@ -113,22 +114,26 @@ export default function MyHome() {
                         <p>Landlord phone number: {home.landlordPhoneNumber ? home.landlordPhoneNumber : "None"}</p>
                     </div>
                     <div className={styles.info}>
-                        <p>Lease link: {home.leaseLink ? home.leaseLink : "None"}</p>
+                        <p>Lease link:</p>
+                        {home.leaseLink ?
+                            <a href={home.leaseLink}>{home.leaseLink}</a>
+                            : <p>None</p>}
+                        {/* <p>Lease link: {home.leaseLink ? home.leaseLink : "None"}</p> */}
                     </div>
                 </div>
                 <Modal title="Edit Home details" button="Save Changes" onClose={() => setShow(false)} show={show}>
                     <div className={styles.modalContents}>
-                        <div className={styles.info}>
+                        <div className={styles.infoModal}>
                             <label htmlFor="nameInput">Name:</label>
-                            <input type="text" id="nameInput" onChange={(event) => {
+                            <input type="text" id="nameInput" defaultValue={home.name} onChange={(event) => {
                                 let h = {...editHome};
                                 h["name"] = event.target.value;
                                 setEditHome(h);
                             }}/>
                         </div>
-                        <div className={styles.info}>
+                        <div className={styles.infoModal}>
                             <label htmlFor="passwordInput">Password:</label>
-                            <input type="password" id="passwordInput" onChange={(event) => {
+                            <input type="password" id="passwordInput" defaultValue={home.password} onChange={(event) => {
                                 let h = {...editHome};
                                 h["password"] = event.target.value;
                                 setEditHome(h);
@@ -140,33 +145,33 @@ export default function MyHome() {
                                 <span>{utils.toTitleCase(user.name)}{index < users.length-1 ? "," : ""} </span>
                             ))}
                         </div> */}
-                        <div className={styles.info}>
+                        <div className={styles.infoModal}>
                             <label htmlFor="addressInput">Address:</label>
-                            <input type="text" id="addressInput" onChange={(event) => {
+                            <input type="text" id="addressInput" defaultValue={home.address} onChange={(event) => {
                                 let h = {...editHome};
                                 h["address"] = event.target.value;
                                 setEditHome(h);
                             }}/>
                         </div>
-                        <div className={styles.info}>
+                        <div className={styles.infoModal}>
                             <label htmlFor="landlordInput">Landlord name:</label>
-                            <input type="text" id="landlordInput" onChange={(event) => {
+                            <input type="text" id="landlordInput" defaultValue={home.landlordName} onChange={(event) => {
                                 let h = {...editHome};
                                 h["landlordName"] = event.target.value;
                                 setEditHome(h);
                             }}/>
                         </div>
-                        <div className={styles.info}>
+                        <div className={styles.infoModal}>
                             <label htmlFor="landlordPhoneInput">Landlord phone number:</label>
-                            <input type="text" id="landlordPhoneInput" onChange={(event) => {
+                            <input type="text" id="landlordPhoneInput" defaultValue={home.landlordPhoneNumber} onChange={(event) => {
                                 let h = {...editHome};
                                 h["landlordPhoneNumber"] = event.target.value;
                                 setEditHome(h);
                             }}/>
                         </div>
-                        <div className={styles.info}>
+                        <div className={styles.infoModal}>
                             <label htmlFor="leaseLinkInput">Lease link:</label>
-                            <input type="text" id="leaseLinkInput" onChange={(event) => {
+                            <input type="text" id="leaseLinkInput" defaultValue={home.leaseLink} onChange={(event) => {
                                 let h = {...editHome};
                                 h["leaseLink"] = event.target.value;
                                 setEditHome(h);
@@ -176,17 +181,21 @@ export default function MyHome() {
                     <div className={styles.submitButtons}>
                         <button className={styles.modalButton} onClick={() => {
                             let h = {
-                                name: home.name,
-                                password: home.password
+                                name: editHome.name,
+                                password: editHome.password,
+                                address: editHome.address,
+                                landlordName: editHome.landlordName,
+                                landlordPhoneNumber: editHome.landlordPhoneNumber,
+                                leaseLink: editHome.leaseLink
                             };
 
-                            if (editHome.name) h["name"] = editHome.name;
-                            if (editHome.password) h["password"] = editHome.password;
-                            if (editHome.address) h["address"] = editHome.address;
-                            if (editHome.landlordName) h["landlordName"] = editHome.landlordName;
-                            if (editHome.landlordPhoneNumber) h["landlordPhoneNumber"] = editHome.landlordPhoneNumber;
-                            if (editHome.leaseLink) h["leaseLink"] = editHome.leaseLink;
-
+                            // if (editHome.name) h["name"] = editHome.name;
+                            // if (editHome.password) h["password"] = editHome.password;
+                            // if (editHome.address) h["address"] = editHome.address;
+                            // if (editHome.landlordName) h["landlordName"] = editHome.landlordName;
+                            // if (editHome.landlordPhoneNumber) h["landlordPhoneNumber"] = editHome.landlordPhoneNumber;
+                            // if (editHome.leaseLink) h["leaseLink"] = editHome.leaseLink;
+                            console.log(h)
                             api.put('homes/' + home._id, h)
                             .then(function(response) {
                                 setHome(h);
