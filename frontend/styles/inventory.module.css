@@ -1,0 +1,104 @@
+.pageContents {
+    padding: 0 2rem;
+    width: 100%;
+    margin: auto;
+    margin-top: 150px;
+    color: #221c42;
+  }
+
+.pageContents h1 {
+    text-align: center;
+    line-height: 1.15;
+    font-size: 3rem;
+    color: #221c42;
+}
+.spacer {
+  padding: 5px;
+}
+
+.submitButtons {
+    margin: auto;
+}
+.modalButton {
+    margin: auto;
+    text-align: center;
+    background-color: #69906b;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+  }
+.modalButton:hover {
+    background-color: #dce6dd;
+    color: black;
+  }
+
+.pageContents p {
+    text-align: center;
+}
+
+.table {
+    width: 50%;
+    padding: 20px;
+    margin: auto;
+    justify-content: center;
+}
+.listHeader {
+    width: 100%;
+    background-color: #dce6dd;
+    padding: 15px;
+}
+.listHeader h3 {
+    display: inline-block;
+    text-align: center;
+}
+.listItem {
+    width: 100%;
+    display: inline-block;
+    border: solid #000;
+    border-width: 1px 0.5px 0.5px 1px;
+    padding: 15px;
+}
+.listColumn {
+    width: 50%;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 7fr;
+}
+.item, .delete {
+    display: inline-block;
+    text-align: center;
+}
+
+.delete:hover {
+    opacity: 60%;
+}
+
+.active {
+    background-color: #69906b;
+  }
+
+.bottom {
+    margin: auto;
+    width: 100%;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+.addItemButton {
+    margin: auto;
+    background-color: #69906b;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+}
+.addItemButton:hover {
+    background-color: #dce6dd;
+    color: black;
+}

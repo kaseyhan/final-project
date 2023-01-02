@@ -83,6 +83,7 @@ export default function Navbar() {
 						<NavLink name="Calendar" href="/calendar" icon='/assets/schedule.svg' />
 						{/* <NavLink name="Chat" href="/chat" icon='/assets/comments-alt.svg' /> */}
 						<NavLink name="Finances" href="/finances" icon='/assets/dollar-alt.svg' />
+						<NavLink name="Inventory" href="/inventory" icon='/assets/list-ul.svg'/>
 						<NavLink name="Analytics" href="/analytics" icon='/assets/chart-line.svg' />
 					</div>
 					: <div className={styles.links}>
@@ -121,7 +122,8 @@ export default function Navbar() {
 								<MenuItem onClick={handleCloseMenu}><Link href="/calendar">Calendar</Link></MenuItem>
 								{/* <MenuItem onClick={handleCloseMenu}><Link href="/chat">Chat</Link></MenuItem> */}
 								<MenuItem onClick={handleCloseMenu}><Link href="/finances">Finances</Link></MenuItem>
-								{/* <MenuItem onClick={handleCloseMenu}><Link href="/analytics">Analytics</Link></MenuItem> */}
+								<MenuItem onClick={handleCloseMenu}><Link href="/inventory">Inventory</Link></MenuItem>
+								<MenuItem onClick={handleCloseMenu}><Link href="/analytics">Analytics</Link></MenuItem>
 							</div>)
 							: <div>
 								<MenuItem onClick={handleCloseMenu}><Link href="/">My Home</Link></MenuItem>

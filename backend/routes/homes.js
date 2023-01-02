@@ -26,6 +26,7 @@ module.exports = function (router) {
             landlordPhoneNumber: req.body.landlordPhoneNumber,
             leaseLink: req.body.leaseLink,
             announcements: req.body.announcements,
+            inventory: req.body.inventory,
             dateCreated: Date.now()
         })
 
@@ -247,6 +248,7 @@ module.exports = function (router) {
             // if (req.body.landlordPhoneNumber) data.landlordPhoneNumber = req.body.landlordPhoneNumber;
             // if (req.body.leaseLink) data.leaseLink = req.body.leaseLink;
             if (req.body.announcements) data.announcements = req.body.announcements;
+            if (req.body.inventory) data.inventory = req.body.inventory;
 
             if (req.body.members) {
                 // await User.updateMany({home: data._id},{home:"none"});

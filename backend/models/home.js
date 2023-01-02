@@ -10,7 +10,8 @@ var HomeSchema = new mongoose.Schema({
     landlordName: {type: String, default: ""},
     landlordPhoneNumber: {type: String, default: ""},
     leaseLink: {type: String, default: ""},
-    announcements: [{user: String, message: String}] // user id
+    announcements: [{user: String, message: String}], // user id
+    inventory: {type: [String], default: []}
 });
 
 module.exports = mongoose.model('Home', HomeSchema);
