@@ -24,7 +24,7 @@ const localizer = momentLocalizer(moment);
 export default function Calendar() {
   const [isLoading, setIsLoading] = useState(false);
   const [userID, setUserID] = useState(null);
-  const [events, setEvents] = useState(null);
+  const [events, setEvents] = useState([]);
   const [home, setHome] = useState(null);
   const [user, setUser] = useState(null);
   const [showEventDetailModal, setShowEventDetailModal] = useState(false);
@@ -61,31 +61,30 @@ export default function Calendar() {
 
         // get upcoming user events
         let upcomingEvents = [];
-        const eventsRequests = data.events.map(id => API.get(`events/${id}`));
-        const eventsResults = await Promise.all(eventsRequests);
-        eventsResults.map(res => {
-          let curEvent = res.data.data;
-          let eventData = {
-            id: curEvent._id,
-            title: curEvent.name,
-            home: curEvent.home,
-            start: new Date(curEvent.start),
-            end: new Date(curEvent.end),
-            location: curEvent.location,
-            guests: curEvent.guests,
-            notes: curEvent.notes,
-            repeat: curEvent.repeat,
-            color: userColor || "#cccccc"
-          }
-          upcomingEvents.push(eventData)
-        })
+        // let pu = {"params": {"where": JSON.stringify({"host":data._id})}};
+        // const userEventGet = await API.get("events", pu);
+        // userEventGet.data.data.map(curEvent => {
+        //   let eventData = {
+        //     id: curEvent._id,
+        //     title: curEvent.name,
+        //     home: curEvent.home,
+        //     start: new Date(curEvent.start),
+        //     end: new Date(curEvent.end),
+        //     location: curEvent.location,
+        //     guests: curEvent.guests,
+        //     notes: curEvent.notes,
+        //     repeat: curEvent.repeat,
+        //     color: userColor || "#cccccc"
+        //   }
+        //   upcomingEvents.push(eventData)
+        // })
 
         // get home events
-        if (homeID && homeID.length > 2 && homeGet.data.data && homeGet.data.data.events.length > 0) {
-          const homeRequests = homeGet.data.data.events.map(id => API.get(`events/${id}`));
-          const homeResults = await Promise.all(homeRequests);
-          homeResults.map(res => {
-            let curEvent = res.data.data;
+        if (homeID && homeID.length > 2 && homeGet.data.data){// && homeGet.data.data.events.length > 0) {
+          // const homeRequests = homeGet.data.data.events.map(id => API.get(`events/${id}`));
+          // const homeResults = await Promise.all(homeRequests);
+          const eventGet = await API.get("events",p);
+          eventGet.data.data.map(curEvent => {
             let u = usersGet.data.data.find(element => element._id === curEvent.host);
             let c = u ? u.color : "#cccccc"
             let eventData = {
@@ -103,10 +102,10 @@ export default function Calendar() {
 
             // avoid adding Home events that are also one of the logged in
             // User's events to the calendar
-            const IDs = upcomingEvents.map(event => event.id);
-            if (IDs.indexOf(eventData.id) === -1) {
+            // const IDs = upcomingEvents.map(event => event.id);
+            // if (IDs.indexOf(eventData.id) === -1) {
               upcomingEvents.push(eventData);
-            }
+            // }
           })
         }
 
